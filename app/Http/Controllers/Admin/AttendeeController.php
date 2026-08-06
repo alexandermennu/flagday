@@ -8,6 +8,7 @@ use App\Http\Requests\StoreAttendeeRequest;
 use App\Http\Requests\UpdateAttendeeRequest;
 use App\Mail\AttendeeReminder;
 use App\Models\Attendee;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -22,14 +23,13 @@ class AttendeeController extends Controller
 
         if ($search = $request->query('q')) {
             $query->where(function ($q) use ($search) {
-                $q->where('full_name', 'like', "%{$search}%")
+                $q->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
-        if ($status = $request->query('status')) {
-            $query->where('status', $status);
-        }
+        $this->applyStatusFilter($query, $request->query('status'));
 
         $attendees = $query->orderByDesc('created_at')->paginate(25)->withQueryString();
 
@@ -104,22 +104,28 @@ class AttendeeController extends Controller
         return redirect()->route('admin.attendees.index')->with('success', $message);
     }
 
-    public function export(): StreamedResponse
+    public function export(Request $request): StreamedResponse
     {
         $filename = 'attendees-'.now()->format('Y-m-d-His').'.csv';
+        $status = $request->query('status');
 
-        return response()->streamDownload(function () {
+        return response()->streamDownload(function () use ($status) {
             $handle = fopen('php://output', 'w');
 
-            fputcsv($handle, ['Name', 'Email', 'Phone', 'Organization', 'Status', 'RSVP Date', 'Checked In At']);
+            fputcsv($handle, ['Name', 'Email', 'Phone', 'Organization', 'Department', 'Position', 'Status', 'RSVP Date', 'Checked In At']);
 
-            Attendee::orderBy('full_name')->chunk(200, function ($attendees) use ($handle) {
+            $query = Attendee::orderBy('last_name')->orderBy('first_name');
+            $this->applyStatusFilter($query, $status);
+
+            $query->chunk(200, function ($attendees) use ($handle) {
                 foreach ($attendees as $attendee) {
                     fputcsv($handle, [
                         $this->csvSafe($attendee->full_name),
                         $this->csvSafe($attendee->email),
                         $this->csvSafe($attendee->phone ?? ''),
-                        $this->csvSafe($attendee->organization ?? ''),
+                        $this->csvSafe($attendee->organization),
+                        $this->csvSafe($attendee->department ?? ''),
+                        $this->csvSafe($attendee->position),
                         $attendee->status->label(),
                         optional($attendee->confirmed_at)->format('Y-m-d H:i'),
                         optional($attendee->checked_in_at)->format('Y-m-d H:i'),
@@ -154,6 +160,26 @@ class AttendeeController extends Controller
         ])->save();
 
         $attendee->sendConfirmationEmail();
+    }
+
+    /**
+     * "responded" is a synthetic filter (not a real status) meaning "has answered the
+     * RSVP either way" — powers the sidebar's "RSVP Responses" view without a second
+     * controller/table.
+     */
+    private function applyStatusFilter(Builder $query, ?string $status): void
+    {
+        if (! $status) {
+            return;
+        }
+
+        if ($status === 'responded') {
+            $query->where('status', '!=', AttendeeStatus::Pending->value);
+
+            return;
+        }
+
+        $query->where('status', $status);
     }
 
     private function csvSafe(string $value): string

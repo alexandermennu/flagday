@@ -17,7 +17,8 @@ class StoreRsvpRequest extends FormRequest
     {
         $this->merge([
             'email' => strtolower(trim((string) $this->input('email'))),
-            'full_name' => trim((string) $this->input('full_name')),
+            'first_name' => trim((string) $this->input('first_name')),
+            'last_name' => trim((string) $this->input('last_name')),
         ]);
     }
 
@@ -27,10 +28,13 @@ class StoreRsvpRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'full_name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:30'],
-            'organization' => ['nullable', 'string', 'max:255'],
+            'organization' => ['required', 'string', 'max:255'],
+            'department' => ['nullable', 'string', 'max:255'],
+            'position' => ['required', 'string', 'max:255'],
             'status' => [
                 'required',
                 Rule::in([AttendeeStatus::Confirmed->value, AttendeeStatus::Declined->value]),

@@ -25,13 +25,12 @@
 
     <main class="mx-auto max-w-3xl px-6 py-16">
         <div class="text-center">
-            <span class="text-sm font-semibold uppercase tracking-wider text-red-700">RSVP</span>
-            <h1 class="mt-3 text-3xl font-bold tracking-tight text-blue-950 sm:text-4xl">
-                {{ config('event.name') }}
+            <h1 class="text-3xl font-bold tracking-tight text-blue-950 sm:text-4xl">
+                {{ \Illuminate\Support\Number::ordinal(date('Y', strtotime(config('event.date'))) - 1847) }} Flag Day RSVP Form
             </h1>
             <p class="mt-4 text-slate-600">
-                {{ date('l, F j, Y', strtotime(config('event.date'))) }} &middot;
-                {{ config('event.venue') }}, {{ config('event.venue_address') }}
+                Kindly fill the form below to secure your spot (Note: This form is only applicable those that
+                received an official invitation letter!)
             </p>
         </div>
 
@@ -50,44 +49,63 @@
             <form method="POST" action="{{ route('rsvp.store') }}" class="space-y-6">
                 @csrf
 
+                <div>
+                    <label class="mb-1.5 block text-sm font-semibold text-slate-700">Full Name <span class="text-red-600">*</span></label>
+                    <div class="grid gap-3 sm:grid-cols-2">
+                        <div>
+                            <input type="text" name="first_name" id="first_name" required value="{{ old('first_name') }}" placeholder="First Name"
+                                   class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
+                        </div>
+                        <div>
+                            <input type="text" name="last_name" id="last_name" required value="{{ old('last_name') }}" placeholder="Last Name"
+                                   class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
+                        </div>
+                    </div>
+                </div>
+
                 <fieldset>
-                    <legend class="mb-3 text-sm font-semibold text-slate-700">Will you be attending?</legend>
+                    <legend class="mb-3 text-sm font-semibold text-slate-700">Attending? <span class="text-red-600">*</span></legend>
                     <div class="grid grid-cols-2 gap-3">
                         <label class="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 transition has-[:checked]:border-red-700 has-[:checked]:bg-red-50 has-[:checked]:text-red-700">
                             <input type="radio" name="status" value="confirmed" class="accent-red-700" {{ old('status', 'confirmed') === 'confirmed' ? 'checked' : '' }}>
-                            Yes, I'll attend
+                            Yes
                         </label>
                         <label class="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 transition has-[:checked]:border-slate-500 has-[:checked]:bg-slate-100">
                             <input type="radio" name="status" value="declined" class="accent-slate-600" {{ old('status') === 'declined' ? 'checked' : '' }}>
-                            No, I can't make it
+                            No
                         </label>
                     </div>
                 </fieldset>
 
                 <div>
-                    <label for="full_name" class="mb-1.5 block text-sm font-semibold text-slate-700">Full name</label>
-                    <input type="text" name="full_name" id="full_name" required value="{{ old('full_name') }}"
+                    <label for="phone" class="mb-1.5 block text-sm font-semibold text-slate-700">Phone Number</label>
+                    <input type="tel" name="phone" id="phone" value="{{ old('phone') }}" placeholder="(000) 000-0000"
                            class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
                 </div>
 
                 <div>
-                    <label for="email" class="mb-1.5 block text-sm font-semibold text-slate-700">Email address</label>
-                    <input type="email" name="email" id="email" required value="{{ old('email') }}"
+                    <label for="email" class="mb-1.5 block text-sm font-semibold text-slate-700">Email <span class="text-red-600">*</span></label>
+                    <input type="email" name="email" id="email" required value="{{ old('email') }}" placeholder="example@example.com"
                            class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
                     <p class="mt-1.5 text-xs text-slate-500">Your digital ticket and confirmation will be sent here.</p>
                 </div>
 
-                <div class="grid gap-6 sm:grid-cols-2">
-                    <div>
-                        <label for="phone" class="mb-1.5 block text-sm font-semibold text-slate-700">Phone <span class="font-normal text-slate-400">(optional)</span></label>
-                        <input type="tel" name="phone" id="phone" value="{{ old('phone') }}"
-                               class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
-                    </div>
-                    <div>
-                        <label for="organization" class="mb-1.5 block text-sm font-semibold text-slate-700">Organization <span class="font-normal text-slate-400">(optional)</span></label>
-                        <input type="text" name="organization" id="organization" value="{{ old('organization') }}"
-                               class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
-                    </div>
+                <div>
+                    <label for="organization" class="mb-1.5 block text-sm font-semibold text-slate-700">Organization/Agency <span class="text-red-600">*</span></label>
+                    <input type="text" name="organization" id="organization" required value="{{ old('organization') }}"
+                           class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
+                </div>
+
+                <div>
+                    <label for="department" class="mb-1.5 block text-sm font-semibold text-slate-700">Department/Division/Unit</label>
+                    <input type="text" name="department" id="department" value="{{ old('department') }}"
+                           class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
+                </div>
+
+                <div>
+                    <label for="position" class="mb-1.5 block text-sm font-semibold text-slate-700">Position <span class="text-red-600">*</span></label>
+                    <input type="text" name="position" id="position" required value="{{ old('position') }}"
+                           class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
                 </div>
 
                 <button type="submit"

@@ -20,10 +20,13 @@ class AttendeeFactory extends Factory
     public function definition(): array
     {
         return [
-            'full_name' => fake()->name(),
+            'first_name' => fake()->firstName(),
+            'last_name' => fake()->lastName(),
             'email' => fake()->unique()->safeEmail(),
             'phone' => fake()->optional()->phoneNumber(),
-            'organization' => fake()->optional()->company(),
+            'organization' => fake()->company(),
+            'department' => fake()->optional()->word(),
+            'position' => fake()->jobTitle(),
             'status' => AttendeeStatus::Pending,
             'invite_token' => (string) Str::uuid(),
         ];

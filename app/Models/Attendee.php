@@ -6,12 +6,13 @@ use App\Enums\AttendeeStatus;
 use App\Mail\RsvpConfirmation;
 use Database\Factories\AttendeeFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
-#[Fillable(['full_name', 'email', 'phone', 'organization', 'status'])]
+#[Fillable(['first_name', 'last_name', 'email', 'phone', 'organization', 'department', 'position', 'status'])]
 class Attendee extends Model
 {
     /** @use HasFactory<AttendeeFactory> */
@@ -30,6 +31,15 @@ class Attendee extends Model
             'reminder_sent_at' => 'datetime',
             'checked_in_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Computed full name, kept as a read-only "full_name" attribute so PDF/email/CSV
+     * templates that display a single name field don't need to know about the split.
+     */
+    protected function fullName(): Attribute
+    {
+        return Attribute::get(fn () => trim("{$this->first_name} {$this->last_name}"));
     }
 
     protected static function booted(): void

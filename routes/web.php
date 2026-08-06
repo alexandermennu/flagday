@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AttendeeController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\CheckInController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\RsvpController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,5 +35,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('attendees-export', [AttendeeController::class, 'export'])->name('attendees.export');
 
         Route::get('checkin/{attendee:invite_token}', [CheckInController::class, 'show'])->name('checkin.show');
+
+        Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
     });
 });

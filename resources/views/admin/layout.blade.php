@@ -18,14 +18,26 @@
                     <span class="block text-sm font-bold text-blue-950">Admin</span>
                 </span>
             </div>
+            @php
+                $isResponses = request()->routeIs('admin.attendees.index') && request()->query('status') === 'responded';
+                $isInvitees = request()->routeIs('admin.attendees.*') && ! $isResponses;
+            @endphp
             <nav class="space-y-1 px-3 py-4">
                 <a href="{{ route('admin.dashboard') }}"
-                   class="block rounded-lg px-3 py-2 text-sm font-medium transition {{ request()->routeIs('admin.dashboard') ? 'bg-blue-950 text-white' : 'text-slate-600 hover:bg-slate-100' }}">
-                    Dashboard
+                   class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition {{ request()->routeIs('admin.dashboard') ? 'bg-blue-950 text-white' : 'text-slate-600 hover:bg-slate-100' }}">
+                    <span aria-hidden="true">📊</span> Dashboard
                 </a>
                 <a href="{{ route('admin.attendees.index') }}"
-                   class="block rounded-lg px-3 py-2 text-sm font-medium transition {{ request()->routeIs('admin.attendees.*') ? 'bg-blue-950 text-white' : 'text-slate-600 hover:bg-slate-100' }}">
-                    Attendees
+                   class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition {{ $isInvitees ? 'bg-blue-950 text-white' : 'text-slate-600 hover:bg-slate-100' }}">
+                    <span aria-hidden="true">👥</span> Invitees
+                </a>
+                <a href="{{ route('admin.attendees.index', ['status' => 'responded']) }}"
+                   class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition {{ $isResponses ? 'bg-blue-950 text-white' : 'text-slate-600 hover:bg-slate-100' }}">
+                    <span aria-hidden="true">📨</span> RSVP Responses
+                </a>
+                <a href="{{ route('admin.reports.index') }}"
+                   class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition {{ request()->routeIs('admin.reports.*') ? 'bg-blue-950 text-white' : 'text-slate-600 hover:bg-slate-100' }}">
+                    <span aria-hidden="true">📈</span> Reports
                 </a>
             </nav>
         </aside>

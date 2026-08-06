@@ -23,16 +23,24 @@ class AttendeeManagementTest extends TestCase
         return $user;
     }
 
+    private function payload(array $overrides = []): array
+    {
+        return array_merge([
+            'first_name' => 'VIP',
+            'last_name' => 'Guest',
+            'email' => 'vip@example.com',
+            'organization' => 'Ministry of Education',
+            'position' => 'Director',
+            'status' => 'pending',
+        ], $overrides);
+    }
+
     public function test_admin_can_create_an_attendee(): void
     {
         Mail::fake();
         $this->actingAsAdmin();
 
-        $response = $this->post(route('admin.attendees.store'), [
-            'full_name' => 'VIP Guest',
-            'email' => 'vip@example.com',
-            'status' => 'pending',
-        ]);
+        $response = $this->post(route('admin.attendees.store'), $this->payload());
 
         $response->assertRedirect(route('admin.attendees.index'));
         $this->assertDatabaseHas('attendees', ['email' => 'vip@example.com', 'status' => 'pending']);
@@ -46,11 +54,14 @@ class AttendeeManagementTest extends TestCase
 
         $attendee = Attendee::factory()->create(['status' => AttendeeStatus::Pending]);
 
-        $this->put(route('admin.attendees.update', $attendee), [
-            'full_name' => $attendee->full_name,
+        $this->put(route('admin.attendees.update', $attendee), $this->payload([
+            'first_name' => $attendee->first_name,
+            'last_name' => $attendee->last_name,
             'email' => $attendee->email,
+            'organization' => $attendee->organization,
+            'position' => $attendee->position,
             'status' => 'confirmed',
-        ]);
+        ]));
 
         Mail::assertQueued(RsvpConfirmation::class, fn ($mail) => $mail->attendee->is($attendee));
     }
@@ -62,11 +73,14 @@ class AttendeeManagementTest extends TestCase
 
         $attendee = Attendee::factory()->confirmed()->create();
 
-        $this->put(route('admin.attendees.update', $attendee), [
-            'full_name' => 'Updated Name',
+        $this->put(route('admin.attendees.update', $attendee), $this->payload([
+            'first_name' => $attendee->first_name,
+            'last_name' => 'Updated',
             'email' => $attendee->email,
+            'organization' => $attendee->organization,
+            'position' => $attendee->position,
             'status' => 'confirmed',
-        ]);
+        ]));
 
         Mail::assertNotQueued(RsvpConfirmation::class);
     }
@@ -102,12 +116,29 @@ class AttendeeManagementTest extends TestCase
         $this->assertNull($pending->fresh()->reminder_sent_at);
     }
 
+    public function test_responded_filter_excludes_pending_invitees(): void
+    {
+        $this->actingAsAdmin();
+
+        $confirmed = Attendee::factory()->confirmed()->create();
+        $declined = Attendee::factory()->declined()->create();
+        $pending = Attendee::factory()->create(['status' => AttendeeStatus::Pending]);
+
+        $response = $this->get(route('admin.attendees.index', ['status' => 'responded']));
+
+        $response->assertOk();
+        $response->assertSee($confirmed->email);
+        $response->assertSee($declined->email);
+        $response->assertDontSee($pending->email);
+    }
+
     public function test_csv_export_neutralizes_formula_injection_payload(): void
     {
         $this->actingAsAdmin();
 
         Attendee::factory()->create([
-            'full_name' => '=cmd|\'/c calc\'!A1',
+            'first_name' => '=cmd|\'/c calc\'!A1',
+            'last_name' => 'Attacker',
             'email' => 'attacker@example.com',
         ]);
 
@@ -115,5 +146,19 @@ class AttendeeManagementTest extends TestCase
 
         $response->assertOk();
         $this->assertStringContainsString("'=cmd", $response->streamedContent());
+    }
+
+    public function test_reports_page_loads_with_stats(): void
+    {
+        $this->actingAsAdmin();
+
+        Attendee::factory()->confirmed()->create();
+        Attendee::factory()->declined()->create();
+
+        $response = $this->get(route('admin.reports.index'));
+
+        $response->assertOk();
+        $response->assertViewHas('stats');
+        $response->assertViewHas('byOrganization');
     }
 }

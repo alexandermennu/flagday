@@ -1,6 +1,6 @@
 @extends('admin.layout')
 
-@section('title', 'Attendees')
+@section('title', $filters['status'] === 'responded' ? 'RSVP Responses' : 'Invitees')
 
 @section('content')
     <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -10,6 +10,7 @@
             <select name="status" onchange="this.form.submit()"
                     class="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
                 <option value="">All statuses</option>
+                <option value="responded" @selected($filters['status'] === 'responded')>Responded (Confirmed + Declined)</option>
                 @foreach (\App\Enums\AttendeeStatus::cases() as $case)
                     <option value="{{ $case->value }}" @selected($filters['status'] === $case->value)>{{ $case->label() }}</option>
                 @endforeach
@@ -50,6 +51,7 @@
                         <th class="px-4 py-3">Name</th>
                         <th class="px-4 py-3">Email</th>
                         <th class="px-4 py-3">Organization</th>
+                        <th class="px-4 py-3">Position</th>
                         <th class="px-4 py-3">Status</th>
                         <th class="px-4 py-3">Checked In</th>
                         <th class="px-4 py-3 text-right">Actions</th>
@@ -63,7 +65,8 @@
                             </td>
                             <td class="px-4 py-3 font-medium text-slate-800">{{ $attendee->full_name }}</td>
                             <td class="px-4 py-3 text-slate-500">{{ $attendee->email }}</td>
-                            <td class="px-4 py-3 text-slate-500">{{ $attendee->organization ?? '—' }}</td>
+                            <td class="px-4 py-3 text-slate-500">{{ $attendee->organization }}</td>
+                            <td class="px-4 py-3 text-slate-500">{{ $attendee->position }}</td>
                             <td class="px-4 py-3"><x-status-badge :status="$attendee->status" /></td>
                             <td class="px-4 py-3 text-slate-500">
                                 @if ($attendee->checked_in_at)
@@ -83,7 +86,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-6 py-10 text-center text-slate-400">No attendees found.</td>
+                            <td colspan="8" class="px-6 py-10 text-center text-slate-400">No attendees found.</td>
                         </tr>
                     @endforelse
                 </tbody>

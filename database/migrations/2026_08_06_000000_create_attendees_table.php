@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('attendees', function (Blueprint $table) {
             $table->id();
-            $table->string('full_name');
+            $table->string('first_name');
+            $table->string('last_name');
             $table->string('email')->unique();
             $table->string('phone')->nullable();
-            $table->string('organization')->nullable();
+            $table->string('organization');
+            $table->string('department')->nullable();
+            $table->string('position');
             $table->string('status')->default('pending')->index();
             $table->string('invite_token', 36)->unique();
             $table->timestamp('confirmed_at')->nullable();

@@ -26,10 +26,13 @@ class StoreAttendeeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'full_name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:attendees,email'],
             'phone' => ['nullable', 'string', 'max:30'],
-            'organization' => ['nullable', 'string', 'max:255'],
+            'organization' => ['required', 'string', 'max:255'],
+            'department' => ['nullable', 'string', 'max:255'],
+            'position' => ['required', 'string', 'max:255'],
             'status' => ['required', Rule::enum(AttendeeStatus::class)],
         ];
     }

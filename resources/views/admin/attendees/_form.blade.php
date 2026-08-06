@@ -5,10 +5,17 @@
 
 <div class="grid gap-6 sm:grid-cols-2">
     <div>
-        <label for="full_name" class="mb-1.5 block text-sm font-semibold text-slate-700">Full name</label>
-        <input type="text" name="full_name" id="full_name" required value="{{ old('full_name', $attendee->full_name ?? '') }}"
+        <label for="first_name" class="mb-1.5 block text-sm font-semibold text-slate-700">First name</label>
+        <input type="text" name="first_name" id="first_name" required value="{{ old('first_name', $attendee->first_name ?? '') }}"
                class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
-        @error('full_name') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+        @error('first_name') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+    </div>
+
+    <div>
+        <label for="last_name" class="mb-1.5 block text-sm font-semibold text-slate-700">Last name</label>
+        <input type="text" name="last_name" id="last_name" required value="{{ old('last_name', $attendee->last_name ?? '') }}"
+               class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
+        @error('last_name') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
     </div>
 
     <div>
@@ -25,9 +32,23 @@
     </div>
 
     <div>
-        <label for="organization" class="mb-1.5 block text-sm font-semibold text-slate-700">Organization</label>
-        <input type="text" name="organization" id="organization" value="{{ old('organization', $attendee->organization ?? '') }}"
+        <label for="organization" class="mb-1.5 block text-sm font-semibold text-slate-700">Organization/Agency</label>
+        <input type="text" name="organization" id="organization" required value="{{ old('organization', $attendee->organization ?? '') }}"
                class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
+        @error('organization') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+    </div>
+
+    <div>
+        <label for="department" class="mb-1.5 block text-sm font-semibold text-slate-700">Department/Division/Unit</label>
+        <input type="text" name="department" id="department" value="{{ old('department', $attendee->department ?? '') }}"
+               class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
+    </div>
+
+    <div>
+        <label for="position" class="mb-1.5 block text-sm font-semibold text-slate-700">Position</label>
+        <input type="text" name="position" id="position" required value="{{ old('position', $attendee->position ?? '') }}"
+               class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
+        @error('position') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
     </div>
 
     <div>
