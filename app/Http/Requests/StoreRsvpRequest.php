@@ -39,6 +39,10 @@ class StoreRsvpRequest extends FormRequest
                 'required',
                 Rule::in([AttendeeStatus::Confirmed->value, AttendeeStatus::Declined->value]),
             ],
+            'guests' => ['nullable', 'array', 'max:5'],
+            'guests.*.full_name' => ['required_with:guests', 'string', 'max:255'],
+            'guests.*.organization' => ['required_with:guests', 'string', 'max:255'],
+            'guests.*.position' => ['required_with:guests', 'string', 'max:255'],
         ];
     }
 }

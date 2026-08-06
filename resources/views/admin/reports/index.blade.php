@@ -3,7 +3,7 @@
 @section('title', 'Reports')
 
 @section('content')
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <div class="rounded-2xl border border-slate-200 bg-white p-5">
             <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Invited</p>
             <p class="mt-1 text-2xl font-bold text-blue-950">{{ $stats['total'] }}</p>
@@ -19,6 +19,15 @@
         <div class="rounded-2xl border border-slate-200 bg-white p-5">
             <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Checked In</p>
             <p class="mt-1 text-2xl font-bold text-red-700">{{ $stats['checked_in'] }}</p>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-white p-5">
+            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Additional Guests</p>
+            <p class="mt-1 text-2xl font-bold text-blue-950">{{ $stats['total_guests'] }}</p>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-white p-5">
+            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Expected Attendance</p>
+            <p class="mt-1 text-2xl font-bold text-blue-950">{{ $stats['expected_attendance'] }}</p>
+            <p class="mt-1 text-xs text-slate-400">Confirmed + guests</p>
         </div>
     </div>
 

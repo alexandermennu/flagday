@@ -19,7 +19,7 @@ class AttendeeController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Attendee::query();
+        $query = Attendee::query()->withCount('guests');
 
         if ($search = $request->query('q')) {
             $query->where(function ($q) use ($search) {
@@ -112,13 +112,17 @@ class AttendeeController extends Controller
         return response()->streamDownload(function () use ($status) {
             $handle = fopen('php://output', 'w');
 
-            fputcsv($handle, ['Name', 'Email', 'Phone', 'Organization', 'Department', 'Position', 'Status', 'RSVP Date', 'Checked In At']);
+            fputcsv($handle, ['Name', 'Email', 'Phone', 'Organization', 'Department', 'Position', 'Status', 'RSVP Date', 'Checked In At', 'Guest Count', 'Guest Names']);
 
-            $query = Attendee::orderBy('last_name')->orderBy('first_name');
+            $query = Attendee::with('guests')->orderBy('last_name')->orderBy('first_name');
             $this->applyStatusFilter($query, $status);
 
             $query->chunk(200, function ($attendees) use ($handle) {
                 foreach ($attendees as $attendee) {
+                    $guestNames = $attendee->guests
+                        ->map(fn ($guest) => "{$guest->full_name} ({$guest->organization}, {$guest->position})")
+                        ->implode('; ');
+
                     fputcsv($handle, [
                         $this->csvSafe($attendee->full_name),
                         $this->csvSafe($attendee->email),
@@ -129,6 +133,8 @@ class AttendeeController extends Controller
                         $attendee->status->label(),
                         optional($attendee->confirmed_at)->format('Y-m-d H:i'),
                         optional($attendee->checked_in_at)->format('Y-m-d H:i'),
+                        $attendee->guests->count(),
+                        $this->csvSafe($guestNames),
                     ]);
                 }
             });

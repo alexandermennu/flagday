@@ -63,7 +63,12 @@
                             <td class="px-4 py-3">
                                 <input type="checkbox" name="attendee_ids[]" value="{{ $attendee->id }}" class="row-checkbox rounded accent-blue-950">
                             </td>
-                            <td class="px-4 py-3 font-medium text-slate-800">{{ $attendee->full_name }}</td>
+                            <td class="px-4 py-3 font-medium text-slate-800">
+                                {{ $attendee->full_name }}
+                                @if ($attendee->guests_count > 0)
+                                    <span class="ml-1 inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-950">+{{ $attendee->guests_count }}</span>
+                                @endif
+                            </td>
                             <td class="px-4 py-3 text-slate-500">{{ $attendee->email }}</td>
                             <td class="px-4 py-3 text-slate-500">{{ $attendee->organization }}</td>
                             <td class="px-4 py-3 text-slate-500">{{ $attendee->position }}</td>

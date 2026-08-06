@@ -92,6 +92,83 @@ class RsvpTest extends TestCase
         $response->assertSessionHasErrors(['organization', 'position']);
     }
 
+    public function test_confirming_with_guests_creates_guest_records(): void
+    {
+        Mail::fake();
+
+        $this->post(route('rsvp.store'), $this->payload([
+            'guests' => [
+                ['full_name' => 'Guest One', 'organization' => 'Acme Corp', 'position' => 'Analyst'],
+                ['full_name' => 'Guest Two', 'organization' => 'Acme Corp', 'position' => 'Manager'],
+            ],
+        ]));
+
+        $attendee = Attendee::where('email', 'jane@example.com')->firstOrFail();
+        $this->assertCount(2, $attendee->guests);
+        $this->assertSame('Guest One', $attendee->guests->first()->full_name);
+    }
+
+    public function test_declining_attendance_ignores_any_submitted_guests(): void
+    {
+        Mail::fake();
+
+        $this->post(route('rsvp.store'), $this->payload([
+            'status' => 'declined',
+            'guests' => [
+                ['full_name' => 'Guest One', 'organization' => 'Acme Corp', 'position' => 'Analyst'],
+            ],
+        ]));
+
+        $attendee = Attendee::where('email', 'jane@example.com')->firstOrFail();
+        $this->assertCount(0, $attendee->guests);
+    }
+
+    public function test_resubmitting_replaces_the_prior_guest_list(): void
+    {
+        Mail::fake();
+
+        $this->post(route('rsvp.store'), $this->payload([
+            'guests' => [
+                ['full_name' => 'Guest One', 'organization' => 'Acme Corp', 'position' => 'Analyst'],
+            ],
+        ]));
+
+        $this->post(route('rsvp.store'), $this->payload([
+            'guests' => [
+                ['full_name' => 'Guest Two', 'organization' => 'Acme Corp', 'position' => 'Manager'],
+                ['full_name' => 'Guest Three', 'organization' => 'Acme Corp', 'position' => 'Director'],
+            ],
+        ]));
+
+        $attendee = Attendee::where('email', 'jane@example.com')->firstOrFail();
+        $this->assertCount(2, $attendee->guests()->get());
+        $this->assertSame(['Guest Two', 'Guest Three'], $attendee->guests()->pluck('full_name')->all());
+    }
+
+    public function test_guest_fields_are_required_when_a_guest_row_is_submitted(): void
+    {
+        $response = $this->post(route('rsvp.store'), $this->payload([
+            'guests' => [
+                ['full_name' => '', 'organization' => '', 'position' => ''],
+            ],
+        ]));
+
+        $response->assertSessionHasErrors([
+            'guests.0.full_name',
+            'guests.0.organization',
+            'guests.0.position',
+        ]);
+    }
+
+    public function test_guests_are_capped_at_five(): void
+    {
+        $guests = array_fill(0, 6, ['full_name' => 'Guest', 'organization' => 'Acme', 'position' => 'Staff']);
+
+        $response = $this->post(route('rsvp.store'), $this->payload(['guests' => $guests]));
+
+        $response->assertSessionHasErrors('guests');
+    }
+
     public function test_rsvp_submissions_are_throttled(): void
     {
         Mail::fake();

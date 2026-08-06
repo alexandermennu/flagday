@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\AttendeeStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Attendee;
+use App\Models\AttendeeGuest;
 use Illuminate\View\View;
 
 class ReportController extends Controller
@@ -17,6 +18,7 @@ class ReportController extends Controller
         $pending = Attendee::where('status', AttendeeStatus::Pending)->count();
         $checkedIn = Attendee::whereNotNull('checked_in_at')->count();
         $responded = $confirmed + $declined;
+        $totalGuests = AttendeeGuest::count();
 
         $byOrganization = Attendee::selectRaw(
             'organization, count(*) as total, sum(case when status = ? then 1 else 0 end) as confirmed',
@@ -35,6 +37,8 @@ class ReportController extends Controller
                 'pending' => $pending,
                 'checked_in' => $checkedIn,
                 'response_rate' => $total > 0 ? round($responded / $total * 100) : 0,
+                'total_guests' => $totalGuests,
+                'expected_attendance' => $confirmed + $totalGuests,
             ],
             'byOrganization' => $byOrganization,
         ]);

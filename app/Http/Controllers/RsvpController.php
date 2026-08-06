@@ -21,6 +21,8 @@ class RsvpController extends Controller
     public function store(StoreRsvpRequest $request): RedirectResponse
     {
         $data = $request->validated();
+        $guests = $data['guests'] ?? [];
+        unset($data['guests']);
 
         // Resubmission by the same email updates the existing response rather than
         // erroring. The try/catch below only guards the rare race where two requests
@@ -45,6 +47,15 @@ class RsvpController extends Controller
         }
 
         $attendee->save();
+
+        // Guests only make sense when attending — a resubmission always replaces the
+        // prior guest list rather than appending to it, and declining clears it out.
+        $attendee->guests()->delete();
+        if ($attendee->status === AttendeeStatus::Confirmed) {
+            foreach ($guests as $guest) {
+                $attendee->guests()->create($guest);
+            }
+        }
 
         if ($attendee->status === AttendeeStatus::Confirmed) {
             $attendee->sendConfirmationEmail();
