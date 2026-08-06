@@ -49,7 +49,7 @@ class AttendeeController extends Controller
 
     public function store(StoreAttendeeRequest $request): RedirectResponse
     {
-        $attendee = Attendee::create($request->validated());
+        $attendee = Attendee::create($this->normalizePositionAndDeclineReason($request->validated()));
 
         $this->handleConfirmationTransition($attendee, previousStatus: AttendeeStatus::Pending);
 
@@ -65,7 +65,7 @@ class AttendeeController extends Controller
     {
         $previousStatus = $attendee->status;
 
-        $attendee->fill($request->validated());
+        $attendee->fill($this->normalizePositionAndDeclineReason($request->validated()));
         $attendee->save();
 
         $this->handleConfirmationTransition($attendee, $previousStatus);
@@ -112,7 +112,7 @@ class AttendeeController extends Controller
         return response()->streamDownload(function () use ($status) {
             $handle = fopen('php://output', 'w');
 
-            fputcsv($handle, ['Name', 'Email', 'Phone', 'Organization', 'Department', 'Position', 'Status', 'RSVP Date', 'Checked In At', 'Guest Count', 'Guest Names']);
+            fputcsv($handle, ['Name', 'Email', 'Phone', 'Organization', 'Department', 'Position', 'Status', 'Decline Reason', 'RSVP Date', 'Checked In At', 'Guest Count', 'Guest Names']);
 
             $query = Attendee::with('guests')->orderBy('last_name')->orderBy('first_name');
             $this->applyStatusFilter($query, $status);
@@ -131,6 +131,7 @@ class AttendeeController extends Controller
                         $this->csvSafe($attendee->department ?? ''),
                         $this->csvSafe($attendee->position),
                         $attendee->status->label(),
+                        $this->csvSafe($attendee->decline_reason ?? ''),
                         optional($attendee->confirmed_at)->format('Y-m-d H:i'),
                         optional($attendee->checked_in_at)->format('Y-m-d H:i'),
                         $attendee->guests->count(),
@@ -186,6 +187,20 @@ class AttendeeController extends Controller
         }
 
         $query->where('status', $status);
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private function normalizePositionAndDeclineReason(array $data): array
+    {
+        $data['position'] = $data['position'] ?? '';
+        $data['decline_reason'] = ($data['status'] ?? null) === AttendeeStatus::Declined->value
+            ? ($data['decline_reason'] ?? null)
+            : null;
+
+        return $data;
     }
 
     private function csvSafe(string $value): string

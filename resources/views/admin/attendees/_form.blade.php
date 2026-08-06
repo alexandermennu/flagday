@@ -46,8 +46,9 @@
 
     <div>
         <label for="position" class="mb-1.5 block text-sm font-semibold text-slate-700">Position</label>
-        <input type="text" name="position" id="position" required value="{{ old('position', $attendee->position ?? '') }}"
+        <input type="text" name="position" id="position" value="{{ old('position', $attendee->position ?? '') }}"
                class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
+        <p class="mt-1.5 text-xs text-slate-500">Required only when status is Confirmed.</p>
         @error('position') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
     </div>
 
@@ -62,6 +63,12 @@
         @if (isset($attendee))
             <p class="mt-1.5 text-xs text-slate-500">Setting this to Confirmed sends them a fresh digital ticket by email.</p>
         @endif
+    </div>
+
+    <div class="sm:col-span-2">
+        <label for="decline_reason" class="mb-1.5 block text-sm font-semibold text-slate-700">Decline Reason <span class="font-normal text-slate-400">(optional)</span></label>
+        <textarea name="decline_reason" id="decline_reason" rows="2"
+                  class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">{{ old('decline_reason', $attendee->decline_reason ?? '') }}</textarea>
     </div>
 </div>
 

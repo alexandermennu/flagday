@@ -24,6 +24,13 @@ class RsvpController extends Controller
         $guests = $data['guests'] ?? [];
         unset($data['guests']);
 
+        // The "No" path never collects a position, and the "Yes" path never collects a
+        // decline reason — normalize both so neither goes stale on a status switch.
+        $data['position'] = $data['position'] ?? '';
+        $data['decline_reason'] = $data['status'] === AttendeeStatus::Declined->value
+            ? ($data['decline_reason'] ?? null)
+            : null;
+
         // Resubmission by the same email updates the existing response rather than
         // erroring. The try/catch below only guards the rare race where two requests
         // for a brand-new email both pass the lookup before either commits.

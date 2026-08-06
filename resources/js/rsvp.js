@@ -1,19 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const guestToggleRadios = document.querySelectorAll('[data-guest-toggle]');
-    const guestCountField = document.getElementById('guest-count-field');
-    const guestCountSelect = document.getElementById('guest_count_select');
-    const guestCards = document.getElementById('guest-cards');
-    const statusRadios = document.querySelectorAll('input[name="status"]');
-    const additionalGuestsSection = document.getElementById('additional-guests-section');
-
-    if (!guestToggleRadios.length || !guestCountField || !guestCountSelect || !guestCards) {
-        return;
-    }
-
     const TRANSITION_MS = 300;
 
     function expand(el) {
-        if (!el.classList.contains('hidden')) return;
+        if (!el || !el.classList.contains('hidden')) return;
         el.classList.remove('hidden');
         const targetHeight = el.scrollHeight;
         el.style.overflow = 'hidden';
@@ -31,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function collapse(el) {
-        if (el.classList.contains('hidden')) return;
+        if (!el || el.classList.contains('hidden')) return;
         const startHeight = el.scrollHeight;
         el.style.overflow = 'hidden';
         el.style.maxHeight = `${startHeight}px`;
@@ -48,6 +37,70 @@ document.addEventListener('DOMContentLoaded', () => {
         }, TRANSITION_MS);
     }
 
+    function setBlockEnabled(block, enabled) {
+        if (!block) return;
+        block.querySelectorAll('input, select, textarea').forEach((field) => {
+            field.disabled = !enabled;
+        });
+    }
+
+    function syncSharedFields(fromBlock, toBlock) {
+        if (!fromBlock || !toBlock) return;
+        fromBlock.querySelectorAll('[data-sync-field]').forEach((source) => {
+            const target = toBlock.querySelector(`[data-sync-field="${source.dataset.syncField}"]`);
+            if (target && !target.value) {
+                target.value = source.value;
+            }
+        });
+    }
+
+    /* ---------- Step 1: Attendance ---------- */
+
+    const attendanceRadios = document.querySelectorAll('input[name="status"]');
+    const yesBlock = document.getElementById('attend-yes-block');
+    const noBlock = document.getElementById('attend-no-block');
+    const submitButton = document.getElementById('submit-button');
+
+    // Initial enabled/disabled state matches whatever Blade rendered as visible
+    // (relevant when re-showing the form after a validation error).
+    setBlockEnabled(yesBlock, yesBlock && !yesBlock.classList.contains('hidden'));
+    setBlockEnabled(noBlock, noBlock && !noBlock.classList.contains('hidden'));
+
+    attendanceRadios.forEach((radio) => {
+        radio.addEventListener('change', () => {
+            if (!radio.checked) return;
+
+            if (submitButton) {
+                submitButton.classList.remove('hidden');
+            }
+
+            if (radio.value === 'confirmed') {
+                syncSharedFields(noBlock, yesBlock);
+                collapse(noBlock);
+                setBlockEnabled(noBlock, false);
+                expand(yesBlock);
+                setBlockEnabled(yesBlock, true);
+            } else {
+                syncSharedFields(yesBlock, noBlock);
+                collapse(yesBlock);
+                setBlockEnabled(yesBlock, false);
+                expand(noBlock);
+                setBlockEnabled(noBlock, true);
+            }
+        });
+    });
+
+    /* ---------- Step 2 (Yes path only): Additional guests ---------- */
+
+    const guestToggleRadios = document.querySelectorAll('[data-guest-toggle]');
+    const guestCountField = document.getElementById('guest-count-field');
+    const guestCountSelect = document.getElementById('guest_count_select');
+    const guestCards = document.getElementById('guest-cards');
+
+    if (!guestToggleRadios.length || !guestCountField || !guestCountSelect || !guestCards) {
+        return;
+    }
+
     function guestCardTemplate(index) {
         return `
             <div class="guest-card rounded-xl border border-slate-200 bg-slate-50 p-5" data-guest-index="${index}">
@@ -55,17 +108,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="space-y-4">
                     <div>
                         <label class="mb-1.5 block text-sm font-medium text-slate-700">Full Name <span class="text-red-600">*</span></label>
-                        <input type="text" name="guests[${index}][full_name]" required
+                        <input type="text" name="guests[${index}][full_name]"
                                class="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
                     </div>
                     <div>
-                        <label class="mb-1.5 block text-sm font-medium text-slate-700">Organization / Institution <span class="text-red-600">*</span></label>
-                        <input type="text" name="guests[${index}][organization]" required
+                        <label class="mb-1.5 block text-sm font-medium text-slate-700">Organization <span class="text-red-600">*</span></label>
+                        <input type="text" name="guests[${index}][organization]"
                                class="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
                     </div>
                     <div>
-                        <label class="mb-1.5 block text-sm font-medium text-slate-700">Position / Title <span class="text-red-600">*</span></label>
-                        <input type="text" name="guests[${index}][position]" required
+                        <label class="mb-1.5 block text-sm font-medium text-slate-700">Position <span class="text-red-600">*</span></label>
+                        <input type="text" name="guests[${index}][position]"
                                class="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
                     </div>
                 </div>
@@ -111,18 +164,4 @@ document.addEventListener('DOMContentLoaded', () => {
             collapse(guestCards);
         }
     });
-
-    if (additionalGuestsSection) {
-        statusRadios.forEach((radio) => {
-            radio.addEventListener('change', () => {
-                if (!radio.checked) return;
-
-                if (radio.value === 'declined') {
-                    collapse(additionalGuestsSection);
-                } else if (radio.value === 'confirmed') {
-                    expand(additionalGuestsSection);
-                }
-            });
-        });
-    }
 });

@@ -34,7 +34,8 @@ class StoreRsvpRequest extends FormRequest
             'phone' => ['nullable', 'string', 'max:30'],
             'organization' => ['required', 'string', 'max:255'],
             'department' => ['nullable', 'string', 'max:255'],
-            'position' => ['required', 'string', 'max:255'],
+            'position' => ['nullable', 'required_if:status,confirmed', 'string', 'max:255'],
+            'decline_reason' => ['nullable', 'string', 'max:1000'],
             'status' => [
                 'required',
                 Rule::in([AttendeeStatus::Confirmed->value, AttendeeStatus::Declined->value]),

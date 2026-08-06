@@ -85,6 +85,26 @@ class AttendeeManagementTest extends TestCase
         Mail::assertNotQueued(RsvpConfirmation::class);
     }
 
+    public function test_admin_can_create_a_declined_attendee_without_a_position(): void
+    {
+        $this->actingAsAdmin();
+
+        $response = $this->post(route('admin.attendees.store'), $this->payload([
+            'email' => 'declined@example.com',
+            'position' => '',
+            'status' => 'declined',
+            'decline_reason' => 'Out of the country.',
+        ]));
+
+        $response->assertRedirect(route('admin.attendees.index'));
+        $this->assertDatabaseHas('attendees', [
+            'email' => 'declined@example.com',
+            'status' => 'declined',
+            'position' => '',
+            'decline_reason' => 'Out of the country.',
+        ]);
+    }
+
     public function test_admin_can_delete_an_attendee(): void
     {
         $this->actingAsAdmin();

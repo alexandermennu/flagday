@@ -47,152 +47,171 @@
             @endif
 
             @php
-                $attendingConfirmed = old('status', 'confirmed') === 'confirmed';
+                $oldStatus = old('status');
+                $showYes = $oldStatus === 'confirmed';
+                $showNo = $oldStatus === 'declined';
                 $oldGuests = old('guests', []);
                 $hasGuests = count($oldGuests) > 0;
+
+                $inputClass = 'w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950';
             @endphp
 
-            <p class="mb-8 text-xs text-slate-500">Fields marked <span class="text-red-600">*</span> are required.</p>
-
-            <form method="POST" action="{{ route('rsvp.store') }}" class="space-y-12">
+            <form method="POST" action="{{ route('rsvp.store') }}" id="rsvp-form" class="space-y-10">
                 @csrf
 
-                {{-- ============ Section: Your Information ============ --}}
-                <section>
-                    <div class="mb-6">
-                        <h2 class="text-lg font-bold text-blue-950">Your Information</h2>
-                        <p class="mt-1 text-sm text-slate-500">Tell us who you are and where you're joining us from.</p>
+                {{-- ============ Step 1: Attendance ============ --}}
+                <section class="text-center">
+                    <h2 class="text-xl font-bold text-blue-950">Will you attend the National Flag Day Celebration?</h2>
+                    <div class="mt-5 flex flex-wrap items-center justify-center gap-3">
+                        <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border-2 border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 transition has-[:checked]:border-red-700 has-[:checked]:bg-red-50 has-[:checked]:text-red-700">
+                            <input type="radio" name="status" id="attendance-yes" value="confirmed" class="sr-only" {{ $showYes ? 'checked' : '' }}>
+                            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                            </svg>
+                            Yes, I will attend
+                        </label>
+                        <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border-2 border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 transition has-[:checked]:border-slate-500 has-[:checked]:bg-slate-100">
+                            <input type="radio" name="status" id="attendance-no" value="declined" class="sr-only" {{ $showNo ? 'checked' : '' }}>
+                            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" clip-rule="evenodd" />
+                            </svg>
+                            No, I am unable to attend
+                        </label>
                     </div>
+                </section>
 
-                    <div class="space-y-5">
-                        <div>
-                            <label class="mb-1.5 block text-sm font-semibold text-slate-700">Full Name <span class="text-red-600">*</span></label>
-                            <div class="grid gap-3 sm:grid-cols-2">
-                                <input type="text" name="first_name" id="first_name" required value="{{ old('first_name') }}" placeholder="First Name"
-                                       class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
-                                <input type="text" name="last_name" id="last_name" required value="{{ old('last_name') }}" placeholder="Last Name"
-                                       class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
+                {{-- ============ Yes path ============ --}}
+                <div id="attend-yes-block" class="{{ $showYes ? '' : 'hidden' }} space-y-10">
+                    <section>
+                        <div class="mb-6">
+                            <h2 class="text-lg font-bold text-blue-950">Your Information</h2>
+                            <p class="mt-1 text-sm text-slate-500">Tell us who you are and where you're joining us from.</p>
+                        </div>
+
+                        <div class="grid gap-x-6 gap-y-5 sm:grid-cols-2">
+                            <div>
+                                <label for="first_name" class="mb-1.5 block text-sm font-semibold text-slate-700">First Name <span class="text-red-600">*</span></label>
+                                <input type="text" name="first_name" id="first_name" data-sync-field="first_name" value="{{ old('first_name') }}" class="{{ $inputClass }}">
+                            </div>
+                            <div>
+                                <label for="last_name" class="mb-1.5 block text-sm font-semibold text-slate-700">Last Name <span class="text-red-600">*</span></label>
+                                <input type="text" name="last_name" id="last_name" data-sync-field="last_name" value="{{ old('last_name') }}" class="{{ $inputClass }}">
+                            </div>
+
+                            <div>
+                                <label for="email" class="mb-1.5 block text-sm font-semibold text-slate-700">Email <span class="text-red-600">*</span></label>
+                                <input type="email" name="email" id="email" data-sync-field="email" value="{{ old('email') }}" placeholder="example@example.com" class="{{ $inputClass }}">
+                                <p class="mt-1.5 text-xs text-slate-500">Your digital ticket and confirmation will be sent here.</p>
+                            </div>
+                            <div>
+                                <label for="phone" class="mb-1.5 block text-sm font-semibold text-slate-700">Phone Number</label>
+                                <input type="tel" name="phone" id="phone" value="{{ old('phone') }}" placeholder="(000) 000-0000" class="{{ $inputClass }}">
+                            </div>
+
+                            <div>
+                                <label for="organization" class="mb-1.5 block text-sm font-semibold text-slate-700">Organization/Agency <span class="text-red-600">*</span></label>
+                                <input type="text" name="organization" id="organization" data-sync-field="organization" value="{{ old('organization') }}" class="{{ $inputClass }}">
+                            </div>
+                            <div>
+                                <label for="department" class="mb-1.5 block text-sm font-semibold text-slate-700">Department/Division/Unit</label>
+                                <input type="text" name="department" id="department" value="{{ old('department') }}" class="{{ $inputClass }}">
+                            </div>
+
+                            <div class="sm:col-span-2">
+                                <label for="position" class="mb-1.5 block text-sm font-semibold text-slate-700">Position <span class="text-red-600">*</span></label>
+                                <input type="text" name="position" id="position" value="{{ old('position') }}" class="{{ $inputClass }}">
+                                <p class="mt-1.5 text-xs text-slate-500">Your official title or role.</p>
                             </div>
                         </div>
+                    </section>
 
-                        <div>
-                            <label for="email" class="mb-1.5 block text-sm font-semibold text-slate-700">Email <span class="text-red-600">*</span></label>
-                            <input type="email" name="email" id="email" required value="{{ old('email') }}" placeholder="example@example.com"
-                                   class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
-                            <p class="mt-1.5 text-xs text-slate-500">Your digital ticket and confirmation will be sent here.</p>
+                    <section id="additional-guests-section">
+                        <div class="mb-6">
+                            <h2 class="text-lg font-bold text-blue-950">Additional Guests</h2>
+                            <p class="mt-1 text-sm text-slate-500">Bringing anyone with you? Let us know so we can prepare for them too.</p>
                         </div>
 
-                        <div>
-                            <label for="phone" class="mb-1.5 block text-sm font-semibold text-slate-700">Phone Number</label>
-                            <input type="tel" name="phone" id="phone" value="{{ old('phone') }}" placeholder="(000) 000-0000"
-                                   class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
-                            <p class="mt-1.5 text-xs text-slate-500">Optional — only used if we need to reach you about the event.</p>
-                        </div>
-
-                        <div>
-                            <label for="organization" class="mb-1.5 block text-sm font-semibold text-slate-700">Organization/Agency <span class="text-red-600">*</span></label>
-                            <input type="text" name="organization" id="organization" required value="{{ old('organization') }}"
-                                   class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
-                            <p class="mt-1.5 text-xs text-slate-500">The government ministry, agency, or organization you represent.</p>
-                        </div>
-
-                        <div>
-                            <label for="department" class="mb-1.5 block text-sm font-semibold text-slate-700">Department/Division/Unit</label>
-                            <input type="text" name="department" id="department" value="{{ old('department') }}"
-                                   class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
-                            <p class="mt-1.5 text-xs text-slate-500">Optional — if applicable to your organization.</p>
-                        </div>
-
-                        <div>
-                            <label for="position" class="mb-1.5 block text-sm font-semibold text-slate-700">Position <span class="text-red-600">*</span></label>
-                            <input type="text" name="position" id="position" required value="{{ old('position') }}"
-                                   class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
-                            <p class="mt-1.5 text-xs text-slate-500">Your official title or role.</p>
-                        </div>
-                    </div>
-                </section>
-
-                {{-- ============ Section: Attendance ============ --}}
-                <section>
-                    <div class="mb-6">
-                        <h2 class="text-lg font-bold text-blue-950">Attendance</h2>
-                        <p class="mt-1 text-sm text-slate-500">Let us know if you'll be joining us.</p>
-                    </div>
-
-                    <fieldset>
-                        <legend class="mb-3 text-sm font-semibold text-slate-700">Attending? <span class="text-red-600">*</span></legend>
-                        <div class="grid grid-cols-2 gap-3">
-                            <label class="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 transition has-[:checked]:border-red-700 has-[:checked]:bg-red-50 has-[:checked]:text-red-700">
-                                <input type="radio" name="status" value="confirmed" class="accent-red-700" {{ $attendingConfirmed ? 'checked' : '' }}>
+                        <p class="mb-3 text-sm font-semibold text-slate-700">Will you bring additional guest(s)?</p>
+                        <div class="flex flex-wrap gap-3">
+                            <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border-2 border-slate-300 px-5 py-2 text-sm font-semibold text-slate-700 transition has-[:checked]:border-red-700 has-[:checked]:bg-red-50 has-[:checked]:text-red-700">
+                                <input type="radio" data-guest-toggle name="has_guests_choice" value="yes" class="sr-only" {{ $hasGuests ? 'checked' : '' }}>
                                 Yes
                             </label>
-                            <label class="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 transition has-[:checked]:border-slate-500 has-[:checked]:bg-slate-100">
-                                <input type="radio" name="status" value="declined" class="accent-slate-600" {{ ! $attendingConfirmed ? 'checked' : '' }}>
+                            <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border-2 border-slate-300 px-5 py-2 text-sm font-semibold text-slate-700 transition has-[:checked]:border-slate-500 has-[:checked]:bg-slate-100">
+                                <input type="radio" data-guest-toggle name="has_guests_choice" value="no" class="sr-only" {{ ! $hasGuests ? 'checked' : '' }}>
                                 No
                             </label>
                         </div>
-                    </fieldset>
-                </section>
 
-                {{-- ============ Section: Additional Guests (conditional) ============ --}}
-                <section id="additional-guests-section" class="{{ $attendingConfirmed ? '' : 'hidden' }}">
-                    <div class="mb-6">
-                        <h2 class="text-lg font-bold text-blue-950">Additional Guests</h2>
-                        <p class="mt-1 text-sm text-slate-500">Bringing anyone with you? Let us know so we can prepare for them too.</p>
-                    </div>
-
-                    <fieldset>
-                        <legend class="mb-3 text-sm font-semibold text-slate-700">Will you bring any additional guest(s)?</legend>
-                        <div class="grid grid-cols-2 gap-3">
-                            <label class="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 transition has-[:checked]:border-red-700 has-[:checked]:bg-red-50 has-[:checked]:text-red-700">
-                                <input type="radio" data-guest-toggle name="has_guests_choice" value="yes" class="accent-red-700" {{ $hasGuests ? 'checked' : '' }}>
-                                Yes
-                            </label>
-                            <label class="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 transition has-[:checked]:border-slate-500 has-[:checked]:bg-slate-100">
-                                <input type="radio" data-guest-toggle name="has_guests_choice" value="no" class="accent-slate-600" {{ ! $hasGuests ? 'checked' : '' }}>
-                                No
-                            </label>
+                        <div id="guest-count-field" class="mt-5 {{ $hasGuests ? '' : 'hidden' }}">
+                            <label for="guest_count_select" class="mb-1.5 block text-sm font-semibold text-slate-700">How many additional guests?</label>
+                            <select id="guest_count_select" class="w-full max-w-[200px] rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
+                                <option value="">Select&hellip;</option>
+                                @for ($i = 1; $i <= 5; $i++)
+                                    <option value="{{ $i }}" {{ count($oldGuests) === $i ? 'selected' : '' }}>{{ $i }}</option>
+                                @endfor
+                            </select>
                         </div>
-                    </fieldset>
 
-                    <div id="guest-count-field" class="mt-5 {{ $hasGuests ? '' : 'hidden' }}">
-                        <label for="guest_count_select" class="mb-1.5 block text-sm font-semibold text-slate-700">How many additional guests?</label>
-                        <select id="guest_count_select" class="w-full max-w-[200px] rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
-                            <option value="">Select&hellip;</option>
-                            @for ($i = 1; $i <= 5; $i++)
-                                <option value="{{ $i }}" {{ count($oldGuests) === $i ? 'selected' : '' }}>{{ $i }}</option>
-                            @endfor
-                        </select>
-                    </div>
-
-                    <div id="guest-cards" class="mt-5 space-y-4 {{ $hasGuests ? '' : 'hidden' }}">
-                        @foreach ($oldGuests as $i => $guest)
-                            <div class="guest-card rounded-xl border border-slate-200 bg-slate-50 p-5" data-guest-index="{{ $i }}">
-                                <h3 class="mb-3 text-sm font-semibold text-slate-700">Guest {{ $i + 1 }}</h3>
-                                <div class="space-y-4">
-                                    <div>
-                                        <label class="mb-1.5 block text-sm font-medium text-slate-700">Full Name <span class="text-red-600">*</span></label>
-                                        <input type="text" name="guests[{{ $i }}][full_name]" required value="{{ $guest['full_name'] ?? '' }}"
-                                               class="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
-                                    </div>
-                                    <div>
-                                        <label class="mb-1.5 block text-sm font-medium text-slate-700">Organization / Institution <span class="text-red-600">*</span></label>
-                                        <input type="text" name="guests[{{ $i }}][organization]" required value="{{ $guest['organization'] ?? '' }}"
-                                               class="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
-                                    </div>
-                                    <div>
-                                        <label class="mb-1.5 block text-sm font-medium text-slate-700">Position / Title <span class="text-red-600">*</span></label>
-                                        <input type="text" name="guests[{{ $i }}][position]" required value="{{ $guest['position'] ?? '' }}"
-                                               class="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
+                        <div id="guest-cards" class="mt-5 space-y-4 {{ $hasGuests ? '' : 'hidden' }}">
+                            @foreach ($oldGuests as $i => $guest)
+                                <div class="guest-card rounded-xl border border-slate-200 bg-slate-50 p-5" data-guest-index="{{ $i }}">
+                                    <h3 class="mb-3 text-sm font-semibold text-slate-700">Guest {{ $i + 1 }}</h3>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="mb-1.5 block text-sm font-medium text-slate-700">Full Name <span class="text-red-600">*</span></label>
+                                            <input type="text" name="guests[{{ $i }}][full_name]" value="{{ $guest['full_name'] ?? '' }}" class="{{ $inputClass }} bg-white">
+                                        </div>
+                                        <div>
+                                            <label class="mb-1.5 block text-sm font-medium text-slate-700">Organization <span class="text-red-600">*</span></label>
+                                            <input type="text" name="guests[{{ $i }}][organization]" value="{{ $guest['organization'] ?? '' }}" class="{{ $inputClass }} bg-white">
+                                        </div>
+                                        <div>
+                                            <label class="mb-1.5 block text-sm font-medium text-slate-700">Position <span class="text-red-600">*</span></label>
+                                            <input type="text" name="guests[{{ $i }}][position]" value="{{ $guest['position'] ?? '' }}" class="{{ $inputClass }} bg-white">
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </section>
+                            @endforeach
+                        </div>
+                    </section>
+                </div>
 
-                <button type="submit"
-                        class="w-full rounded-md bg-red-700 px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-red-700/20 transition hover:bg-red-800 active:scale-[0.98]">
+                {{-- ============ No path ============ --}}
+                <div id="attend-no-block" class="{{ $showNo ? '' : 'hidden' }} space-y-6">
+                    <div class="mb-2">
+                        <h2 class="text-lg font-bold text-blue-950">A Few Details</h2>
+                        <p class="mt-1 text-sm text-slate-500">We're sorry you can't join us — just a few details so we can keep our records accurate.</p>
+                    </div>
+
+                    <div class="grid gap-x-6 gap-y-5 sm:grid-cols-2">
+                        <div>
+                            <label for="first_name_no" class="mb-1.5 block text-sm font-semibold text-slate-700">First Name <span class="text-red-600">*</span></label>
+                            <input type="text" name="first_name" id="first_name_no" data-sync-field="first_name" value="{{ old('first_name') }}" class="{{ $inputClass }}">
+                        </div>
+                        <div>
+                            <label for="last_name_no" class="mb-1.5 block text-sm font-semibold text-slate-700">Last Name <span class="text-red-600">*</span></label>
+                            <input type="text" name="last_name" id="last_name_no" data-sync-field="last_name" value="{{ old('last_name') }}" class="{{ $inputClass }}">
+                        </div>
+
+                        <div>
+                            <label for="email_no" class="mb-1.5 block text-sm font-semibold text-slate-700">Email <span class="text-red-600">*</span></label>
+                            <input type="email" name="email" id="email_no" data-sync-field="email" value="{{ old('email') }}" placeholder="example@example.com" class="{{ $inputClass }}">
+                        </div>
+                        <div>
+                            <label for="organization_no" class="mb-1.5 block text-sm font-semibold text-slate-700">Organization/Agency <span class="text-red-600">*</span></label>
+                            <input type="text" name="organization" id="organization_no" data-sync-field="organization" value="{{ old('organization') }}" class="{{ $inputClass }}">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="decline_reason" class="mb-1.5 block text-sm font-semibold text-slate-700">Reason for declining <span class="font-normal text-slate-400">(optional)</span></label>
+                        <textarea name="decline_reason" id="decline_reason" rows="3" class="{{ $inputClass }}">{{ old('decline_reason') }}</textarea>
+                    </div>
+                </div>
+
+                <button type="submit" id="submit-button"
+                        class="{{ ($showYes || $showNo) ? '' : 'hidden' }} w-full rounded-md bg-red-700 px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-red-700/20 transition hover:bg-red-800 active:scale-[0.98]">
                     Submit RSVP
                 </button>
             </form>

@@ -92,6 +92,54 @@ class RsvpTest extends TestCase
         $response->assertSessionHasErrors(['organization', 'position']);
     }
 
+    public function test_declining_does_not_require_position_or_department(): void
+    {
+        Mail::fake();
+
+        $response = $this->post(route('rsvp.store'), [
+            'first_name' => 'John',
+            'last_name' => 'Roe',
+            'email' => 'john@example.com',
+            'organization' => 'Ministry of Education',
+            'status' => 'declined',
+        ]);
+
+        $response->assertSessionHasNoErrors();
+
+        $attendee = Attendee::where('email', 'john@example.com')->firstOrFail();
+        $this->assertSame(AttendeeStatus::Declined, $attendee->status);
+        $this->assertSame('', $attendee->position);
+    }
+
+    public function test_decline_reason_is_persisted_when_declining(): void
+    {
+        Mail::fake();
+
+        $this->post(route('rsvp.store'), $this->payload([
+            'status' => 'declined',
+            'decline_reason' => 'Scheduling conflict.',
+        ]));
+
+        $attendee = Attendee::where('email', 'jane@example.com')->firstOrFail();
+        $this->assertSame('Scheduling conflict.', $attendee->decline_reason);
+    }
+
+    public function test_confirming_clears_any_stale_decline_reason(): void
+    {
+        Mail::fake();
+
+        $this->post(route('rsvp.store'), $this->payload([
+            'status' => 'declined',
+            'decline_reason' => 'Scheduling conflict.',
+        ]));
+
+        $this->post(route('rsvp.store'), $this->payload(['status' => 'confirmed']));
+
+        $attendee = Attendee::where('email', 'jane@example.com')->firstOrFail();
+        $this->assertSame(AttendeeStatus::Confirmed, $attendee->status);
+        $this->assertNull($attendee->decline_reason);
+    }
+
     public function test_confirming_with_guests_creates_guest_records(): void
     {
         Mail::fake();

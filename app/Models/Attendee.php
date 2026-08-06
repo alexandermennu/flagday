@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
-#[Fillable(['first_name', 'last_name', 'email', 'phone', 'organization', 'department', 'position', 'status'])]
+#[Fillable(['first_name', 'last_name', 'email', 'phone', 'organization', 'department', 'position', 'decline_reason', 'status'])]
 class Attendee extends Model
 {
     /** @use HasFactory<AttendeeFactory> */
