@@ -20,7 +20,7 @@
     {{-- ============ Header ============ --}}
     <header class="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur">
         <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-3 lg:px-8">
-            <a href="#" class="flex items-center gap-3">
+            <a href="{{ route('landing') }}" class="flex items-center gap-3">
                 <x-seal class="h-10 w-10 shrink-0" />
                 <span class="leading-tight">
                     <span class="block text-[11px] font-semibold uppercase tracking-wider text-red-700">Republic of Liberia</span>
@@ -34,7 +34,7 @@
                 <a href="#why-we-celebrate" class="text-sm font-medium text-slate-600 transition hover:text-blue-950">Why We Celebrate</a>
             </nav>
 
-            <a href="#"
+            <a href="{{ route('rsvp.create') }}"
                class="inline-flex items-center gap-2 rounded-md bg-red-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-800 active:scale-[0.98]">
                 RSVP Now
             </a>
@@ -65,7 +65,7 @@
                 </p>
 
                 <div class="animate-fade-in-up mt-10 flex flex-col items-center justify-center gap-4 [animation-delay:300ms] sm:flex-row">
-                    <a href="#"
+                    <a href="{{ route('rsvp.create') }}"
                        class="inline-flex w-full items-center justify-center gap-2 rounded-md bg-red-700 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-red-700/20 transition hover:bg-red-800 active:scale-[0.98] sm:w-auto">
                         RSVP Now
                         <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -144,7 +144,7 @@
                             </svg>
                         </div>
                         <h3 class="mt-4 text-sm font-semibold uppercase tracking-wider text-slate-500">Date</h3>
-                        <p class="mt-1 text-lg font-bold text-blue-950">Monday, August 24</p>
+                        <p class="mt-1 text-lg font-bold text-blue-950">{{ date('l, F j', strtotime(config('event.date'))) }}</p>
                     </div>
 
                     <div class="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm transition hover:shadow-md">
@@ -155,7 +155,7 @@
                             </svg>
                         </div>
                         <h3 class="mt-4 text-sm font-semibold uppercase tracking-wider text-slate-500">Time</h3>
-                        <p class="mt-1 text-lg font-bold text-blue-950">9:00 AM</p>
+                        <p class="mt-1 text-lg font-bold text-blue-950">{{ date('g:i A', strtotime(config('event.start_time'))) }}</p>
                     </div>
 
                     <div class="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm transition hover:shadow-md">
@@ -166,7 +166,8 @@
                             </svg>
                         </div>
                         <h3 class="mt-4 text-sm font-semibold uppercase tracking-wider text-slate-500">Venue</h3>
-                        <p class="mt-1 text-lg font-bold text-blue-950">Centennial Pavilion, Monrovia</p>
+                        <p class="mt-1 text-lg font-bold text-blue-950">{{ config('event.venue') }}</p>
+                        <p class="text-sm text-slate-500">{{ config('event.venue_address') }}</p>
                     </div>
                 </div>
             </div>
@@ -222,7 +223,7 @@
                 <p class="mx-auto mt-4 max-w-xl text-blue-100">
                     Secure your place at this year's National Flag Day ceremony in just a few minutes.
                 </p>
-                <a href="#"
+                <a href="{{ route('rsvp.create') }}"
                    class="mt-8 inline-flex items-center justify-center gap-2 rounded-md bg-red-700 px-8 py-3.5 text-base font-semibold text-white shadow-lg transition hover:bg-red-600 active:scale-[0.98]">
                     RSVP Now
                 </a>
@@ -234,7 +235,7 @@
     <footer class="border-t border-slate-200 bg-white">
         <div class="mx-auto max-w-7xl px-6 py-12 lg:px-8">
             <div class="flex flex-col items-center justify-between gap-6 sm:flex-row">
-                <a href="#" class="flex items-center gap-3">
+                <a href="{{ route('landing') }}" class="flex items-center gap-3">
                     <x-seal class="h-9 w-9 shrink-0" />
                     <span class="leading-tight">
                         <span class="block text-[11px] font-semibold uppercase tracking-wider text-red-700">Republic of Liberia</span>
