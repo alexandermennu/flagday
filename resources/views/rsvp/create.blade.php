@@ -63,7 +63,7 @@
                 <section class="text-center">
                     <h2 class="text-xl font-bold text-blue-950">Will you attend the National Flag Day Celebration?</h2>
                     <div class="mt-5 flex flex-wrap items-center justify-center gap-3">
-                        <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border-2 border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 transition has-[:checked]:border-red-700 has-[:checked]:bg-red-50 has-[:checked]:text-red-700">
+                        <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border-2 border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 transition has-[:checked]:border-blue-950 has-[:checked]:bg-blue-50 has-[:checked]:text-blue-950">
                             <input type="radio" name="status" id="attendance-yes" value="confirmed" class="sr-only" {{ $showYes ? 'checked' : '' }}>
                             <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                 <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
@@ -214,6 +214,13 @@
                         class="{{ ($showYes || $showNo) ? '' : 'hidden' }} w-full rounded-md bg-red-700 px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-red-700/20 transition hover:bg-red-800 active:scale-[0.98]">
                     Submit RSVP
                 </button>
+
+                <div class="flex items-center justify-center gap-2 rounded-lg bg-red-50 px-4 py-3 text-center text-sm text-slate-500">
+                    <svg class="h-4 w-4 shrink-0 text-red-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" />
+                    </svg>
+                    Your response is secure and will only be used for event planning purposes.
+                </div>
             </form>
         </div>
     </main>
