@@ -79,7 +79,7 @@
                 <x-seal class="h-[36rem] w-[36rem]" />
             </div>
 
-            <div class="relative mx-auto max-w-5xl px-6 pt-20 pb-14 sm:pt-28 lg:px-8">
+            <div class="relative mx-auto max-w-5xl px-6 py-24 sm:py-32 lg:px-8">
                 <p class="animate-fade-in-up text-center text-xs font-semibold uppercase tracking-[0.2em] text-red-400">
                     Celebrating Our Unity. Honoring Our Heritage.
                 </p>
@@ -92,31 +92,7 @@
                     &ldquo;{{ config('event.theme') }}&rdquo;
                 </p>
 
-                <div class="animate-fade-in-up mt-10 flex flex-col items-center justify-center gap-3 text-sm text-blue-100 [animation-delay:200ms] sm:flex-row sm:gap-8">
-                    <span class="inline-flex items-center gap-2">
-                        <svg class="h-4 w-4 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
-                            <rect x="3" y="4.5" width="18" height="16" rx="2" />
-                            <path d="M3 9.5h18M8 3v3M16 3v3" />
-                        </svg>
-                        {{ date('l, F j, Y', strtotime(config('event.date'))) }}
-                    </span>
-                    <span class="inline-flex items-center gap-2">
-                        <svg class="h-4 w-4 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
-                            <path d="M12 21s-7-6.1-7-11.5A7 7 0 0119 9.5C19 14.9 12 21 12 21z" />
-                            <circle cx="12" cy="9.5" r="2.25" />
-                        </svg>
-                        {{ config('event.venue') }}, {{ config('event.venue_address') }}
-                    </span>
-                    <span class="inline-flex items-center gap-2">
-                        <svg class="h-4 w-4 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
-                            <circle cx="12" cy="12" r="8.5" />
-                            <path d="M12 7.5V12l3 2" />
-                        </svg>
-                        {{ date('g:i A', strtotime(config('event.start_time'))) }}
-                    </span>
-                </div>
-
-                <div class="animate-fade-in-up mt-10 flex flex-col items-center justify-center gap-4 [animation-delay:300ms] sm:flex-row">
+                <div class="animate-fade-in-up mt-12 flex flex-col items-center justify-center gap-4 [animation-delay:250ms] sm:flex-row">
                     <a href="{{ route('rsvp.create') }}"
                        class="inline-flex w-full items-center justify-center gap-2 rounded-md bg-red-700 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-red-950/30 transition hover:bg-red-600 active:scale-[0.98] sm:w-auto">
                         RSVP Now
@@ -132,13 +108,6 @@
                         </svg>
                     </button>
                 </div>
-            </div>
-
-            {{-- Decorative row of small flags --}}
-            <div class="relative flex items-end justify-center gap-1.5 overflow-hidden pb-6 opacity-80 sm:gap-2">
-                @for ($i = 0; $i < 15; $i++)
-                    <x-liberian-flag class="h-auto {{ $i === 7 ? 'w-10 sm:w-14' : 'w-5 sm:w-7' }} shrink-0" />
-                @endfor
             </div>
         </section>
 
