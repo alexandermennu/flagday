@@ -4,18 +4,16 @@ namespace App\Mail;
 
 use App\Models\Attendee;
 use App\Services\DigitalInviteService;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Queue\SerializesModels;
 
-class RsvpConfirmation extends Mailable implements ShouldQueue
+class RsvpConfirmation extends Mailable
 {
-    use Queueable, SerializesModels;
-
+    // Sent synchronously (see Attendee::sendConfirmationEmail()) rather than queued —
+    // this is the confirmation on the critical RSVP path, and queuing it makes delivery
+    // silently depend on a queue worker actually running in production.
     public function __construct(public Attendee $attendee)
     {
     }

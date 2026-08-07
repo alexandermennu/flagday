@@ -28,7 +28,7 @@ class RsvpTest extends TestCase
         ], $overrides);
     }
 
-    public function test_confirming_attendance_creates_attendee_and_queues_confirmation_email(): void
+    public function test_confirming_attendance_creates_attendee_and_sends_confirmation_email(): void
     {
         Mail::fake();
 
@@ -40,12 +40,13 @@ class RsvpTest extends TestCase
         $this->assertSame(AttendeeStatus::Confirmed, $attendee->status);
         $this->assertNotNull($attendee->confirmed_at);
         $this->assertNotNull($attendee->invite_token);
+        $this->assertNotNull($attendee->confirmation_id);
         $this->assertSame('Jane Doe', $attendee->full_name);
 
-        Mail::assertQueued(RsvpConfirmation::class, fn ($mail) => $mail->attendee->is($attendee));
+        Mail::assertSent(RsvpConfirmation::class, fn ($mail) => $mail->attendee->is($attendee));
     }
 
-    public function test_declining_attendance_queues_acknowledgement_without_ticket(): void
+    public function test_declining_attendance_sends_acknowledgement_without_ticket(): void
     {
         Mail::fake();
 
@@ -59,8 +60,8 @@ class RsvpTest extends TestCase
         $attendee = Attendee::where('email', 'john@example.com')->firstOrFail();
         $this->assertSame(AttendeeStatus::Declined, $attendee->status);
 
-        Mail::assertQueued(RsvpDeclinedAcknowledgement::class);
-        Mail::assertNotQueued(RsvpConfirmation::class);
+        Mail::assertSent(RsvpDeclinedAcknowledgement::class);
+        Mail::assertNotSent(RsvpConfirmation::class);
     }
 
     public function test_resubmitting_with_same_email_updates_existing_attendee_instead_of_duplicating(): void

@@ -9,6 +9,10 @@
 
     <table class="details">
         <tr>
+            <td class="label">Confirmation ID</td>
+            <td class="value">{{ $attendee->confirmation_id }}</td>
+        </tr>
+        <tr>
             <td class="label">Date</td>
             <td class="value">{{ date('l, F j, Y', strtotime(config('event.date'))) }}</td>
         </tr>

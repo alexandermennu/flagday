@@ -16,4 +16,12 @@ return [
 
     'venue_address' => env('EVENT_VENUE_ADDRESS', 'Monrovia, Liberia'),
 
+    'dress_code' => env('EVENT_DRESS_CODE', 'National / Formal Attire'),
+
+    'contact_phone' => env('EVENT_CONTACT_PHONE', '+231 77 000 0000'),
+
+    'contact_email' => env('EVENT_CONTACT_EMAIL', 'events@moe.gov.lr'),
+
+    'contact_website' => env('EVENT_CONTACT_WEBSITE', 'www.moe.gov.lr'),
+
 ];

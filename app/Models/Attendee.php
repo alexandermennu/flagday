@@ -47,7 +47,26 @@ class Attendee extends Model
     {
         static::creating(function (Attendee $attendee) {
             $attendee->invite_token ??= (string) Str::uuid();
+            $attendee->confirmation_id ??= static::generateConfirmationId();
         });
+    }
+
+    /**
+     * A short, human-presentable code (e.g. "NFD179-7X2K8F") shown on the digital ticket
+     * — distinct from invite_token, which is the long opaque value encoded in the QR code.
+     * Avoids visually ambiguous characters (0/O, 1/I/L) since guests may read it aloud or
+     * type it in by hand.
+     */
+    protected static function generateConfirmationId(): string
+    {
+        $edition = date('Y', strtotime(config('event.date'))) - 1847;
+        $charset = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+
+        $code = collect(range(1, 6))
+            ->map(fn () => $charset[random_int(0, strlen($charset) - 1)])
+            ->implode('');
+
+        return "NFD{$edition}-{$code}";
     }
 
     public function guests(): HasMany
@@ -56,12 +75,13 @@ class Attendee extends Model
     }
 
     /**
-     * Queue the confirmation email carrying the digital invite (PDF ticket + calendar file).
+     * Send the confirmation email carrying the digital invite (PDF ticket + calendar file).
      * Called from both the public RSVP flow and admin-side manual confirmations, so the
-     * "who gets a ticket" rule lives in exactly one place.
+     * "who gets a ticket" rule lives in exactly one place. Sent synchronously — see the
+     * note on the RsvpConfirmation mailable.
      */
     public function sendConfirmationEmail(): void
     {
-        Mail::to($this->email)->queue(new RsvpConfirmation($this));
+        Mail::to($this->email)->send(new RsvpConfirmation($this));
     }
 }

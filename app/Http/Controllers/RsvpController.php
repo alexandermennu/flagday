@@ -67,7 +67,7 @@ class RsvpController extends Controller
         if ($attendee->status === AttendeeStatus::Confirmed) {
             $attendee->sendConfirmationEmail();
         } else {
-            Mail::to($attendee->email)->queue(new RsvpDeclinedAcknowledgement($attendee));
+            Mail::to($attendee->email)->send(new RsvpDeclinedAcknowledgement($attendee));
         }
 
         return redirect()->route('rsvp.thank-you')->with('rsvp_status', $attendee->status->value);

@@ -44,7 +44,7 @@ class AttendeeManagementTest extends TestCase
 
         $response->assertRedirect(route('admin.attendees.index'));
         $this->assertDatabaseHas('attendees', ['email' => 'vip@example.com', 'status' => 'pending']);
-        Mail::assertNotQueued(RsvpConfirmation::class);
+        Mail::assertNotSent(RsvpConfirmation::class);
     }
 
     public function test_setting_status_to_confirmed_sends_ticket_email(): void
@@ -63,7 +63,7 @@ class AttendeeManagementTest extends TestCase
             'status' => 'confirmed',
         ]));
 
-        Mail::assertQueued(RsvpConfirmation::class, fn ($mail) => $mail->attendee->is($attendee));
+        Mail::assertSent(RsvpConfirmation::class, fn ($mail) => $mail->attendee->is($attendee));
     }
 
     public function test_editing_an_already_confirmed_attendee_does_not_resend_ticket(): void
@@ -82,7 +82,7 @@ class AttendeeManagementTest extends TestCase
             'status' => 'confirmed',
         ]));
 
-        Mail::assertNotQueued(RsvpConfirmation::class);
+        Mail::assertNotSent(RsvpConfirmation::class);
     }
 
     public function test_admin_can_create_a_declined_attendee_without_a_position(): void

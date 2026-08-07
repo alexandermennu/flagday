@@ -10,119 +10,234 @@
             font-family: Helvetica, Arial, sans-serif;
             color: #1e293b;
         }
+
         .header {
-            background-color: #002868;
-            color: #ffffff;
-            padding: 28px 32px;
+            background-color: #1b2652;
+            border-bottom-left-radius: 28px;
+            border-bottom-right-radius: 28px;
+            padding: 26px 24px 20px;
             text-align: center;
         }
-        .header .kicker {
-            font-size: 10px;
+        .check-badge {
+            display: inline-block;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .check-badge img { width: 20px; height: 20px; margin-top: 9px; }
+        .header .title {
+            font-size: 19px;
+            font-weight: bold;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0 0 5px 0;
+        }
+        .header .subtitle {
+            font-size: 11px;
+            font-weight: bold;
+            color: #c7cbe0;
             letter-spacing: 2px;
             text-transform: uppercase;
-            color: #fbbf24;
-            margin: 0 0 6px 0;
-        }
-        .header .title {
-            font-size: 20px;
-            font-weight: bold;
             margin: 0;
-            text-transform: uppercase;
         }
-        .body {
-            padding: 28px 32px;
-        }
-        .guest-label {
+
+        .body { padding: 22px 26px 6px; }
+
+        .conf-id-label {
+            text-align: center;
             font-size: 10px;
+            font-weight: bold;
             letter-spacing: 1.5px;
             text-transform: uppercase;
-            color: #94a3b8;
-            margin: 0 0 4px 0;
+            color: #1b2652;
+            margin: 0 0 8px 0;
         }
-        .guest-name {
-            font-size: 24px;
+        .conf-id-box {
+            text-align: center;
+            background-color: #f7f4ef;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 19px;
             font-weight: bold;
-            color: #002868;
+            letter-spacing: 1px;
+            color: #b91c1c;
             margin: 0 0 20px 0;
         }
-        table.details {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 24px;
-        }
-        table.details td {
-            padding: 8px 0;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 12px;
-        }
-        table.details td.label {
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            width: 90px;
-        }
-        table.details td.value {
-            color: #1e293b;
-            font-weight: bold;
-        }
-        .qr-wrap {
-            text-align: center;
-            padding: 12px 0 4px 0;
-        }
-        .qr-wrap img {
-            width: 160px;
-            height: 160px;
-        }
-        .footer-note {
-            text-align: center;
-            font-size: 11px;
-            color: #64748b;
-            margin-top: 8px;
-        }
-        .status {
+
+        table.info-qr { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+        table.info-qr td.info-col { width: 58%; vertical-align: top; padding-right: 14px; }
+        table.info-qr td.qr-col { width: 42%; vertical-align: top; text-align: center; border-left: 1px solid #e2e8f0; padding-left: 14px; }
+
+        table.info-row { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
+        table.info-row td { padding: 9px 0; border-bottom: 1px solid #eef0f3; vertical-align: middle; }
+        table.info-row td.icon-cell { width: 26px; }
+        .info-icon {
             display: inline-block;
-            margin-top: 4px;
-            padding: 3px 10px;
-            border-radius: 10px;
-            background-color: #fef2f2;
-            color: #BF0A30;
-            font-size: 10px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            width: 22px;
+            height: 22px;
+            border-radius: 5px;
+            background-color: #1b2652;
+            text-align: center;
         }
+        .info-icon img { width: 13px; height: 13px; margin-top: 4.5px; }
+        .info-label { font-size: 9px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; color: #94a3b8; margin: 0; }
+        .info-value { font-size: 12.5px; font-weight: bold; color: #1b2652; margin: 2px 0 0 0; }
+
+        .qr-frame { display: inline-block; border: 1px solid #e2e8f0; border-radius: 10px; padding: 8px; }
+        .qr-frame img { width: 108px; height: 108px; }
+        .qr-caption { font-size: 9.5px; color: #475569; margin-top: 8px; line-height: 1.4; }
+
+        .divider { border: none; border-top: 1px solid #e2e8f0; margin: 2px 0 14px 0; }
+
+        table.details-row { width: 100%; border-collapse: collapse; }
+        table.details-row td { width: 25%; text-align: center; vertical-align: top; padding: 0 3px; }
+        .detail-icon img { width: 18px; height: 18px; }
+        .detail-label { font-size: 8px; font-weight: bold; letter-spacing: 0.75px; text-transform: uppercase; color: #94a3b8; margin: 5px 0 3px 0; }
+        .detail-value { font-size: 10px; font-weight: bold; color: #1b2652; line-height: 1.35; margin: 0; }
+
+        .footer { background-color: #1b2652; color: #ffffff; padding: 18px 22px; margin-top: 16px; }
+        table.footer-table { width: 100%; border-collapse: collapse; }
+        table.footer-table td { vertical-align: middle; }
+        .footer-seal-col { width: 52px; }
+        .footer-seal { width: 44px; height: 44px; border-radius: 50%; background-color: #ffffff; text-align: center; }
+        .footer-seal img { width: 30px; height: 30px; margin-top: 7px; }
+        .footer-event-col { width: 46%; padding: 0 12px; }
+        .footer-contact-col { width: 34%; }
+        .footer-event-name { font-size: 10.5px; font-weight: bold; letter-spacing: 0.5px; margin: 0 0 4px 0; text-transform: uppercase; }
+        .footer-star img { width: 12px; height: 12px; margin-bottom: 4px; }
+        .footer-tagline { font-size: 8px; font-weight: bold; letter-spacing: 0.5px; color: #d4af37; margin: 0; line-height: 1.5; text-transform: uppercase; }
+        .footer-contact-heading { font-size: 9px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; margin: 0 0 7px 0; }
+        table.footer-contact td { padding: 0 0 5px 0; font-size: 8.5px; }
+        table.footer-contact td.footer-contact-icon { width: 16px; }
+        table.footer-contact img { width: 11px; height: 11px; }
     </style>
 </head>
 <body>
+    @php
+        $icon = fn (string $name, string $color) => \App\Services\PdfIconFactory::dataUri($name, $color);
+    @endphp
+
     <div class="header">
-        <p class="kicker">Republic of Liberia &middot; Ministry of Education</p>
-        <p class="title">{{ config('event.name') }}</p>
+        <div class="check-badge">
+            <img src="{{ $icon('check', '#1b2652') }}" alt="">
+        </div>
+        <p class="title">Attendance Confirmed.</p>
+        <p class="subtitle">Your Spot Is Secured</p>
     </div>
 
     <div class="body">
-        <p class="guest-label">Guest</p>
-        <p class="guest-name">{{ $attendee->full_name }}</p>
+        <p class="conf-id-label">Confirmation ID</p>
+        <div class="conf-id-box">{{ $attendee->confirmation_id }}</div>
 
-        <table class="details">
+        <table class="info-qr">
             <tr>
-                <td class="label">Date</td>
-                <td class="value">{{ date('l, F j, Y', strtotime(config('event.date'))) }}</td>
-            </tr>
-            <tr>
-                <td class="label">Time</td>
-                <td class="value">{{ date('g:i A', strtotime(config('event.start_time'))) }} &ndash; {{ date('g:i A', strtotime(config('event.end_time'))) }}</td>
-            </tr>
-            <tr>
-                <td class="label">Venue</td>
-                <td class="value">{{ config('event.venue') }}, {{ config('event.venue_address') }}</td>
+                <td class="info-col">
+                    <table class="info-row">
+                        <tr>
+                            <td class="icon-cell">
+                                <span class="info-icon"><img src="{{ $icon('person', '#ffffff') }}" alt=""></span>
+                            </td>
+                            <td>
+                                <p class="info-label">Issued To</p>
+                                <p class="info-value">{{ $attendee->full_name }}</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="icon-cell">
+                                <span class="info-icon"><img src="{{ $icon('building', '#ffffff') }}" alt=""></span>
+                            </td>
+                            <td>
+                                <p class="info-label">Organization</p>
+                                <p class="info-value">{{ $attendee->organization }}</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="icon-cell">
+                                <span class="info-icon"><img src="{{ $icon('briefcase', '#ffffff') }}" alt=""></span>
+                            </td>
+                            <td>
+                                <p class="info-label">Position</p>
+                                <p class="info-value">{{ $attendee->position }}</p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="qr-col">
+                    <div class="qr-frame">
+                        <img src="{{ $qrDataUri }}" alt="Check-in QR code">
+                    </div>
+                    <p class="qr-caption">Please present this digital invitation at the event entrance.</p>
+                </td>
             </tr>
         </table>
 
-        <div class="qr-wrap">
-            <img src="{{ $qrDataUri }}" alt="Check-in QR code">
-        </div>
+        <hr class="divider">
 
-        <p class="footer-note">Present this ticket (printed or on your phone) at the entrance for check-in.</p>
+        <table class="details-row">
+            <tr>
+                <td>
+                    <div class="detail-icon"><img src="{{ $icon('calendar', '#1b2652') }}" alt=""></div>
+                    <p class="detail-label">Date</p>
+                    <p class="detail-value">
+                        {{ date('F j, Y', strtotime(config('event.date'))) }}<br>
+                        ({{ date('l', strtotime(config('event.date'))) }})
+                    </p>
+                </td>
+                <td>
+                    <div class="detail-icon"><img src="{{ $icon('clock', '#1b2652') }}" alt=""></div>
+                    <p class="detail-label">Time</p>
+                    <p class="detail-value">{{ date('g:i A', strtotime(config('event.start_time'))) }}<br>Prompt</p>
+                </td>
+                <td>
+                    <div class="detail-icon"><img src="{{ $icon('pin', '#1b2652') }}" alt=""></div>
+                    <p class="detail-label">Venue</p>
+                    <p class="detail-value">{{ config('event.venue') }}<br>{{ config('event.venue_address') }}</p>
+                </td>
+                <td>
+                    <div class="detail-icon"><img src="{{ $icon('tie', '#1b2652') }}" alt=""></div>
+                    <p class="detail-label">Dress Code</p>
+                    <p class="detail-value">{{ config('event.dress_code') }}</p>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="footer">
+        <table class="footer-table">
+            <tr>
+                <td class="footer-seal-col">
+                    <div class="footer-seal">
+                        <img src="{{ $icon('star', '#d4af37') }}" alt="">
+                    </div>
+                </td>
+                <td class="footer-event-col">
+                    <p class="footer-event-name">{{ \Illuminate\Support\Number::ordinal(date('Y', strtotime(config('event.date'))) - 1847) }} National Flag Day Celebration</p>
+                    <span class="footer-star"><img src="{{ $icon('star', '#d4af37') }}" alt=""></span>
+                    <p class="footer-tagline">Honoring Our Flag.<br>Uniting Our Nation.</p>
+                </td>
+                <td class="footer-contact-col">
+                    <p class="footer-contact-heading">Contact Us</p>
+                    <table class="footer-contact">
+                        <tr>
+                            <td class="footer-contact-icon"><img src="{{ $icon('phone', '#ffffff') }}" alt=""></td>
+                            <td>{{ config('event.contact_phone') }}</td>
+                        </tr>
+                        <tr>
+                            <td class="footer-contact-icon"><img src="{{ $icon('mail', '#ffffff') }}" alt=""></td>
+                            <td>{{ config('event.contact_email') }}</td>
+                        </tr>
+                        <tr>
+                            <td class="footer-contact-icon"><img src="{{ $icon('globe', '#ffffff') }}" alt=""></td>
+                            <td>{{ config('event.contact_website') }}</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
     </div>
 </body>
 </html>
