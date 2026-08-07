@@ -32,6 +32,7 @@
                 <a href="#about" class="text-sm font-medium text-slate-600 transition hover:text-blue-950">About</a>
                 <a href="#event-details" class="text-sm font-medium text-slate-600 transition hover:text-blue-950">Event Details</a>
                 <a href="#why-we-celebrate" class="text-sm font-medium text-slate-600 transition hover:text-blue-950">Why We Celebrate</a>
+                <a href="{{ route('flag-day.show') }}" class="text-sm font-medium text-slate-600 transition hover:text-blue-950">The 179th Flag Day</a>
             </nav>
 
             <a href="{{ route('rsvp.create') }}"
@@ -72,7 +73,7 @@
                             <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
                         </svg>
                     </a>
-                    <a href="#about"
+                    <a href="{{ route('flag-day.show') }}"
                        class="inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-8 py-3.5 text-base font-semibold text-slate-800 transition hover:border-slate-400 hover:bg-slate-50 sm:w-auto">
                         The 179th Flag Day
                     </a>
@@ -243,10 +244,11 @@
                     </span>
                 </a>
 
-                <nav class="flex items-center gap-6" aria-label="Footer">
+                <nav class="flex flex-wrap items-center justify-center gap-6" aria-label="Footer">
                     <a href="#about" class="text-sm text-slate-500 transition hover:text-blue-950">About</a>
                     <a href="#event-details" class="text-sm text-slate-500 transition hover:text-blue-950">Event Details</a>
                     <a href="#why-we-celebrate" class="text-sm text-slate-500 transition hover:text-blue-950">Why We Celebrate</a>
+                    <a href="{{ route('flag-day.show') }}" class="text-sm text-slate-500 transition hover:text-blue-950">The 179th Flag Day</a>
                 </nav>
             </div>
 
