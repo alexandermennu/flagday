@@ -99,18 +99,19 @@
         .detail-label { font-size: 8px; font-weight: bold; letter-spacing: 0.75px; text-transform: uppercase; color: #94a3b8; margin: 5px 0 3px 0; }
         .detail-value { font-size: 10px; font-weight: bold; color: #1b2652; line-height: 1.35; margin: 0; }
 
-        .footer { background-color: #1b2652; color: #ffffff; padding: 18px 22px; margin-top: 16px; }
+        .footer { background-color: #1b2652; color: #ffffff; padding: 20px 22px; margin-top: 16px; }
         table.footer-table { width: 100%; border-collapse: collapse; }
-        table.footer-table td { vertical-align: top; }
-        .footer-seal-col { width: 50px; }
-        .footer-seal { width: 42px; height: 42px; border-radius: 50%; background-color: #ffffff; text-align: center; }
-        .footer-seal img { width: 28px; height: 28px; margin-top: 7px; }
-        .footer-main-col { padding-left: 14px; }
-        .footer-event-name { font-size: 10.5px; font-weight: bold; letter-spacing: 0.5px; margin: 0 0 3px 0; text-transform: uppercase; }
-        .footer-tagline { font-size: 8.5px; font-style: italic; color: #d4af37; margin: 0 0 8px 0; line-height: 1.4; }
-        .footer-committee { font-size: 8px; font-weight: bold; color: #ffffff; margin: 0 0 3px 0; line-height: 1.5; }
-        .footer-office { font-size: 7.5px; color: #c7cbe0; margin: 0 0 6px 0; line-height: 1.5; }
-        .footer-contact-line { font-size: 7.5px; color: #c7cbe0; margin: 0; line-height: 1.5; }
+        table.footer-table td { vertical-align: middle; }
+        .footer-logo-col { width: 56px; }
+        .footer-emblem { width: 46px; height: 46px; border-radius: 50%; background-color: #ffffff; text-align: center; }
+        .footer-emblem img { width: 32px; height: 32px; margin-top: 7px; }
+        .footer-center-col { width: 48%; text-align: center; padding: 0 10px; }
+        .footer-event-name { font-size: 10.5px; font-weight: bold; letter-spacing: 0.75px; margin: 0 0 6px 0; text-transform: uppercase; }
+        .footer-tagline { font-size: 8.5px; font-style: italic; color: #d4af37; margin: 0; line-height: 1.45; }
+        .footer-contact-col { width: 34%; text-align: right; }
+        .footer-contact-heading { font-size: 9px; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase; color: #d4af37; margin: 0 0 6px 0; }
+        .footer-contact-line { font-size: 8px; color: #e2e5f0; margin: 0 0 3px 0; line-height: 1.5; }
+        .footer-contact-line:last-child { margin-bottom: 0; }
     </style>
 </head>
 <body>
@@ -207,26 +208,22 @@
     <div class="footer">
         <table class="footer-table">
             <tr>
-                <td class="footer-seal-col">
-                    <div class="footer-seal">
-                        <img src="{{ $icon('star', '#d4af37') }}" alt="">
+                <td class="footer-logo-col">
+                    <div class="footer-emblem">
+                        <img src="{{ \App\Services\IconFactory::emblemDataUri('moe') }}" alt="Ministry of Education">
                     </div>
                 </td>
-                <td class="footer-main-col">
+                <td class="footer-center-col">
                     <p class="footer-event-name">{{ $edition }} National Flag Day Celebration</p>
                     <p class="footer-tagline">&ldquo;{{ config('event.theme') }}&rdquo;</p>
-                    <p class="footer-committee">
-                        {{ $edition }} National Flag Day Planning Committee
-                    </p>
-                    <p class="footer-office">
-                        Office of the Assistant Minister &middot; Bureau of Student Personnel Services<br>
-                        Ministry of Education, Republic of Liberia
-                    </p>
-                    <p class="footer-contact-line">
-                        {{ config('event.contact_phone') }} / {{ config('event.contact_phone_secondary') }}
-                        &middot; WhatsApp: {{ config('event.contact_whatsapp') }}
-                        &middot; {{ config('event.contact_website') }}
-                    </p>
+                </td>
+                <td class="footer-contact-col">
+                    <p class="footer-contact-heading">Contact Us</p>
+                    <p class="footer-contact-line">{{ config('event.contact_phone') }}</p>
+                    <p class="footer-contact-line">{{ config('event.contact_phone_secondary') }}</p>
+                    <p class="footer-contact-line">WhatsApp: {{ config('event.contact_whatsapp') }}</p>
+                    <p class="footer-contact-line">{{ config('event.contact_email') }}</p>
+                    <p class="footer-contact-line">{{ config('event.contact_website') }}</p>
                 </td>
             </tr>
         </table>

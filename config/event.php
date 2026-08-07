@@ -26,7 +26,7 @@ return [
 
     'contact_whatsapp' => env('EVENT_CONTACT_WHATSAPP', '+231 886 659 166'),
 
-    'contact_email' => env('EVENT_CONTACT_EMAIL', 'events@moe.gov.lr'),
+    'contact_email' => env('EVENT_CONTACT_EMAIL', 'contactsps@moe.gov.lr'),
 
     'contact_website' => env('EVENT_CONTACT_WEBSITE', 'www.moe.gov.lr'),
 
