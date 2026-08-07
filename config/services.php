@@ -19,7 +19,9 @@ return [
     ],
 
     'resend' => [
-        'key' => env('RESEND_API_KEY'),
+        // Accepts either name — Laravel's convention is RESEND_API_KEY, but tolerate
+        // RESEND_KEY too in case that's what was configured in a given environment.
+        'key' => env('RESEND_API_KEY', env('RESEND_KEY')),
     ],
 
     'ses' => [

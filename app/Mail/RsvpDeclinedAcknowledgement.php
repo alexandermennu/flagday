@@ -9,7 +9,8 @@ use Illuminate\Mail\Mailables\Envelope;
 
 class RsvpDeclinedAcknowledgement extends Mailable
 {
-    // Sent synchronously — see the note on RsvpConfirmation.
+    // Sent synchronously — see the note on RsvpConfirmation. Reply-to is applied
+    // globally by MailManager (config('mail.reply_to')), not set here.
     public function __construct(public Attendee $attendee)
     {
     }
