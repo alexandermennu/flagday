@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\CheckInController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\FlagDayController;
 use App\Http\Controllers\PassVerificationController;
 use App\Http\Controllers\RsvpController;
 use Illuminate\Support\Facades\Route;
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('landing');
 })->name('landing');
+
+Route::get('/flag-day', [FlagDayController::class, 'show'])->name('flag-day.show');
 
 Route::get('/rsvp', [RsvpController::class, 'create'])->name('rsvp.create');
 Route::post('/rsvp', [RsvpController::class, 'store'])
