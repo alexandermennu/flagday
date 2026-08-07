@@ -22,7 +22,7 @@
         .calendar-link { font-size: 13px; font-weight: bold; color: #1b2652 !important; text-decoration: none; }
         .calendar-link::before { content: "＋ "; }
         .emblems { text-align: center; margin: 24px 0 6px 0; }
-        .emblems img { width: 44px; height: 44px; margin: 0 10px; }
+        .emblems img { max-width: 44px; max-height: 44px; width: auto; height: auto; margin: 0 10px; vertical-align: middle; }
         .emblem-captions { text-align: center; font-size: 10px; color: #94a3b8; margin: 0 0 20px 0; }
         .emblem-captions span { display: inline-block; width: 110px; }
         .signature { font-size: 12px; line-height: 1.7; color: #64748b; margin: 0; }
