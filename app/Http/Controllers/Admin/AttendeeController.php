@@ -144,6 +144,13 @@ class AttendeeController extends Controller
         }, $filename, ['Content-Type' => 'text/csv']);
     }
 
+    public function checkIn(Attendee $attendee): RedirectResponse
+    {
+        $attendee->forceFill(['checked_in_at' => $attendee->checked_in_at ?? now()])->save();
+
+        return back()->with('success', "Checked in {$attendee->full_name}.");
+    }
+
     public function uncheckIn(Attendee $attendee): RedirectResponse
     {
         $attendee->forceFill(['checked_in_at' => null])->save();

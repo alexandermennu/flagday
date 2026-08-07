@@ -37,6 +37,10 @@ class RsvpConfirmation extends Mailable
     }
 
     /**
+     * Only the PDF is attached — the .ics file is served via a link in the email body
+     * instead (see CalendarController), since an attached .ics makes Gmail and some
+     * other clients render a large inline event card at the top of the message.
+     *
      * @return array<int, Attachment>
      */
     public function attachments(): array
@@ -44,10 +48,8 @@ class RsvpConfirmation extends Mailable
         $invites = app(DigitalInviteService::class);
 
         return [
-            Attachment::fromData(fn () => $invites->pdf($this->attendee), 'flag-day-ticket.pdf')
+            Attachment::fromData(fn () => $invites->pdf($this->attendee), '179th_National_Flag_Day_Event_Pass.pdf')
                 ->withMime('application/pdf'),
-            Attachment::fromData(fn () => $invites->ics($this->attendee), 'flag-day-invite.ics')
-                ->withMime('text/calendar'),
         ];
     }
 }

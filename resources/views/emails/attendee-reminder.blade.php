@@ -27,7 +27,8 @@
     </table>
 
     <p>
-        We've re-attached your digital ticket (PDF with QR code) and a calendar file for convenience.
-        Please bring your ticket, printed or on your phone, for check-in at the entrance.
+        We've re-attached your Event Pass (PDF with QR code) for convenience. Please bring it, printed or on your
+        phone, for entry.
+        <a href="{{ route('calendar.show', $attendee->invite_token) }}" class="calendar-link">Add to Calendar</a>
     </p>
 @endsection

@@ -3,22 +3,19 @@
 namespace App\Services;
 
 /**
- * Renders small icon glyphs as base64 PNG data URIs for use inside the PDF ticket.
- * dompdf in this environment does not render inline <svg> markup (verified: even a
- * trivial <circle>/<rect> renders blank), so icons are drawn with GD instead — the same
- * reliable raster approach already used for the QR code image.
+ * Renders small icon glyphs and brand emblems as base64 PNG data URIs, for use in the
+ * PDF ticket and confirmation emails. dompdf does not render inline <svg> markup in this
+ * environment (verified: even a trivial <circle>/<rect> renders blank) and email clients
+ * have inconsistent inline-SVG support, so everything here is drawn with GD instead — the
+ * same reliable raster approach already used for the QR code image.
  */
-class PdfIconFactory
+class IconFactory
 {
     private const SIZE = 64;
 
     public static function dataUri(string $name, string $hexColor): string
     {
-        $image = imagecreatetruecolor(self::SIZE, self::SIZE);
-        imagealphablending($image, true);
-        imagesavealpha($image, true);
-        $transparent = imagecolorallocatealpha($image, 0, 0, 0, 127);
-        imagefill($image, 0, 0, $transparent);
+        $image = self::canvas();
 
         [$r, $g, $b] = self::hexToRgb($hexColor);
         $color = imagecolorallocate($image, $r, $g, $b);
@@ -39,6 +36,44 @@ class PdfIconFactory
             default => null,
         };
 
+        return self::toDataUri($image);
+    }
+
+    /**
+     * A circular brand emblem (navy disc, gold ring, gold glyph) — "seal" for the
+     * Republic of Liberia and "moe" for the Ministry of Education, shown side by side
+     * on the confirmation email's signature block. Both are original placeholder marks,
+     * not reproductions of the real government/ministry seals.
+     */
+    public static function emblemDataUri(string $name): string
+    {
+        $image = self::canvas();
+
+        $navy = imagecolorallocate($image, 27, 38, 82);
+        $gold = imagecolorallocate($image, 212, 175, 55);
+
+        match ($name) {
+            'seal' => self::drawSealEmblem($image, $navy, $gold),
+            'moe' => self::drawMoeEmblem($image, $navy, $gold),
+            default => null,
+        };
+
+        return self::toDataUri($image);
+    }
+
+    private static function canvas()
+    {
+        $image = imagecreatetruecolor(self::SIZE, self::SIZE);
+        imagealphablending($image, true);
+        imagesavealpha($image, true);
+        $transparent = imagecolorallocatealpha($image, 0, 0, 0, 127);
+        imagefill($image, 0, 0, $transparent);
+
+        return $image;
+    }
+
+    private static function toDataUri($image): string
+    {
         ob_start();
         imagepng($image);
         $bytes = ob_get_clean();
@@ -64,6 +99,20 @@ class PdfIconFactory
     {
         imagesetthickness($image, $thickness);
         imageline($image, $x1, $y1, $x2, $y2, $color);
+    }
+
+    private static function starPoints(int $cx, int $cy, float $outerR, float $innerR): array
+    {
+        $points = [];
+
+        for ($i = 0; $i < 10; $i++) {
+            $angle = -M_PI / 2 + $i * M_PI / 5;
+            $r = $i % 2 === 0 ? $outerR : $innerR;
+            $points[] = $cx + $r * cos($angle);
+            $points[] = $cy + $r * sin($angle);
+        }
+
+        return $points;
     }
 
     private static function drawCheck($image, int $color): void
@@ -126,20 +175,7 @@ class PdfIconFactory
 
     private static function drawStar($image, int $color): void
     {
-        $points = [];
-        $cx = 32;
-        $cy = 32;
-        $outerR = 28;
-        $innerR = 11;
-
-        for ($i = 0; $i < 10; $i++) {
-            $angle = -M_PI / 2 + $i * M_PI / 5;
-            $r = $i % 2 === 0 ? $outerR : $innerR;
-            $points[] = $cx + $r * cos($angle);
-            $points[] = $cy + $r * sin($angle);
-        }
-
-        imagefilledpolygon($image, $points, $color);
+        imagefilledpolygon($image, self::starPoints(32, 32, 28, 11), $color);
     }
 
     private static function drawPhone($image, int $color): void
@@ -161,5 +197,26 @@ class PdfIconFactory
         imageellipse($image, 32, 32, 48, 48, $color);
         imageline($image, 8, 32, 56, 32, $color);
         imageellipse($image, 32, 32, 20, 48, $color);
+    }
+
+    private static function drawSealEmblem($image, int $navy, int $gold): void
+    {
+        imagefilledellipse($image, 32, 32, 62, 62, $navy);
+        imagesetthickness($image, 2);
+        imageellipse($image, 32, 32, 56, 56, $gold);
+        imagefilledpolygon($image, self::starPoints(32, 32, 16, 6.5), $gold);
+    }
+
+    private static function drawMoeEmblem($image, int $navy, int $gold): void
+    {
+        imagefilledellipse($image, 32, 32, 62, 62, $navy);
+        imagesetthickness($image, 2);
+        imageellipse($image, 32, 32, 56, 56, $gold);
+
+        // Graduation cap: mortarboard diamond + band + tassel.
+        imagefilledpolygon($image, [32, 20, 48, 28, 32, 36, 16, 28], $gold);
+        imagefilledrectangle($image, 27, 34, 37, 40, $gold);
+        imagefilledellipse($image, 44, 30, 4, 4, $gold);
+        self::thickLine($image, $gold, 44, 30, 44, 38, 2);
     }
 }

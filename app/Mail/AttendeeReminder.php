@@ -35,6 +35,8 @@ class AttendeeReminder extends Mailable implements ShouldQueue
     }
 
     /**
+     * Only the PDF is attached — see the note on RsvpConfirmation::attachments().
+     *
      * @return array<int, Attachment>
      */
     public function attachments(): array
@@ -42,10 +44,8 @@ class AttendeeReminder extends Mailable implements ShouldQueue
         $invites = app(DigitalInviteService::class);
 
         return [
-            Attachment::fromData(fn () => $invites->pdf($this->attendee), 'flag-day-ticket.pdf')
+            Attachment::fromData(fn () => $invites->pdf($this->attendee), '179th_National_Flag_Day_Event_Pass.pdf')
                 ->withMime('application/pdf'),
-            Attachment::fromData(fn () => $invites->ics($this->attendee), 'flag-day-invite.ics')
-                ->withMime('text/calendar'),
         ];
     }
 }

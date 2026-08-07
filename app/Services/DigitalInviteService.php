@@ -59,7 +59,7 @@ class DigitalInviteService
     protected function qrCodeDataUri(Attendee $attendee): string
     {
         $qrCode = new QrCode(
-            data: route('admin.checkin.show', $attendee->invite_token),
+            data: route('pass.verify', $attendee->invite_token),
             errorCorrectionLevel: ErrorCorrectionLevel::High,
             size: 300,
             margin: 10,

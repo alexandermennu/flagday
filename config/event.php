@@ -18,7 +18,13 @@ return [
 
     'dress_code' => env('EVENT_DRESS_CODE', 'National / Formal Attire'),
 
-    'contact_phone' => env('EVENT_CONTACT_PHONE', '+231 77 000 0000'),
+    'theme' => env('EVENT_THEME', 'From Heritage to Hope: The Flag That Unites Us.'),
+
+    'contact_phone' => env('EVENT_CONTACT_PHONE', '+231 777 659 166'),
+
+    'contact_phone_secondary' => env('EVENT_CONTACT_PHONE_SECONDARY', '+231 886 659 166'),
+
+    'contact_whatsapp' => env('EVENT_CONTACT_WHATSAPP', '+231 886 659 166'),
 
     'contact_email' => env('EVENT_CONTACT_EMAIL', 'events@moe.gov.lr'),
 

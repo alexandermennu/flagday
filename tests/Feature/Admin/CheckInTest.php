@@ -57,4 +57,28 @@ class CheckInTest extends TestCase
 
         $this->assertTrue($firstCheckIn->equalTo($attendee->fresh()->checked_in_at));
     }
+
+    public function test_admin_can_manually_check_in_an_attendee(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $attendee = Attendee::factory()->confirmed()->create();
+        $this->assertNull($attendee->checked_in_at);
+
+        $response = $this->patch(route('admin.attendees.check-in', $attendee));
+
+        $response->assertRedirect();
+        $this->assertNotNull($attendee->fresh()->checked_in_at);
+    }
+
+    public function test_manual_check_in_requires_authentication(): void
+    {
+        $attendee = Attendee::factory()->confirmed()->create();
+
+        $this->patch(route('admin.attendees.check-in', $attendee))
+            ->assertRedirect(route('admin.login'));
+
+        $this->assertNull($attendee->fresh()->checked_in_at);
+    }
 }

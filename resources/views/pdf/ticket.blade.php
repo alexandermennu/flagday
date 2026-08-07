@@ -101,24 +101,22 @@
 
         .footer { background-color: #1b2652; color: #ffffff; padding: 18px 22px; margin-top: 16px; }
         table.footer-table { width: 100%; border-collapse: collapse; }
-        table.footer-table td { vertical-align: middle; }
-        .footer-seal-col { width: 52px; }
-        .footer-seal { width: 44px; height: 44px; border-radius: 50%; background-color: #ffffff; text-align: center; }
-        .footer-seal img { width: 30px; height: 30px; margin-top: 7px; }
-        .footer-event-col { width: 46%; padding: 0 12px; }
-        .footer-contact-col { width: 34%; }
-        .footer-event-name { font-size: 10.5px; font-weight: bold; letter-spacing: 0.5px; margin: 0 0 4px 0; text-transform: uppercase; }
-        .footer-star img { width: 12px; height: 12px; margin-bottom: 4px; }
-        .footer-tagline { font-size: 8px; font-weight: bold; letter-spacing: 0.5px; color: #d4af37; margin: 0; line-height: 1.5; text-transform: uppercase; }
-        .footer-contact-heading { font-size: 9px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; margin: 0 0 7px 0; }
-        table.footer-contact td { padding: 0 0 5px 0; font-size: 8.5px; }
-        table.footer-contact td.footer-contact-icon { width: 16px; }
-        table.footer-contact img { width: 11px; height: 11px; }
+        table.footer-table td { vertical-align: top; }
+        .footer-seal-col { width: 50px; }
+        .footer-seal { width: 42px; height: 42px; border-radius: 50%; background-color: #ffffff; text-align: center; }
+        .footer-seal img { width: 28px; height: 28px; margin-top: 7px; }
+        .footer-main-col { padding-left: 14px; }
+        .footer-event-name { font-size: 10.5px; font-weight: bold; letter-spacing: 0.5px; margin: 0 0 3px 0; text-transform: uppercase; }
+        .footer-tagline { font-size: 8.5px; font-style: italic; color: #d4af37; margin: 0 0 8px 0; line-height: 1.4; }
+        .footer-committee { font-size: 8px; font-weight: bold; color: #ffffff; margin: 0 0 3px 0; line-height: 1.5; }
+        .footer-office { font-size: 7.5px; color: #c7cbe0; margin: 0 0 6px 0; line-height: 1.5; }
+        .footer-contact-line { font-size: 7.5px; color: #c7cbe0; margin: 0; line-height: 1.5; }
     </style>
 </head>
 <body>
     @php
-        $icon = fn (string $name, string $color) => \App\Services\PdfIconFactory::dataUri($name, $color);
+        $icon = fn (string $name, string $color) => \App\Services\IconFactory::dataUri($name, $color);
+        $edition = \Illuminate\Support\Number::ordinal(date('Y', strtotime(config('event.date'))) - 1847);
     @endphp
 
     <div class="header">
@@ -214,27 +212,21 @@
                         <img src="{{ $icon('star', '#d4af37') }}" alt="">
                     </div>
                 </td>
-                <td class="footer-event-col">
-                    <p class="footer-event-name">{{ \Illuminate\Support\Number::ordinal(date('Y', strtotime(config('event.date'))) - 1847) }} National Flag Day Celebration</p>
-                    <span class="footer-star"><img src="{{ $icon('star', '#d4af37') }}" alt=""></span>
-                    <p class="footer-tagline">Honoring Our Flag.<br>Uniting Our Nation.</p>
-                </td>
-                <td class="footer-contact-col">
-                    <p class="footer-contact-heading">Contact Us</p>
-                    <table class="footer-contact">
-                        <tr>
-                            <td class="footer-contact-icon"><img src="{{ $icon('phone', '#ffffff') }}" alt=""></td>
-                            <td>{{ config('event.contact_phone') }}</td>
-                        </tr>
-                        <tr>
-                            <td class="footer-contact-icon"><img src="{{ $icon('mail', '#ffffff') }}" alt=""></td>
-                            <td>{{ config('event.contact_email') }}</td>
-                        </tr>
-                        <tr>
-                            <td class="footer-contact-icon"><img src="{{ $icon('globe', '#ffffff') }}" alt=""></td>
-                            <td>{{ config('event.contact_website') }}</td>
-                        </tr>
-                    </table>
+                <td class="footer-main-col">
+                    <p class="footer-event-name">{{ $edition }} National Flag Day Celebration</p>
+                    <p class="footer-tagline">&ldquo;{{ config('event.theme') }}&rdquo;</p>
+                    <p class="footer-committee">
+                        {{ $edition }} National Flag Day Planning Committee
+                    </p>
+                    <p class="footer-office">
+                        Office of the Assistant Minister &middot; Bureau of Student Personnel Services<br>
+                        Ministry of Education, Republic of Liberia
+                    </p>
+                    <p class="footer-contact-line">
+                        {{ config('event.contact_phone') }} / {{ config('event.contact_phone_secondary') }}
+                        &middot; WhatsApp: {{ config('event.contact_whatsapp') }}
+                        &middot; {{ config('event.contact_website') }}
+                    </p>
                 </td>
             </tr>
         </table>

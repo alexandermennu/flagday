@@ -44,6 +44,11 @@ class RsvpTest extends TestCase
         $this->assertSame('Jane Doe', $attendee->full_name);
 
         Mail::assertSent(RsvpConfirmation::class, fn ($mail) => $mail->attendee->is($attendee));
+
+        // Only the PDF is attached — the .ics file is a link in the body now, not an
+        // attachment, since an attached .ics makes some clients render a large event card.
+        $mail = new RsvpConfirmation($attendee);
+        $this->assertCount(1, $mail->attachments());
     }
 
     public function test_declining_attendance_sends_acknowledgement_without_ticket(): void

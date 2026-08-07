@@ -84,6 +84,8 @@
                                 <a href="{{ route('admin.attendees.edit', $attendee) }}" class="font-medium text-blue-950 hover:underline">Edit</a>
                                 @if ($attendee->checked_in_at)
                                     <button type="submit" form="uncheckin-{{ $attendee->id }}" class="ml-3 font-medium text-amber-600 hover:underline">Undo check-in</button>
+                                @elseif ($attendee->status === \App\Enums\AttendeeStatus::Confirmed)
+                                    <button type="submit" form="checkin-{{ $attendee->id }}" class="ml-3 font-medium text-green-700 hover:underline">Check In</button>
                                 @endif
                                 <button type="submit" form="delete-{{ $attendee->id }}" class="ml-3 font-medium text-red-700 hover:underline"
                                         onclick="return confirm('Remove {{ $attendee->full_name }}?')">Delete</button>
@@ -107,6 +109,11 @@
         </form>
         @if ($attendee->checked_in_at)
             <form id="uncheckin-{{ $attendee->id }}" method="POST" action="{{ route('admin.attendees.uncheck-in', $attendee) }}" class="hidden">
+                @csrf
+                @method('PATCH')
+            </form>
+        @elseif ($attendee->status === \App\Enums\AttendeeStatus::Confirmed)
+            <form id="checkin-{{ $attendee->id }}" method="POST" action="{{ route('admin.attendees.check-in', $attendee) }}" class="hidden">
                 @csrf
                 @method('PATCH')
             </form>
