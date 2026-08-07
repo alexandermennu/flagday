@@ -63,7 +63,7 @@
                 <section class="text-center">
                     <h2 class="text-xl font-bold text-blue-950">Will you attend the National Flag Day Celebration?</h2>
                     <div class="mt-5 flex flex-wrap items-center justify-center gap-3">
-                        <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border-2 border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 transition has-[:checked]:border-blue-950 has-[:checked]:bg-blue-50 has-[:checked]:text-blue-950">
+                        <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border-2 border-[#1b2652] bg-[#1b2652] px-5 py-2.5 text-sm font-semibold text-white transition has-[:checked]:ring-2 has-[:checked]:ring-[#1b2652] has-[:checked]:ring-offset-2">
                             <input type="radio" name="status" id="attendance-yes" value="confirmed" class="sr-only" {{ $showYes ? 'checked' : '' }}>
                             <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                 <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
