@@ -173,7 +173,15 @@
                     </p>
                 </div>
 
-                <x-image-placeholder class="aspect-[4/3] w-full" label="Celebration photo placeholder" />
+                <div class="relative flex justify-center lg:-my-16" style="perspective: 1200px;">
+                    <div class="flex flex-col items-center">
+                        <div class="animate-flag-wave drop-shadow-2xl">
+                            <x-liberian-flag class="h-auto w-64 sm:w-80 lg:w-[27rem]" />
+                        </div>
+                        <div class="h-56 w-2 rounded-b-sm bg-gradient-to-b from-slate-300 to-slate-400 sm:h-72 lg:h-96"></div>
+                        <div class="h-2.5 w-20 rounded-full bg-slate-300 sm:w-24"></div>
+                    </div>
+                </div>
             </div>
         </section>
 
