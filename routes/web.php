@@ -21,7 +21,10 @@ Route::post('/rsvp', [RsvpController::class, 'store'])
 Route::get('/rsvp/thank-you', [RsvpController::class, 'thankYou'])->name('rsvp.thank-you');
 
 // Public, unauthenticated — the QR code on the PDF Event Pass points here.
-Route::get('/pass/{attendee:invite_token}', [PassVerificationController::class, 'show'])->name('pass.verify');
+Route::get('/confirm/{attendee:invite_token}', [PassVerificationController::class, 'show'])->name('pass.verify');
+
+// Redirects tickets issued before the confirmation URL moved from /pass to /confirm.
+Route::get('/pass/{token}', fn (string $token) => redirect()->route('pass.verify', $token, 301));
 
 // Public — linked from the confirmation/reminder emails instead of an .ics attachment,
 // since attached .ics files trigger Gmail's large inline event card.

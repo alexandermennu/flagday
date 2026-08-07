@@ -34,6 +34,9 @@ class PassVerificationTest extends TestCase
         $response->assertSee('Ministry of Finance');
         $response->assertSee('Deputy Director');
         $response->assertSee($attendee->confirmation_id);
+        $response->assertSee('Confirmed');
+        $response->assertSee('National Flag Day Celebration');
+        $response->assertSee(date('g:i A', strtotime(config('event.start_time'))));
     }
 
     public function test_verify_page_does_not_mark_the_attendee_as_checked_in(): void
@@ -47,6 +50,14 @@ class PassVerificationTest extends TestCase
 
     public function test_verify_page_returns_404_for_an_unknown_token(): void
     {
-        $this->get('/pass/not-a-real-token')->assertNotFound();
+        $this->get('/confirm/not-a-real-token')->assertNotFound();
+    }
+
+    public function test_legacy_pass_url_redirects_to_the_confirm_url(): void
+    {
+        $attendee = Attendee::factory()->confirmed()->create();
+
+        $this->get('/pass/'.$attendee->invite_token)
+            ->assertRedirect(route('pass.verify', $attendee->invite_token));
     }
 }

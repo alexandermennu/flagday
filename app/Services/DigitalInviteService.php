@@ -58,6 +58,8 @@ class DigitalInviteService
 
     protected function qrCodeDataUri(Attendee $attendee): string
     {
+        // An absolute https:// URL (see AppServiceProvider::boot()) so scanning apps
+        // recognize it as a link and open it directly, with no copy/paste step.
         $qrCode = new QrCode(
             data: route('pass.verify', $attendee->invite_token),
             errorCorrectionLevel: ErrorCorrectionLevel::High,
