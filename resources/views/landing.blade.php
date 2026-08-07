@@ -51,12 +51,12 @@
 
             <div class="relative mx-auto max-w-5xl px-6 pt-20 pb-16 text-center sm:pt-28 lg:px-8">
                 <p class="animate-fade-in-up inline-flex items-center gap-2 rounded-full border border-red-100 bg-red-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-red-700">
-                    Republic of Liberia &middot; Ministry of Education
+                    179th National &middot; Flag Day Celebration
                 </p>
 
                 <h1 class="animate-fade-in-up mt-6 text-5xl font-extrabold uppercase tracking-tight [animation-delay:100ms] sm:text-6xl lg:text-7xl">
-                    <span class="text-red-700">One Nation,</span>
-                    <span class="block text-blue-950 sm:inline">Indivisible</span>
+                    <span class="text-red-700">“From Heritage to Hope:,</span>
+                    <span class="block text-blue-950 sm:inline">The Flag That Unites Us.”</span>
                 </h1>
 
                 <p class="animate-fade-in-up mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-600 [animation-delay:200ms]">
