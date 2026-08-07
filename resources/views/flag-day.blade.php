@@ -181,63 +181,108 @@
             </div>
         </section>
 
-        {{-- ============ President & Orator ============ --}}
+        {{-- ============ Leadership ============ --}}
         <section class="bg-slate-50 py-20 sm:py-28">
-            <div class="mx-auto grid max-w-7xl gap-6 px-6 lg:grid-cols-2 lg:px-8">
-                <div class="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-                    <span class="text-xs font-semibold uppercase tracking-wider text-red-700">President's Special Message</span>
-                    <div class="mt-5 flex items-start gap-4">
-                        <x-image-placeholder shape="circle" :label="null" class="h-16 w-16 shrink-0" />
-                        <div>
-                            <p class="leading-relaxed text-slate-600">
+            <div class="mx-auto max-w-7xl px-6 lg:px-8">
+
+                {{-- President's Special Message — full-width feature card --}}
+                <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg shadow-slate-200/60">
+                    <div class="grid lg:grid-cols-[22rem_1fr]">
+                        <div class="h-72 lg:h-auto">
+                            <img src="{{ asset('images/people/president-boakai.png') }}"
+                                 alt="H.E. Joseph Nyuma Boakai, Sr., President of the Republic of Liberia"
+                                 class="h-full w-full object-cover object-top">
+                        </div>
+                        <div class="p-8 sm:p-10 lg:p-12">
+                            <span class="inline-flex items-center rounded-full bg-red-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-red-700">
+                                President's Special Message
+                            </span>
+                            <p class="mt-6 text-xl leading-relaxed font-medium text-slate-800 sm:text-2xl">
                                 &ldquo;On this special day, let us remember the sacrifices of our forebears and the
                                 power of unity that continues to move our nation forward. Together, let us build a
                                 Liberia where every child can dream, learn, and achieve.&rdquo;
                             </p>
-                            <p class="mt-4 text-sm font-bold text-blue-950">H.E. Joseph Nyuma Boakai, Sr.</p>
+                            <p class="mt-6 text-base font-bold text-blue-950">H.E. Joseph Nyuma Boakai, Sr.</p>
                             <p class="text-sm text-slate-500">President of the Republic of Liberia</p>
+
+                            <details class="group mt-6">
+                                <summary class="inline-flex cursor-pointer list-none items-center gap-1.5 rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 [&::-webkit-details-marker]:hidden">
+                                    Read Full Message
+                                    <svg class="h-3.5 w-3.5 transition group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg>
+                                </summary>
+                                <p class="mt-4 leading-relaxed text-slate-600">
+                                    Fellow citizens, as we gather once more to raise our beloved flag, we are reminded that
+                                    the eleven stripes and lone star are not merely symbols of cloth and thread — they are a
+                                    covenant between generations past, present, and future. Let this {{ $edition }} celebration
+                                    renew our resolve to serve one another and to leave a stronger Liberia for those who follow.
+                                </p>
+                            </details>
                         </div>
                     </div>
-                    <details class="group mt-5">
-                        <summary class="inline-flex cursor-pointer list-none items-center gap-1.5 rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 [&::-webkit-details-marker]:hidden">
-                            Read Full Message
-                            <svg class="h-3.5 w-3.5 transition group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg>
-                        </summary>
-                        <p class="mt-4 leading-relaxed text-slate-600">
-                            Fellow citizens, as we gather once more to raise our beloved flag, we are reminded that
-                            the eleven stripes and lone star are not merely symbols of cloth and thread — they are a
-                            covenant between generations past, present, and future. Let this {{ $edition }} celebration
-                            renew our resolve to serve one another and to leave a stronger Liberia for those who follow.
-                        </p>
-                    </details>
                 </div>
 
-                <div class="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-                    <span class="text-xs font-semibold uppercase tracking-wider text-red-700">Our National Orator</span>
-                    <div class="mt-5 flex items-start gap-4">
-                        <x-image-placeholder shape="circle" :label="null" class="h-16 w-16 shrink-0" />
-                        <div>
-                            <p class="text-sm font-bold text-blue-950">Dr. Yatta Kolleh Yumkella</p>
-                            <p class="text-sm text-slate-500">Former Minister of Foreign Affairs of Liberia</p>
-                            <p class="mt-4 leading-relaxed text-slate-600">
-                                A distinguished leader, diplomat, and advocate for sustainable development. Dr.
-                                Yumkella's address will inspire us to continue building a nation anchored in peace,
-                                unity, and progress.
-                            </p>
+                {{-- Minister of Education & National Orator — equal-width, subordinate cards --}}
+                <div class="mt-6 grid gap-6 lg:grid-cols-2">
+                    <div class="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-red-700">Welcome from the Minister of Education</span>
+                        <div class="mt-5 flex items-start gap-4">
+                            <img src="{{ asset('images/people/jarso-jallah.jpeg') }}"
+                                 alt="Dr. Jarso Maley Jallah, Minister of Education"
+                                 class="h-16 w-16 shrink-0 rounded-full object-cover object-top ring-2 ring-slate-100">
+                            <div>
+                                <p class="leading-relaxed text-slate-600">
+                                    &ldquo;It is my honor to welcome you to this year's National Flag Day celebration.
+                                    Our schools and communities have worked together to make this ceremony a true
+                                    reflection of the unity our flag represents.&rdquo;
+                                </p>
+                                <p class="mt-4 text-sm font-bold text-blue-950">Dr. Jarso Maley Jallah</p>
+                                <p class="text-sm text-slate-500">Minister of Education, Republic of Liberia</p>
+                            </div>
                         </div>
+                        <details class="group mt-5">
+                            <summary class="inline-flex cursor-pointer list-none items-center gap-1.5 rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 [&::-webkit-details-marker]:hidden">
+                                Read More
+                                <svg class="h-3.5 w-3.5 transition group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg>
+                            </summary>
+                            <p class="mt-4 leading-relaxed text-slate-600">
+                                The Ministry of Education is proud to coordinate this year's participating schools,
+                                bringing students from across the country to take part in the flag-raising ceremony
+                                and cultural programme. This celebration is as much theirs as it is the nation's.
+                            </p>
+                        </details>
                     </div>
-                    <details class="group mt-5">
-                        <summary class="inline-flex cursor-pointer list-none items-center gap-1.5 rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 [&::-webkit-details-marker]:hidden">
-                            Read Profile
-                            <svg class="h-3.5 w-3.5 transition group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg>
-                        </summary>
-                        <p class="mt-4 leading-relaxed text-slate-600">
-                            Dr. Yumkella has spent decades in public service and international development, working to
-                            expand access to education and economic opportunity across West Africa. This year's
-                            address will center on the role of unity and civic responsibility in nation-building.
-                        </p>
-                    </details>
+
+                    <div class="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-red-700">National Orator</span>
+                        <div class="mt-5 flex items-start gap-4">
+                            <img src="{{ asset('images/people/augustine-ngafuan.jpeg') }}"
+                                 alt="Hon. Augustine Kpehe Ngafuan"
+                                 class="h-16 w-16 shrink-0 rounded-full object-cover object-top ring-2 ring-slate-100">
+                            <div>
+                                <p class="text-sm font-bold text-blue-950">Hon. Augustine Kpehe Ngafuan</p>
+                                <p class="text-sm text-slate-500">Minister of Finance &amp; Development Planning</p>
+                                <p class="text-sm text-slate-500">National Orator, {{ $edition }} National Flag Day Celebration</p>
+                                <p class="mt-4 leading-relaxed text-slate-600">
+                                    A veteran public servant and economist, Minister Ngafuan brings decades of
+                                    leadership in fiscal policy and national development planning to this year's
+                                    orator address.
+                                </p>
+                            </div>
+                        </div>
+                        <details class="group mt-5">
+                            <summary class="inline-flex cursor-pointer list-none items-center gap-1.5 rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 [&::-webkit-details-marker]:hidden">
+                                Read Profile
+                                <svg class="h-3.5 w-3.5 transition group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg>
+                            </summary>
+                            <p class="mt-4 leading-relaxed text-slate-600">
+                                Minister Ngafuan has held senior posts across Liberia's government, including Foreign
+                                Minister and Finance Minister. This year's orator address will center on the role of
+                                sound stewardship and national unity in building a stronger Liberia.
+                            </p>
+                        </details>
+                    </div>
                 </div>
+
             </div>
         </section>
 
