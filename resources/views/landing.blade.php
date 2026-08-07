@@ -56,7 +56,7 @@
                 </p>
 
                 <h1 class="animate-fade-in-up mt-6 text-5xl font-extrabold uppercase tracking-tight [animation-delay:100ms] sm:text-6xl lg:text-7xl">
-                    <span class="text-red-700">“From Heritage to Hope:</span>
+                    <span class="text-red-700">“Theme: From Heritage to Hope:</span>
                     <span class="block text-blue-950 sm:inline">The Flag That Unites Us.”</span>
                 </h1>
 
