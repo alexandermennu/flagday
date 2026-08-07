@@ -55,7 +55,7 @@
                 </p>
 
                 <h1 class="animate-fade-in-up mt-6 text-5xl font-extrabold uppercase tracking-tight [animation-delay:100ms] sm:text-6xl lg:text-7xl">
-                    <span class="text-red-700">“From Heritage to Hope:,</span>
+                    <span class="text-red-700">“From Heritage to Hope:</span>
                     <span class="block text-blue-950 sm:inline">The Flag That Unites Us.”</span>
                 </h1>
 
@@ -74,7 +74,7 @@
                     </a>
                     <a href="#about"
                        class="inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-8 py-3.5 text-base font-semibold text-slate-800 transition hover:border-slate-400 hover:bg-slate-50 sm:w-auto">
-                        Learn More
+                        The 179th Flag Day
                     </a>
                 </div>
             </div>
