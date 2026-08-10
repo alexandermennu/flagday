@@ -1,18 +1,19 @@
 {{--
     Shared public site header — used by every public marketing page (landing, flag-day) so
     the nav's item set, order, and "The 179th Flag Day" position never drift apart between
-    pages again. "About", "Gallery", and "Contact" are anchors on the flag-day page; from
-    any other page they resolve to a full URL + hash, from the flag-day page itself the
-    fragment-only link just scrolls (no reload).
+    pages again. "About", "Gallery", and "Contact" are anchors that only exist on the
+    flag-day page; from any other page they resolve to a full URL + hash, from the flag-day
+    page itself the fragment-only link just scrolls (no reload).
 --}}
 @php
     $isFlagDay = request()->routeIs('flag-day.show');
+    $aboutHref = $isFlagDay ? '#about' : route('flag-day.show').'#about';
     $galleryHref = $isFlagDay ? '#gallery' : route('flag-day.show').'#gallery';
     $contactHref = $isFlagDay ? '#contact' : route('flag-day.show').'#contact';
 
     $navItems = [
         ['label' => 'Home', 'href' => route('landing'), 'active' => request()->routeIs('landing')],
-        ['label' => 'About', 'href' => '#about', 'active' => false],
+        ['label' => 'About', 'href' => $aboutHref, 'active' => false],
         ['label' => 'The 179th Flag Day', 'href' => route('flag-day.show'), 'active' => $isFlagDay],
         ['label' => 'Gallery', 'href' => $galleryHref, 'active' => false],
         ['label' => 'RSVP', 'href' => route('rsvp.create'), 'active' => false],

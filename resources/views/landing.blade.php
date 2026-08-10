@@ -10,7 +10,7 @@
     @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/site.js'])
 </head>
-<body class="bg-white font-sans text-slate-900 antialiased">
+<body class="flex min-h-screen flex-col bg-white font-sans text-slate-900 antialiased">
 
     {{-- Skip link for accessibility --}}
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-4 focus:rounded-md focus:bg-blue-950 focus:px-4 focus:py-2 focus:text-white">
@@ -19,15 +19,15 @@
 
     <x-site-header />
 
-    <main id="main-content">
+    <main id="main-content" class="flex flex-1 flex-col">
         {{-- ============ Hero ============ --}}
-        <section class="relative overflow-hidden bg-gradient-to-b from-slate-50 to-white">
+        <section class="relative flex flex-1 flex-col justify-center overflow-hidden bg-gradient-to-b from-slate-50 to-white">
             {{-- Watermark seal --}}
             <div class="pointer-events-none absolute inset-0 flex items-center justify-center">
                 <x-seal class="h-[32rem] w-[32rem] opacity-[0.04]" />
             </div>
 
-            <div class="relative mx-auto max-w-5xl px-6 pt-20 pb-16 text-center sm:pt-28 lg:px-8">
+            <div class="relative mx-auto max-w-5xl px-6 pt-10 pb-6 text-center sm:pt-12 lg:px-8">
                 <p class="animate-fade-in-up inline-flex items-center gap-2 rounded-full border border-red-100 bg-red-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-red-700">
                     179th National &middot; Flag Day Celebration
                 </p>
@@ -58,8 +58,8 @@
             </div>
 
             {{-- Event detail cards --}}
-            <div class="relative mx-auto max-w-4xl px-6 pb-20 sm:pb-28 lg:px-8">
-                <div class="animate-fade-in-up grid gap-4 sm:grid-cols-3 sm:gap-6 [animation-delay:400ms]">
+            <div class="relative mx-auto max-w-5xl px-6 pb-10 sm:pb-14 lg:px-8">
+                <div class="animate-fade-in-up grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 [animation-delay:400ms]">
                     <div class="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm transition hover:shadow-md">
                         <div class="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-red-50 text-red-700">
                             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
@@ -93,61 +93,22 @@
                         <h3 class="mt-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Time</h3>
                         <p class="mt-1 text-base font-bold text-blue-950">{{ date('g:i A', strtotime(config('event.start_time'))) }}</p>
                     </div>
-                </div>
-            </div>
-        </section>
 
-        {{-- ============ About the Event ============ --}}
-        <section id="about" class="mx-auto max-w-7xl px-6 py-20 sm:py-28 lg:px-8">
-            <div class="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
-                <div>
-                    <span class="text-sm font-semibold uppercase tracking-wider text-red-700">About the Event</span>
-                    <h2 class="mt-3 text-3xl font-bold tracking-tight text-blue-950 sm:text-4xl">
-                        A National Tradition of Unity
-                    </h2>
-                    <p class="mt-6 leading-relaxed text-slate-600">
-                        <span class="font-semibold text-slate-900">National Flag Day</span> commemorates the official
-                        adoption of the flag of the Republic of Liberia and is observed annually as a public holiday
-                        across the country. <span class="font-semibold text-slate-900">Hosted by the Government of
-                        the Republic of Liberia</span>, this year's ceremony brings together government officials,
-                        traditional leaders, school communities, and members of the public for a formal flag-raising,
-                        remarks from national leadership, and cultural presentations.
-                    </p>
-                    <p class="mt-4 leading-relaxed text-slate-600">
-                        This RSVP platform allows invited guests to confirm their attendance ahead of the ceremony,
-                        helping organizers plan seating, security, and hospitality for a smooth and dignified event.
-                    </p>
-                </div>
-
-                <div class="relative">
-                    <div class="aspect-[4/3] w-full overflow-hidden rounded-2xl bg-gradient-to-br from-blue-950 to-blue-900 shadow-xl">
-                        <div class="flex h-full w-full items-center justify-center">
-                            <x-liberian-flag class="w-1/2 opacity-90 drop-shadow-2xl" />
+                    <div class="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm transition hover:shadow-md">
+                        <div class="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-red-50 text-red-700">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+                                <path stroke-linecap="round" d="M6 21V4" />
+                                <path stroke-linejoin="round" d="M6 4l12 3.5L6 11" />
+                            </svg>
                         </div>
+                        <h3 class="mt-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Parade / Outdoor Program</h3>
+                        <p class="mt-1 text-base font-bold text-blue-950">Barclay Training Center (BTC)</p>
+                        <p class="text-sm text-slate-500">UN Drive, Monrovia &middot; 6:00 PM</p>
                     </div>
-                    <div class="absolute -bottom-4 -right-4 -z-10 hidden h-full w-full rounded-2xl border-2 border-red-700/20 sm:block"></div>
                 </div>
             </div>
         </section>
 
-        {{-- ============ RSVP Banner ============ --}}
-        <section class="relative overflow-hidden bg-blue-950">
-            <div class="pointer-events-none absolute inset-0 flex items-center justify-end pr-8 opacity-10">
-                <x-seal class="h-64 w-64" />
-            </div>
-            <div class="relative mx-auto max-w-4xl px-6 py-16 text-center lg:px-8">
-                <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-                    Have you confirmed your attendance?
-                </h2>
-                <p class="mx-auto mt-4 max-w-xl text-blue-100">
-                    Secure your place at this year's National Flag Day ceremony in just a few minutes.
-                </p>
-                <a href="{{ route('rsvp.create') }}"
-                   class="mt-8 inline-flex items-center justify-center gap-2 rounded-md bg-red-700 px-8 py-3.5 text-base font-semibold text-white shadow-lg transition hover:bg-red-600 active:scale-[0.98]">
-                    RSVP Now
-                </a>
-            </div>
-        </section>
     </main>
 
     {{-- ============ Footer ============ --}}
@@ -163,7 +124,7 @@
                 </a>
 
                 <nav class="flex flex-wrap items-center justify-center gap-6" aria-label="Footer">
-                    <a href="#about" class="text-sm text-slate-500 transition hover:text-blue-950">About</a>
+                    <a href="{{ route('flag-day.show') }}#about" class="text-sm text-slate-500 transition hover:text-blue-950">About</a>
                     <a href="{{ route('flag-day.show') }}#event-details" class="text-sm text-slate-500 transition hover:text-blue-950">Event Details</a>
                     <a href="{{ route('flag-day.show') }}#why-we-celebrate" class="text-sm text-slate-500 transition hover:text-blue-950">Why We Celebrate</a>
                     <a href="{{ route('flag-day.show') }}" class="text-sm text-slate-500 transition hover:text-blue-950">The 179th Flag Day</a>
