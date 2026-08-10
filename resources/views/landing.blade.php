@@ -30,8 +30,8 @@
 
             <nav class="hidden items-center gap-8 md:flex" aria-label="Primary">
                 <a href="#about" class="text-sm font-medium text-slate-600 transition hover:text-blue-950">About</a>
-                <a href="#event-details" class="text-sm font-medium text-slate-600 transition hover:text-blue-950">Event Details</a>
-                <a href="#why-we-celebrate" class="text-sm font-medium text-slate-600 transition hover:text-blue-950">Why We Celebrate</a>
+                <a href="{{ route('flag-day.show') }}#event-details" class="text-sm font-medium text-slate-600 transition hover:text-blue-950">Event Details</a>
+                <a href="{{ route('flag-day.show') }}#why-we-celebrate" class="text-sm font-medium text-slate-600 transition hover:text-blue-950">Why We Celebrate</a>
                 <a href="{{ route('flag-day.show') }}" class="text-sm font-medium text-slate-600 transition hover:text-blue-950">The 179th Flag Day</a>
             </nav>
 
@@ -80,14 +80,42 @@
                 </div>
             </div>
 
-            {{-- Flag visual --}}
-            <div class="relative flex justify-center pb-16 sm:pb-24" style="perspective: 800px;">
-                <div class="flex flex-col items-center">
-                    <div class="animate-flag-wave drop-shadow-md">
-                        <x-liberian-flag class="h-auto w-48 sm:w-64" />
+            {{-- Event detail cards --}}
+            <div class="relative mx-auto max-w-4xl px-6 pb-20 sm:pb-28 lg:px-8">
+                <div class="animate-fade-in-up grid gap-4 sm:grid-cols-3 sm:gap-6 [animation-delay:400ms]">
+                    <div class="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm transition hover:shadow-md">
+                        <div class="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-red-50 text-red-700">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+                                <rect x="3" y="4.5" width="18" height="16" rx="2" />
+                                <path d="M3 9.5h18M8 3v3M16 3v3" />
+                            </svg>
+                        </div>
+                        <h3 class="mt-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Date</h3>
+                        <p class="mt-1 text-base font-bold text-blue-950">{{ date('l, F j, Y', strtotime(config('event.date'))) }}</p>
                     </div>
-                    <div class="h-40 w-1.5 rounded-b-sm bg-gradient-to-b from-slate-300 to-slate-400 sm:h-56"></div>
-                    <div class="h-2 w-16 rounded-full bg-slate-300 sm:w-20"></div>
+
+                    <div class="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm transition hover:shadow-md">
+                        <div class="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-red-50 text-red-700">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+                                <path d="M12 21s-7-6.1-7-11.5A7 7 0 0119 9.5C19 14.9 12 21 12 21z" />
+                                <circle cx="12" cy="9.5" r="2.25" />
+                            </svg>
+                        </div>
+                        <h3 class="mt-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Venue</h3>
+                        <p class="mt-1 text-base font-bold text-blue-950">{{ config('event.venue') }}</p>
+                        <p class="text-sm text-slate-500">{{ config('event.venue_address') }}</p>
+                    </div>
+
+                    <div class="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm transition hover:shadow-md">
+                        <div class="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-red-50 text-red-700">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+                                <circle cx="12" cy="12" r="8.5" />
+                                <path d="M12 7.5V12l3 2" />
+                            </svg>
+                        </div>
+                        <h3 class="mt-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Time</h3>
+                        <p class="mt-1 text-base font-bold text-blue-950">{{ date('g:i A', strtotime(config('event.start_time'))) }}</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -121,93 +149,6 @@
                         </div>
                     </div>
                     <div class="absolute -bottom-4 -right-4 -z-10 hidden h-full w-full rounded-2xl border-2 border-red-700/20 sm:block"></div>
-                </div>
-            </div>
-        </section>
-
-        {{-- ============ Event Details ============ --}}
-        {{-- Placeholder logistics below — update once the venue and program schedule are finalized --}}
-        <section id="event-details" class="bg-slate-50 py-20 sm:py-28">
-            <div class="mx-auto max-w-7xl px-6 lg:px-8">
-                <div class="mx-auto max-w-2xl text-center">
-                    <span class="text-sm font-semibold uppercase tracking-wider text-red-700">Event Details</span>
-                    <h2 class="mt-3 text-3xl font-bold tracking-tight text-blue-950 sm:text-4xl">
-                        Where and When to Join Us
-                    </h2>
-                </div>
-
-                <div class="mx-auto mt-14 grid max-w-5xl gap-6 sm:grid-cols-3">
-                    <div class="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm transition hover:shadow-md">
-                        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-700">
-                            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
-                                <rect x="3" y="4.5" width="18" height="16" rx="2" />
-                                <path d="M3 9.5h18M8 3v3M16 3v3" />
-                            </svg>
-                        </div>
-                        <h3 class="mt-4 text-sm font-semibold uppercase tracking-wider text-slate-500">Date</h3>
-                        <p class="mt-1 text-lg font-bold text-blue-950">{{ date('l, F j', strtotime(config('event.date'))) }}</p>
-                    </div>
-
-                    <div class="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm transition hover:shadow-md">
-                        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-700">
-                            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
-                                <circle cx="12" cy="12" r="8.5" />
-                                <path d="M12 7.5V12l3 2" />
-                            </svg>
-                        </div>
-                        <h3 class="mt-4 text-sm font-semibold uppercase tracking-wider text-slate-500">Time</h3>
-                        <p class="mt-1 text-lg font-bold text-blue-950">{{ date('g:i A', strtotime(config('event.start_time'))) }}</p>
-                    </div>
-
-                    <div class="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm transition hover:shadow-md">
-                        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-700">
-                            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
-                                <path d="M12 21s-7-6.1-7-11.5A7 7 0 0119 9.5C19 14.9 12 21 12 21z" />
-                                <circle cx="12" cy="9.5" r="2.25" />
-                            </svg>
-                        </div>
-                        <h3 class="mt-4 text-sm font-semibold uppercase tracking-wider text-slate-500">Venue</h3>
-                        <p class="mt-1 text-lg font-bold text-blue-950">{{ config('event.venue') }}</p>
-                        <p class="text-sm text-slate-500">{{ config('event.venue_address') }}</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        {{-- ============ Why We Celebrate ============ --}}
-        <section id="why-we-celebrate" class="mx-auto max-w-7xl px-6 py-20 sm:py-28 lg:px-8">
-            <div class="mx-auto max-w-2xl text-center">
-                <span class="text-sm font-semibold uppercase tracking-wider text-red-700">Why We Celebrate</span>
-                <h2 class="mt-3 text-3xl font-bold tracking-tight text-blue-950 sm:text-4xl">
-                    What Our Flag Represents
-                </h2>
-                <p class="mt-4 leading-relaxed text-slate-600">
-                    Every element of the Liberian flag carries meaning — a reminder of where we come from and the
-                    values that hold us together as one nation.
-                </p>
-            </div>
-
-            <div class="mx-auto mt-14 grid max-w-5xl gap-6 sm:grid-cols-3">
-                <div class="rounded-2xl bg-slate-50 p-8">
-                    <div class="text-3xl font-extrabold text-red-700">11</div>
-                    <h3 class="mt-2 font-semibold text-blue-950">Eleven Stripes</h3>
-                    <p class="mt-2 text-sm leading-relaxed text-slate-600">
-                        Representing the eleven signatories of Liberia's Declaration of Independence.
-                    </p>
-                </div>
-                <div class="rounded-2xl bg-slate-50 p-8">
-                    <div class="text-3xl font-extrabold text-red-700">1</div>
-                    <h3 class="mt-2 font-semibold text-blue-950">The Lone Star</h3>
-                    <p class="mt-2 text-sm leading-relaxed text-slate-600">
-                        Symbolizing Liberia's status as the first independent republic in Africa.
-                    </p>
-                </div>
-                <div class="rounded-2xl bg-slate-50 p-8">
-                    <div class="text-3xl font-extrabold text-red-700">3</div>
-                    <h3 class="mt-2 font-semibold text-blue-950">Red, White &amp; Blue</h3>
-                    <p class="mt-2 text-sm leading-relaxed text-slate-600">
-                        Colors representing valor, purity, and liberty — the founding ideals of our republic.
-                    </p>
                 </div>
             </div>
         </section>
@@ -246,8 +187,8 @@
 
                 <nav class="flex flex-wrap items-center justify-center gap-6" aria-label="Footer">
                     <a href="#about" class="text-sm text-slate-500 transition hover:text-blue-950">About</a>
-                    <a href="#event-details" class="text-sm text-slate-500 transition hover:text-blue-950">Event Details</a>
-                    <a href="#why-we-celebrate" class="text-sm text-slate-500 transition hover:text-blue-950">Why We Celebrate</a>
+                    <a href="{{ route('flag-day.show') }}#event-details" class="text-sm text-slate-500 transition hover:text-blue-950">Event Details</a>
+                    <a href="{{ route('flag-day.show') }}#why-we-celebrate" class="text-sm text-slate-500 transition hover:text-blue-950">Why We Celebrate</a>
                     <a href="{{ route('flag-day.show') }}" class="text-sm text-slate-500 transition hover:text-blue-950">The 179th Flag Day</a>
                 </nav>
             </div>

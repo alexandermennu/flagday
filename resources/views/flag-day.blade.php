@@ -112,7 +112,7 @@
         </section>
 
         {{-- ============ Quick Facts Strip ============ --}}
-        <section class="border-b border-slate-200 bg-white">
+        <section id="event-details" class="border-b border-slate-200 bg-white">
             <div class="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-6 py-8 sm:grid-cols-4 lg:px-8">
                 <div class="flex items-center gap-3">
                     <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-700">
@@ -176,6 +176,46 @@
                 <div class="relative flex items-center justify-center" style="perspective: 1200px;">
                     <div class="animate-flag-wave drop-shadow-2xl">
                         <x-liberian-flag class="h-auto w-64 sm:w-80 lg:w-[27rem]" />
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        {{-- ============ Why We Celebrate ============ --}}
+        <section id="why-we-celebrate" class="bg-slate-50 py-20 sm:py-28">
+            <div class="mx-auto max-w-7xl px-6 lg:px-8">
+                <div class="mx-auto max-w-2xl text-center">
+                    <span class="text-sm font-semibold uppercase tracking-wider text-red-700">Why We Celebrate</span>
+                    <h2 class="mt-3 text-3xl font-bold tracking-tight text-blue-950 sm:text-4xl">
+                        What Our Flag Represents
+                    </h2>
+                    <p class="mt-4 leading-relaxed text-slate-600">
+                        Every element of the Liberian flag carries meaning — a reminder of where we come from and the
+                        values that hold us together as one nation.
+                    </p>
+                </div>
+
+                <div class="mx-auto mt-14 grid max-w-5xl gap-6 sm:grid-cols-3">
+                    <div class="rounded-2xl bg-white p-8 shadow-sm">
+                        <div class="text-3xl font-extrabold text-red-700">11</div>
+                        <h3 class="mt-2 font-semibold text-blue-950">Eleven Stripes</h3>
+                        <p class="mt-2 text-sm leading-relaxed text-slate-600">
+                            Representing the eleven signatories of Liberia's Declaration of Independence.
+                        </p>
+                    </div>
+                    <div class="rounded-2xl bg-white p-8 shadow-sm">
+                        <div class="text-3xl font-extrabold text-red-700">1</div>
+                        <h3 class="mt-2 font-semibold text-blue-950">The Lone Star</h3>
+                        <p class="mt-2 text-sm leading-relaxed text-slate-600">
+                            Symbolizing Liberia's status as the first independent republic in Africa.
+                        </p>
+                    </div>
+                    <div class="rounded-2xl bg-white p-8 shadow-sm">
+                        <div class="text-3xl font-extrabold text-red-700">3</div>
+                        <h3 class="mt-2 font-semibold text-blue-950">Red, White &amp; Blue</h3>
+                        <p class="mt-2 text-sm leading-relaxed text-slate-600">
+                            Colors representing valor, purity, and liberty — the founding ideals of our republic.
+                        </p>
                     </div>
                 </div>
             </div>
