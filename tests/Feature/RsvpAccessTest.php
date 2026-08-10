@@ -30,4 +30,15 @@ class RsvpAccessTest extends TestCase
         $response->assertRedirect(route('rsvp.create'));
         $this->get(route('rsvp.create'))->assertOk();
     }
+
+    public function test_passcode_check_ignores_case_and_surrounding_whitespace(): void
+    {
+        // Covers mobile auto-capitalization and codes pasted with a trailing space/newline.
+        $response = $this->post(route('rsvp.access.store'), [
+            'passcode' => ' '.strtolower(config('event.rsvp_passcode'))." \n",
+        ]);
+
+        $response->assertRedirect(route('rsvp.create'));
+        $this->get(route('rsvp.create'))->assertOk();
+    }
 }

@@ -35,6 +35,7 @@
                 <div>
                     <label for="passcode" class="mb-1.5 block text-sm font-semibold text-slate-700">Access Code</label>
                     <input type="text" name="passcode" id="passcode" required autofocus autocomplete="off"
+                           autocapitalize="characters" autocorrect="off" spellcheck="false"
                            class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-center text-sm font-semibold uppercase tracking-widest focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
                 </div>
 

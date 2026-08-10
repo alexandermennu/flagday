@@ -17,7 +17,13 @@ class RsvpAccessController extends Controller
     {
         $request->validate(['passcode' => 'required|string']);
 
-        if (! hash_equals((string) config('event.rsvp_passcode'), $request->input('passcode'))) {
+        // Case-insensitive and whitespace-trimmed — mobile keyboards auto-capitalize the
+        // first letter, and codes pasted from a text message often carry a trailing space
+        // or newline, which would otherwise fail an exact match for no visible reason.
+        $expected = strtoupper(trim((string) config('event.rsvp_passcode')));
+        $given = strtoupper(trim((string) $request->input('passcode')));
+
+        if (! hash_equals($expected, $given)) {
             return back()->withErrors(['passcode' => 'That access code is incorrect. Please try again.']);
         }
 
