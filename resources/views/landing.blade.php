@@ -8,7 +8,7 @@
     <title>National Flag Day {{ date('Y') }} — RSVP | Republic of Liberia</title>
 
     @fonts
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/site.js'])
 </head>
 <body class="bg-white font-sans text-slate-900 antialiased">
 
@@ -17,30 +17,7 @@
         Skip to content
     </a>
 
-    {{-- ============ Header ============ --}}
-    <header class="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur">
-        <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-3 lg:px-8">
-            <a href="{{ route('landing') }}" class="flex items-center gap-3">
-                <x-seal class="h-10 w-10 shrink-0" />
-                <span class="leading-tight">
-                    <span class="block text-[11px] font-semibold uppercase tracking-wider text-red-700">Republic of Liberia</span>
-                    <span class="block text-sm font-bold text-blue-950">Ministry of Education</span>
-                </span>
-            </a>
-
-            <nav class="hidden items-center gap-8 md:flex" aria-label="Primary">
-                <a href="#about" class="text-sm font-medium text-slate-600 transition hover:text-blue-950">About</a>
-                <a href="{{ route('flag-day.show') }}#event-details" class="text-sm font-medium text-slate-600 transition hover:text-blue-950">Event Details</a>
-                <a href="{{ route('flag-day.show') }}#why-we-celebrate" class="text-sm font-medium text-slate-600 transition hover:text-blue-950">Why We Celebrate</a>
-                <a href="{{ route('flag-day.show') }}" class="text-sm font-medium text-slate-600 transition hover:text-blue-950">The 179th Flag Day</a>
-            </nav>
-
-            <a href="{{ route('rsvp.create') }}"
-               class="inline-flex items-center gap-2 rounded-md bg-red-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-800 active:scale-[0.98]">
-                RSVP Now
-            </a>
-        </div>
-    </header>
+    <x-site-header />
 
     <main id="main-content">
         {{-- ============ Hero ============ --}}

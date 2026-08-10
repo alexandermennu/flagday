@@ -8,7 +8,7 @@
     <title>{{ \Illuminate\Support\Number::ordinal(date('Y', strtotime(config('event.date'))) - 1847) }} National Flag Day Celebration | Ministry of Education, Republic of Liberia</title>
 
     @fonts
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/flag-day.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/site.js'])
 </head>
 <body class="bg-white font-sans text-slate-900 antialiased">
 
@@ -20,57 +20,7 @@
         $edition = \Illuminate\Support\Number::ordinal(date('Y', strtotime(config('event.date'))) - 1847);
     @endphp
 
-    {{-- ============ Header ============ --}}
-    <header class="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur">
-        <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-3 lg:px-8">
-            <a href="{{ route('landing') }}" class="flex items-center gap-3">
-                <x-seal class="h-10 w-10 shrink-0" />
-                <span class="leading-tight">
-                    <span class="block text-[11px] font-semibold uppercase tracking-wider text-red-700">Republic of Liberia</span>
-                    <span class="block text-sm font-bold text-blue-950">Ministry of Education</span>
-                </span>
-            </a>
-
-            <nav class="hidden items-center gap-7 md:flex" aria-label="Primary">
-                <a href="{{ route('landing') }}" class="text-sm font-medium text-slate-600 transition hover:text-blue-950">Home</a>
-                <a href="#about" class="text-sm font-medium text-slate-600 transition hover:text-blue-950">About</a>
-                <a href="{{ route('flag-day.show') }}" aria-current="page" class="border-b-2 border-red-700 pb-0.5 text-sm font-semibold text-blue-950">The 179th Flag Day</a>
-                <a href="#gallery" class="text-sm font-medium text-slate-600 transition hover:text-blue-950">Gallery</a>
-                <a href="{{ route('rsvp.create') }}" class="text-sm font-medium text-slate-600 transition hover:text-blue-950">RSVP</a>
-                <a href="#contact" class="text-sm font-medium text-slate-600 transition hover:text-blue-950">Contact</a>
-            </nav>
-
-            <div class="flex items-center gap-3">
-                <a href="{{ route('rsvp.create') }}"
-                   class="hidden items-center gap-2 rounded-md bg-red-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-800 active:scale-[0.98] sm:inline-flex">
-                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
-                        <rect x="3" y="4.5" width="18" height="16" rx="2" />
-                        <path d="M3 9.5h18M8 3v3M16 3v3" />
-                    </svg>
-                    RSVP Now
-                </a>
-
-                <button type="button" id="mobile-menu-toggle" aria-expanded="false" aria-controls="mobile-menu"
-                        class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-300 text-slate-600 md:hidden">
-                    <span class="sr-only">Toggle menu</span>
-                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-
-        <div id="mobile-menu" class="hidden border-t border-slate-200 bg-white px-6 py-4 md:hidden">
-            <nav class="flex flex-col gap-1" aria-label="Mobile">
-                <a href="{{ route('landing') }}" class="rounded-md px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50">Home</a>
-                <a href="#about" class="rounded-md px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50">About</a>
-                <a href="{{ route('flag-day.show') }}" class="rounded-md bg-red-50 px-3 py-2.5 text-sm font-semibold text-red-700">The 179th Flag Day</a>
-                <a href="#gallery" class="rounded-md px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50">Gallery</a>
-                <a href="{{ route('rsvp.create') }}" class="rounded-md px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50">RSVP</a>
-                <a href="#contact" class="rounded-md px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50">Contact</a>
-            </nav>
-        </div>
-    </header>
+    <x-site-header />
 
     <main id="main-content">
         {{-- ============ Hero ============ --}}
