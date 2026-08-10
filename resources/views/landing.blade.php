@@ -103,7 +103,7 @@
                         </div>
                         <h3 class="mt-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Parade / Outdoor Program</h3>
                         <p class="mt-1 text-base font-bold text-blue-950">Barclay Training Center (BTC)</p>
-                        <p class="text-sm text-slate-500">UN Drive, Monrovia &middot; 6:00 PM</p>
+                        <p class="text-sm text-slate-500">UN Drive, Monrovia &middot; 6:00 AM</p>
                     </div>
                 </div>
             </div>
