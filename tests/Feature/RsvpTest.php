@@ -14,6 +14,15 @@ class RsvpTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // The RSVP form sits behind a passcode gate (see RsvpAccessTest) — these tests
+        // exercise the form itself, so start each one already past that gate.
+        $this->withSession(['rsvp_access_granted' => true]);
+    }
+
     private function payload(array $overrides = []): array
     {
         return array_merge([

@@ -30,4 +30,6 @@ return [
 
     'contact_website' => env('EVENT_CONTACT_WEBSITE', 'www.moe.gov.lr'),
 
+    'rsvp_passcode' => env('EVENT_RSVP_PASSCODE', 'FLAGDAY179'),
+
 ];

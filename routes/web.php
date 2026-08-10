@@ -8,7 +8,9 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\FlagDayController;
 use App\Http\Controllers\PassVerificationController;
+use App\Http\Controllers\RsvpAccessController;
 use App\Http\Controllers\RsvpController;
+use App\Http\Middleware\RequireRsvpPasscode;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -17,10 +19,19 @@ Route::get('/', function () {
 
 Route::get('/flag-day', [FlagDayController::class, 'show'])->name('flag-day.show');
 
-Route::get('/rsvp', [RsvpController::class, 'create'])->name('rsvp.create');
-Route::post('/rsvp', [RsvpController::class, 'store'])
+// The RSVP form sits behind a shared passcode (see RequireRsvpPasscode) — anyone can
+// click "RSVP" in the nav, but must enter the code before the form itself loads.
+Route::get('/rsvp/access', [RsvpAccessController::class, 'show'])->name('rsvp.access');
+Route::post('/rsvp/access', [RsvpAccessController::class, 'store'])
     ->middleware('throttle:10,1')
-    ->name('rsvp.store');
+    ->name('rsvp.access.store');
+
+Route::middleware(RequireRsvpPasscode::class)->group(function () {
+    Route::get('/rsvp', [RsvpController::class, 'create'])->name('rsvp.create');
+    Route::post('/rsvp', [RsvpController::class, 'store'])
+        ->middleware('throttle:10,1')
+        ->name('rsvp.store');
+});
 Route::get('/rsvp/thank-you', [RsvpController::class, 'thankYou'])->name('rsvp.thank-you');
 
 // Public, unauthenticated — the QR code on the PDF Event Pass points here.
