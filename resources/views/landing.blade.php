@@ -22,9 +22,10 @@
     <main id="main-content" class="flex flex-1 flex-col">
         {{-- ============ Hero ============ --}}
         <section class="relative flex flex-1 flex-col justify-center overflow-hidden bg-gradient-to-b from-slate-50 to-white">
-            {{-- Watermark seal --}}
-            <div class="pointer-events-none absolute inset-0 flex items-center justify-center">
-                <x-seal class="h-[32rem] w-[32rem] opacity-[0.04]" />
+            {{-- Watermark --}}
+            <div class="pointer-events-none absolute inset-0">
+                <img src="{{ asset('images/hero/monument.png') }}" alt="" aria-hidden="true"
+                     class="h-full w-full object-cover object-[25%_45%] opacity-[0.04]">
             </div>
 
             <div class="relative mx-auto max-w-5xl px-6 pt-10 pb-6 text-center sm:pt-12 lg:px-8">
