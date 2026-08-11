@@ -57,8 +57,15 @@
                 </div>
             </div>
 
+            {{-- County flags banner --}}
+            <div class="animate-fade-in-up relative mx-auto w-full max-w-5xl px-6 py-2 [animation-delay:350ms] lg:px-8">
+                <img src="{{ asset('images/hero/lib-county-flags-banner.png') }}"
+                     alt="Flags of Liberia's fifteen counties flying alongside the national flag"
+                     class="h-14 w-full object-cover object-[center_35%] sm:h-20 lg:h-24">
+            </div>
+
             {{-- Event detail cards --}}
-            <div class="relative mx-auto max-w-5xl px-6 pb-10 sm:pb-14 lg:px-8">
+            <div class="relative mx-auto max-w-5xl px-6 pb-8 sm:pb-10 lg:px-8">
                 <div class="animate-fade-in-up grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 [animation-delay:400ms]">
                     <div class="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm transition hover:shadow-md">
                         <div class="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-red-50 text-red-700">
