@@ -318,54 +318,43 @@
                     </button>
                 </div>
 
-                {{-- Participating Schools --}}
+                {{-- Official Schools Parade Line-Up --}}
                 <div id="schools">
-                    <h3 class="border-l-4 border-red-700 pl-3 text-lg font-bold text-blue-950">Participating Schools</h3>
+                    <h3 class="border-l-4 border-red-700 pl-3 text-lg font-bold text-blue-950">Official Schools Parade Line-Up</h3>
 
-                    <div class="mt-6 space-y-3">
-                        <div class="relative">
-                            <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path stroke-linecap="round" d="M21 21l-4.35-4.35" /></svg>
-                            <input type="text" id="school-search" placeholder="Search schools&hellip;"
-                                   class="w-full rounded-md border border-slate-300 py-2.5 pl-9 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <select id="school-county-filter" class="w-full rounded-md border border-slate-300 py-2.5 px-3 text-sm text-slate-700 focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
-                                <option value="">All Counties</option>
-                                @foreach ($counties as $county)
-                                    <option value="{{ strtolower($county) }}">{{ $county }}</option>
-                                @endforeach
-                            </select>
-                            <select id="school-category-filter" class="w-full rounded-md border border-slate-300 py-2.5 px-3 text-sm text-slate-700 focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
-                                <option value="">All Categories</option>
-                                @foreach ($categories as $category)
-                                    <option value="{{ strtolower($category) }}">{{ $category }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                    <div class="mt-6 relative">
+                        <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path stroke-linecap="round" d="M21 21l-4.35-4.35" /></svg>
+                        <input type="text" id="school-search" placeholder="Search schools&hellip;"
+                               class="w-full rounded-md border border-slate-300 py-2.5 pl-9 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
                     </div>
 
-                    <ul class="mt-5 space-y-1">
-                        @foreach ($schools as $school)
-                            <li data-school-row
-                                data-school-name="{{ strtolower($school['name']) }}"
-                                data-school-county="{{ strtolower($school['county']) }}"
-                                data-school-category="{{ strtolower($school['category']) }}"
-                                class="flex items-center justify-between gap-3 rounded-md px-2.5 py-2.5 text-sm transition hover:bg-slate-50">
-                                <span class="flex items-center gap-2.5 text-slate-700">
-                                    <svg class="h-4 w-4 shrink-0 text-red-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M12 3l9 4.5-9 4.5-9-4.5L12 3z" /><path d="M6.5 9.75V15c0 1.4 2.46 2.5 5.5 2.5s5.5-1.1 5.5-2.5V9.75" /></svg>
-                                    {{ $school['name'] }}
-                                </span>
-                                <span class="shrink-0 text-xs text-slate-400">{{ $school['county'] }}</span>
-                            </li>
-                        @endforeach
-                        <li id="school-empty-state" class="hidden px-2.5 py-4 text-center text-sm text-slate-400">
-                            No schools match your search.
-                        </li>
-                    </ul>
-                    <button type="button" title="Coming soon"
-                            class="mt-4 inline-flex items-center gap-2 rounded-md border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
-                        View All Schools
-                    </button>
+                    <div class="mt-5 overflow-x-auto">
+                        <table class="w-full min-w-[560px] border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-blue-950 text-left text-white">
+                                    <th class="px-3 py-2.5 font-semibold">Position</th>
+                                    <th class="px-3 py-2.5 font-semibold">Name of School</th>
+                                    <th class="px-3 py-2.5 font-semibold">Last Year's Rank</th>
+                                    <th class="px-3 py-2.5 font-semibold">Contact Number</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($schools as $school)
+                                    <tr data-school-row
+                                        data-school-name="{{ strtolower($school['name']) }}"
+                                        class="border-b border-slate-200 last:border-0 hover:bg-slate-50">
+                                        <td class="px-3 py-2.5 text-slate-500">{{ $school['position'] }}</td>
+                                        <td class="px-3 py-2.5 font-medium text-slate-700">{{ $school['name'] }}</td>
+                                        <td class="px-3 py-2.5 text-slate-600">{{ $school['rank'] }}</td>
+                                        <td class="px-3 py-2.5 text-slate-500">{{ $school['contact'] }}</td>
+                                    </tr>
+                                @endforeach
+                                <tr id="school-empty-state" class="hidden">
+                                    <td colspan="4" class="px-3 py-4 text-center text-sm text-slate-400">No schools match your search.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 {{-- Venue Information --}}

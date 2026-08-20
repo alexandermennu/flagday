@@ -14,7 +14,7 @@ return [
 
     'venue' => env('EVENT_VENUE', 'The Executive Pavilion'),
 
-    'venue_address' => env('EVENT_VENUE_ADDRESS', 'Monrovia, Liberia'),
+    'venue_address' => env('EVENT_VENUE_ADDRESS', 'Ashmun/Broad Streets, Monrovia'),
 
     'dress_code' => env('EVENT_DRESS_CODE', 'National / Formal Attire'),
 
