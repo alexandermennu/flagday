@@ -12,7 +12,7 @@ return [
 
     'timezone' => env('EVENT_TIMEZONE', 'Africa/Monrovia'),
 
-    'venue' => env('EVENT_VENUE', 'Centennial Pavilion'),
+    'venue' => env('EVENT_VENUE', 'The Executive Pavilion'),
 
     'venue_address' => env('EVENT_VENUE_ADDRESS', 'Monrovia, Liberia'),
 
