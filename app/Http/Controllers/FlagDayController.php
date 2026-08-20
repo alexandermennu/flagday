@@ -6,9 +6,9 @@ use Illuminate\View\View;
 
 /**
  * The 179th Flag Day information hub — a standalone page separate from the RSVP
- * landing page. Programme, FAQ, and partner content below is placeholder
- * data pending real content from the Ministry. Schools reflect the official
- * parade line-up.
+ * landing page. Programme and FAQ content below is placeholder data pending
+ * real content from the Ministry. Schools reflect the official parade
+ * line-up; partners reflect the official partner list.
  */
 class FlagDayController extends Controller
 {
@@ -81,12 +81,9 @@ class FlagDayController extends Controller
         ];
 
         $partners = [
-            'Ministry of Education',
-            'National Flag Day Committee',
-            'UNICEF',
-            'UNDP',
-            'USAID',
-            'Alliance Française',
+            'Wahala Publishing House',
+            'National Tourism Authority',
+            'Governance Commission',
         ];
 
         return view('flag-day', compact('programme', 'schools', 'faqs', 'partners'));

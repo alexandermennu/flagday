@@ -439,7 +439,7 @@
         <section id="partners" class="border-y border-slate-200 bg-slate-50 py-16">
             <div class="mx-auto max-w-7xl px-6 lg:px-8">
                 <p class="text-center text-sm font-semibold uppercase tracking-wider text-slate-400">Our Partners</p>
-                <div class="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+                <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
                     @foreach ($partners as $partner)
                         <div class="flex h-16 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 text-center text-xs font-semibold uppercase tracking-wide text-slate-400">
                             {{ $partner }}
