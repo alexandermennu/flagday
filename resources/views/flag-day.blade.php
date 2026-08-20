@@ -264,11 +264,137 @@
                                 Read Profile
                                 <svg class="h-3.5 w-3.5 transition group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg>
                             </summary>
-                            <p class="mt-4 leading-relaxed text-slate-600">
-                                Minister Ngafuan has held senior posts across Liberia's government, including Foreign
-                                Minister and Finance Minister. This year's orator address will center on the role of
-                                sound stewardship and national unity in building a stronger Liberia.
-                            </p>
+                            <div class="mt-4 space-y-4 leading-relaxed text-slate-600">
+                                <div>
+                                    <p class="text-xs font-bold uppercase tracking-wider text-blue-950">Birth</p>
+                                    <p class="mt-1.5">
+                                        Augustine Kpehe Ngafuan was born on April 7, 1970, at the Old Maternity Health
+                                        Center in Monrovia, Liberia, to the union of Mr. Dennis Ngafuan (deceased) and
+                                        Mrs. Kpana Ngafuan.
+                                    </p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold uppercase tracking-wider text-blue-950">Education</p>
+                                    <p class="mt-1.5">
+                                        He began his elementary education at A. B. Tolbert Elementary School in Logan
+                                        Town in 1975. From 1976 to 1978 he continued his elementary education in his
+                                        hometown, Fangonda in Kolahun District, Lofa County, and later in Voinjama
+                                        City and Bolahun, Lofa County. He returned to Monrovia in 1979 and continued
+                                        his elementary education at A. B. Tolbert School before enrolling at Boatswain
+                                        Elementary and Junior High School in 1982. He completed his junior high
+                                        education at Boatswain in 1985 and enrolled in 1986 at the Booker Washington
+                                        Institute (BWI), where he graduated in 1989 with a Diploma in Bookkeeping,
+                                        graduating Valedictorian of the Class of 1989 and receiving the WAEC Merit
+                                        Award for Academic Excellence for earning the third-highest score in the WAEC
+                                        1989 nationwide exams, trailing two Indian students of St. Patrick's High
+                                        School by a slight margin.
+                                    </p>
+                                    <p class="mt-2.5">
+                                        He earned a Bachelor of Business Administration (BBA) in Accounting, with a
+                                        minor in Economics (summa cum laude), from the University of Liberia (2000).
+                                        Between June 1998 and February 2000, he served as President of the University
+                                        of Liberia Student Union (ULSU), representing nearly 12,000 students. He also
+                                        earned a Master of Business Administration (MBA) in Finance and Accounting
+                                        from the William E. Simon Graduate School of Business, University of
+                                        Rochester, New York, USA (2004).
+                                    </p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold uppercase tracking-wider text-blue-950">Professional Training</p>
+                                    <p class="mt-1.5">
+                                        Minister Ngafuan holds an Executive Certificate in Central Banking from the
+                                        Federal Reserve Bank of New York, and Executive Certificates from the Harvard
+                                        Kennedy School in Public Financial Management (PFM) and Leading Economic
+                                        Growth. He also holds an Executive Certificate in Leadership and Influence
+                                        from the Wharton School, University of Pennsylvania, USA.
+                                    </p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold uppercase tracking-wider text-blue-950">Professional Career</p>
+                                    <p class="mt-1.5">
+                                        Minister Ngafuan served at the Central Bank of Liberia from April 2000 to
+                                        February 2006, progressing from Bank Examiner to Banking Analyst and Head of
+                                        International Banking. From February 2006 to August 2008, he served as
+                                        Director General of the Bureau of the Budget, Republic of Liberia, having
+                                        been appointed by President Ellen Johnson Sirleaf at age 35, becoming the
+                                        youngest member of the Cabinet at the time. From August 2008 to February
+                                        2012, he served as Minister of Finance, Republic of Liberia. From February
+                                        2012 to October 2015, he served as Minister of Foreign Affairs and Dean of
+                                        the Cabinet. From May 2019 to December 2020, he was a Member of the Board of
+                                        Directors of Ecobank Liberia Limited and Chairman of the Audit Committee of
+                                        the Board. From December 2020 to September 2024, he was Country Manager of
+                                        the African Development Bank (AfDB), Uganda, where he managed a portfolio
+                                        exceeding US$2.2 billion. From April 2006 to December 2020, he served as
+                                        Secretary of the Board of Trustees, University of Liberia.
+                                    </p>
+                                    <p class="mt-2.5">
+                                        He returned to Liberia in September 2024 to serve his country in his current
+                                        position as Minister of Finance and Development Planning and technical Head
+                                        of Liberia's Economic Management Team.
+                                    </p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold uppercase tracking-wider text-blue-950">National Impact &amp; Major Achievements</p>
+                                    <p class="mt-2.5 text-sm font-semibold text-slate-700">As Minister of Finance (August 2008 &ndash; February 2012)</p>
+                                    <p class="mt-1.5">
+                                        Minister Ngafuan led Liberia to the HIPC Completion Point in 2010, securing
+                                        nearly US$5 billion in debt cancellation. He led the preparation and ensured
+                                        passage of Liberia's first-ever Public Financial Management (PFM) Law in
+                                        2009, and the introduction of the Integrated Financial Management Information
+                                        System (IFMIS) to improve transparency and efficiency in government budgeting
+                                        and accounting. He spearheaded the 2009 adoption of the first-ever accounting
+                                        standards for the Government of Liberia, the International Public Sector
+                                        Accounting Standards (IPSAS), and introduced direct deposit payments of
+                                        public sector wages and other reforms that strengthened transparency,
+                                        accountability, and service delivery. He mobilized financing for major
+                                        national infrastructure projects, including the Red Light&ndash;Gbarnga&ndash;Ganta&ndash;Guinea
+                                        Border Highway, the Monrovia to Buchanan Highway, and Fish Town to Harper
+                                        Highway.
+                                    </p>
+                                    <p class="mt-2.5 text-sm font-semibold text-slate-700">As Minister of Foreign Affairs (February 2012 &ndash; October 2015)</p>
+                                    <p class="mt-1.5">
+                                        Minister Ngafuan strengthened Liberia's bilateral and multilateral diplomatic
+                                        relations and mobilized international support for Liberia during the Ebola
+                                        crisis. He negotiated a US$60 million grant from China for construction of
+                                        what is now known as the EJS Ministerial Complex, and the first US$50 million
+                                        grant from Japan for the Somalia Drive Expansion Project. He spearheaded the
+                                        launch of the United States&ndash;Liberia Partnership Dialogue, as well as multiple
+                                        cooperation agreements and frameworks with other bilateral and multilateral
+                                        partners including Japan, Nigeria, and C&ocirc;te d'Ivoire.
+                                    </p>
+                                    <p class="mt-2.5 text-sm font-semibold text-slate-700">As Country Manager, African Development Bank (December 2020 &ndash; September 2024)</p>
+                                    <p class="mt-1.5">
+                                        Minister Ngafuan managed the Bank's Uganda portfolio, valued at more than
+                                        US$2.2 billion, and expanded it by nearly US$600 million while strengthening
+                                        implementation and development impact.
+                                    </p>
+                                    <p class="mt-2.5 text-sm font-semibold text-slate-700">As Minister of Finance and Development Planning (September 2024 &ndash; Present)</p>
+                                    <p class="mt-1.5">
+                                        Serving under the guidance of the President, Minister Ngafuan leads Liberia's
+                                        Economic Management Team during his second tenure heading the Ministry of
+                                        Finance and Development Planning. He oversaw the completion and launch of
+                                        Liberia's ARREST Agenda for Inclusive Development (AAID) 2025&ndash;2029 and the 15
+                                        County Development Agendas, and secured Liberia's re-eligibility for the
+                                        Millennium Challenge Corporation (MCC) Compact. He led the expansion of
+                                        Liberia's national budget to a historic US$1.3 billion, the largest in the
+                                        country's recorded history, and continues to lead fiscal reforms focused on
+                                        economic recovery, macroeconomic stability, and sustainable growth. He
+                                        currently chairs the five-nation constituency at the African Development
+                                        Bank, comprising Ghana, The Gambia, Liberia, Sierra Leone, and Sudan, and
+                                        chairs the Board of Directors of the Liberia Bank for Development and
+                                        Investment (LBDI).
+                                    </p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold uppercase tracking-wider text-blue-950">Beyond Public Service</p>
+                                    <p class="mt-1.5">
+                                        Minister Ngafuan is an accomplished poet whose work, &ldquo;The African
+                                        Teacher,&rdquo; won Second Prize in the BBC Network Africa Poetry Competition
+                                        in 2001. Beyond his professional and literary achievements, he is an avid
+                                        supporter and player of soccer. He is married and blessed with four children.
+                                    </p>
+                                </div>
+                            </div>
                         </details>
                     </div>
                 </div>
