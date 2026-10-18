@@ -9,8 +9,10 @@ use Illuminate\Support\Str;
 
 /**
  * Read-side helpers for the graduation event content in config/graduation.php and the
- * RSVP event in config/event.php. Any detail that hasn't been set yet renders as a
- * "To be announced" placeholder rather than a guessed value.
+ * RSVP event in config/event.php. When an event has a published program (admin →
+ * Programs), its date, time, venue and venue address come from that program record
+ * instead of config. Any detail that hasn't been set renders as a "To be announced"
+ * placeholder rather than a guessed value.
  */
 class Graduation
 {
@@ -21,30 +23,34 @@ class Graduation
      */
     public static function events(): Collection
     {
-        $published = self::eventsWithPublishedProgram();
+        $published = self::publishedPrograms();
 
         return collect(config('graduation.events', []))
-            ->map(fn (array $event, string $slug) => self::present($slug, $event, in_array($slug, $published, true)));
+            ->map(fn (array $event, string $slug) => self::present($slug, $event, $published->get($slug)));
     }
 
     /**
-     * Event slugs that have a program published from the admin. A published program takes
-     * precedence over a program_pdf URL set in config.
+     * The published program for each event, keyed by type — the same program
+     * Program::publishedFor() serves the PDF of (latest published wins). Only the columns
+     * the public pages need are loaded; the PDF itself is never pulled in here.
      *
-     * @return array<int, string>
+     * @return Collection<string, Program>
      */
-    private static function eventsWithPublishedProgram(): array
+    private static function publishedPrograms(): Collection
     {
         try {
             return Program::query()
+                ->select(['id', 'type', 'event_date', 'event_time', 'venue_name', 'venue_address', 'published_at'])
                 ->whereNotNull('published_at')
                 ->whereHas('pdf', fn ($query) => $query->whereNotNull('published_data'))
-                ->distinct()
-                ->pluck('type')
-                ->all();
+                ->orderByDesc('published_at')
+                ->orderByDesc('id')
+                ->get()
+                ->unique('type')
+                ->keyBy('type');
         } catch (QueryException) {
             // The programs tables don't exist yet (migrations not run): fall back to config.
-            return [];
+            return collect();
         }
     }
 
@@ -83,10 +89,23 @@ class Graduation
      * @param  array<string, mixed>  $event
      * @return array<string, mixed>
      */
-    private static function present(string $slug, array $event, bool $hasPublishedProgram = false): array
+    private static function present(string $slug, array $event, ?Program $published = null): array
     {
         $pdf = $event['program_pdf'] ?? null;
         $configUrl = filled($pdf) ? (Str::startsWith($pdf, ['http://', 'https://']) ? $pdf : asset($pdf)) : null;
+        $hasPublishedProgram = $published !== null;
+
+        // A published program's details replace config entirely — an empty field shows
+        // "To be announced" rather than mixing in another source. (The program form has no
+        // dress code, so that one still comes from config.)
+        if ($published) {
+            $event = array_merge($event, [
+                'date' => $published->event_date?->toDateString(),
+                'time' => $published->event_time,
+                'venue' => $published->venue_name,
+                'venue_address' => $published->venue_address,
+            ]);
+        }
 
         return array_merge($event, [
             'slug' => $slug,

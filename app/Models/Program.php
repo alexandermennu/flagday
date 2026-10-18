@@ -124,7 +124,8 @@ class Program extends Model
             ->where('type', $type)
             ->whereNotNull('published_at')
             ->whereHas('pdf', fn ($query) => $query->whereNotNull('published_data'))
-            ->latest('published_at')
+            ->orderByDesc('published_at')
+            ->orderByDesc('id')
             ->first();
     }
 
