@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AttendeeController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\CheckInController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ProgramController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\EventController;
@@ -69,5 +70,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('checkin/{attendee:invite_token}', [CheckInController::class, 'show'])->name('checkin.show');
 
         Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+
+        Route::resource('programs', ProgramController::class)->except('show');
+        Route::post('programs/{program}/generate', [ProgramController::class, 'generate'])->name('programs.generate');
+        Route::post('programs/{program}/publish', [ProgramController::class, 'publish'])->name('programs.publish');
+        Route::get('programs/{program}/download', [ProgramController::class, 'download'])->name('programs.download');
+        Route::get('programs/{program}/preview', [ProgramController::class, 'preview'])->name('programs.preview');
     });
 });

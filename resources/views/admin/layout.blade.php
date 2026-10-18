@@ -39,6 +39,10 @@
                    class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition {{ request()->routeIs('admin.reports.*') ? 'bg-ink text-white' : 'text-slate-600 hover:bg-slate-100' }}">
                     <span aria-hidden="true">📈</span> Reports
                 </a>
+                <a href="{{ route('admin.programs.index') }}"
+                   class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition {{ request()->routeIs('admin.programs.*') ? 'bg-ink text-white' : 'text-slate-600 hover:bg-slate-100' }}">
+                    <span aria-hidden="true">📘</span> Programs
+                </a>
             </nav>
         </aside>
 
