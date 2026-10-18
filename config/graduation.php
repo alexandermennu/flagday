@@ -29,6 +29,11 @@ return [
 
     'contact_phone' => env('GRAD_CONTACT_PHONE'),
 
+    // Largest Convocation program PDF an administrator may upload, in KB (default 20 MB).
+    // PHP's upload_max_filesize / post_max_size must be at least this large, and uploads
+    // are stored in the database, so keep it well under the database's packet limit.
+    'program_pdf_max_kb' => (int) env('PROGRAM_PDF_MAX_KB', 20480),
+
     'events' => [
 
         'honors-ball' => [

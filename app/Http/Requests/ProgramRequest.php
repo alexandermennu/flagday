@@ -33,13 +33,33 @@ class ProgramRequest extends FormRequest
     }
 
     /**
+     * Form sections each type does not use. Their (hidden) fields are excluded from
+     * validation and from the saved data, so a type switch never blocks a save on a field
+     * the admin can't see, and never wipes content saved for another type.
+     */
+    private const UNUSED_BY_TYPE = [
+        'honors-ball' => [],
+        'baccalaureate' => ['mark_top', 'mark_script', 'mark_bottom', 'honors_line1', 'honors_ribbon', 'honors_line2', 'honors_line3', 'awards_heading', 'awards'],
+        'convocation' => ['mark_top', 'mark_script', 'mark_bottom', 'honors_line1', 'honors_ribbon', 'honors_line2', 'honors_line3', 'awards_heading', 'awards', 'agenda', 'images'],
+    ];
+
+    /**
      * @return array<string, mixed>
      */
     public function rules(): array
     {
         $image = ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:5120'];
 
-        return [
+        $rules = [
+            'type' => ['required', Rule::in(array_keys(Program::TYPES))],
+            'program_pdf' => ['exclude_unless:type,convocation', 'bail', 'nullable', 'file', 'mimes:pdf', 'mimetypes:application/pdf', 'max:'.Program::pdfUploadMaxKb(), function (string $attribute, mixed $value, Closure $fail) {
+                $handle = fopen($value->getRealPath(), 'rb');
+                $signature = $handle ? fread($handle, 5) : '';
+                $handle && fclose($handle);
+                if ($signature !== '%PDF-') {
+                    $fail('The program PDF must be a valid PDF file.');
+                }
+            }],
             'title' => ['required', 'string', 'max:80'],
             'class_year' => ['required', 'string', 'max:9'],
             'edition_label' => ['nullable', 'string', 'max:60'],
@@ -85,6 +105,18 @@ class ProgramRequest extends FormRequest
             'remove_images' => ['array'],
             'remove_images.*' => [Rule::in(array_keys(Program::IMAGE_SLOTS))],
         ];
+
+        // Prefix rules for fields this type doesn't use with "exclude" (whole sections,
+        // including their nested agenda.* / awards.* / images.* rules).
+        $unused = self::UNUSED_BY_TYPE[$this->input('type')] ?? [];
+        foreach ($rules as $field => $fieldRules) {
+            $root = strtok($field, '.');
+            if (in_array($root, $unused, true) || ($root === 'remove_images' && in_array('images', $unused, true))) {
+                $rules[$field] = ['exclude'];
+            }
+        }
+
+        return $rules;
     }
 
     public function attributes(): array
@@ -94,6 +126,7 @@ class ProgramRequest extends FormRequest
             'awards.*.name' => 'award name',
             'awards.*.description' => 'award description',
             'images.*' => 'image',
+            'program_pdf' => 'program PDF',
             'honors_line1' => 'honors page line 1',
             'honors_ribbon' => 'honors ribbon text',
             'honors_line2' => 'honors page line 2',
@@ -108,9 +141,15 @@ class ProgramRequest extends FormRequest
      */
     public function programData(): array
     {
-        $data = collect($this->validated())->except(['images', 'remove_images'])->all();
-        $data['agenda'] = array_map(fn ($row) => ['style' => $row['style'], 'title' => $row['title']], $data['agenda'] ?? []);
-        $data['awards'] = array_map(fn ($row) => ['name' => $row['name'], 'description' => $row['description'] ?? ''], $data['awards'] ?? []);
+        $data = collect($this->validated())->except(['images', 'remove_images', 'program_pdf'])->all();
+
+        // Sections excluded for this type are left untouched (not emptied) when saving.
+        if (array_key_exists('agenda', $data)) {
+            $data['agenda'] = array_map(fn ($row) => ['style' => $row['style'], 'title' => $row['title']], $data['agenda'] ?? []);
+        }
+        if (array_key_exists('awards', $data)) {
+            $data['awards'] = array_map(fn ($row) => ['name' => $row['name'], 'description' => $row['description'] ?? ''], $data['awards'] ?? []);
+        }
 
         return $data;
     }

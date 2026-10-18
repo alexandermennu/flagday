@@ -78,3 +78,27 @@ document.addEventListener('DOMContentLoaded', () => {
         reindex();
     });
 });
+
+// Program Type selector: shows only the sections that apply to the chosen type. On the
+// New Program page, switching type before anything has been typed reloads the form with
+// that type's starting content instead.
+document.addEventListener('DOMContentLoaded', () => {
+    const select = document.querySelector('[data-program-type]');
+    if (!select) return;
+
+    let edited = false;
+    select.form.addEventListener('input', (event) => {
+        if (event.target !== select) edited = true;
+    });
+
+    select.addEventListener('change', () => {
+        if (select.dataset.typeReload && !edited) {
+            window.location = `${select.dataset.typeReload}?type=${encodeURIComponent(select.value)}`;
+            return;
+        }
+
+        document.querySelectorAll('[data-program-types]').forEach((element) => {
+            element.hidden = !element.dataset.programTypes.split(' ').includes(select.value);
+        });
+    });
+});

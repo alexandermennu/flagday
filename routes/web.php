@@ -22,6 +22,12 @@ Route::view('/class-of-2026', 'class-of-2026')->name('class.show');
 
 Route::get('/events/{slug}', [EventController::class, 'show'])->name('events.show');
 
+// The published program PDF for an event (Honors Ball / Baccalaureate / Convocation) — viewed
+// in the browser, or downloaded with ?download=1.
+Route::get('/events/{slug}/program', [EventController::class, 'program'])
+    ->whereIn('slug', array_keys(\App\Models\Program::TYPES))
+    ->name('events.program');
+
 // The old Flag Day hub — kept as a redirect so any printed/shared links still land somewhere.
 Route::redirect('/flag-day', '/', 301);
 

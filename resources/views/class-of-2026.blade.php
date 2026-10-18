@@ -71,10 +71,18 @@
                             </div>
                         </div>
                         @if ($event['program_url'])
-                            <a href="{{ $event['program_url'] }}" target="_blank" rel="noopener"
-                               class="inline-flex items-center justify-center rounded-full bg-gold-400 px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-300">
-                                View Program (PDF)
-                            </a>
+                            <div class="flex flex-wrap gap-2">
+                                <a href="{{ $event['program_url'] }}" target="_blank" rel="noopener"
+                                   class="inline-flex items-center justify-center rounded-full bg-gold-400 px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-300">
+                                    View Program (PDF)
+                                </a>
+                                @if ($event['program_download_url'])
+                                    <a href="{{ $event['program_download_url'] }}"
+                                       class="inline-flex items-center justify-center rounded-full border border-neutral-300 px-6 py-3 text-sm font-semibold text-ink transition hover:border-ink">
+                                        Download
+                                    </a>
+                                @endif
+                            </div>
                         @else
                             <span class="inline-flex items-center justify-center rounded-full border border-neutral-200 px-6 py-3 text-sm font-semibold text-neutral-400">
                                 Program coming soon

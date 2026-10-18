@@ -12,18 +12,27 @@ use Dompdf\Options;
 use Illuminate\Support\Facades\File;
 
 /**
- * Renders a Program to its four-page A4 (landscape) PDF with dompdf.
+ * Renders a Program to its A4 (landscape) PDF with dompdf: four pages for an Honors Ball
+ * program, just the agenda page for a Baccalaureate program. (Convocation programs are
+ * uploaded, not rendered.)
  *
  * Fitting: the agenda and award-category pages hold variable amounts of text. Each is
  * first rendered on its own at decreasing text-size tiers until it fits on exactly one
  * page (overflowing text spills onto a second page, which is how overflow is detected).
- * The full document is then rendered with those tiers and must come out at exactly four
- * pages — otherwise ProgramDoesNotFit is thrown rather than producing a clipped or
- * overlapping program.
+ * The full document is then rendered with those tiers and must come out at exactly the
+ * expected page count — otherwise ProgramDoesNotFit is thrown rather than producing a
+ * clipped or overlapping program.
  */
 class ProgramPdfRenderer
 {
+    /** Page count of a full (Honors Ball) program. */
     public const PAGE_COUNT = 4;
+
+    /** Pages generated for each type, in order. */
+    public const SECTIONS = [
+        'honors-ball' => ['cover', 'agenda', 'honors', 'awards'],
+        'baccalaureate' => ['agenda'],
+    ];
 
     /** Text-size multipliers tried in order for the variable-length pages. */
     public const SCALES = [1.0, 0.93, 0.86, 0.8, 0.74, 0.68, 0.62];
@@ -40,8 +49,17 @@ class ProgramPdfRenderer
 
     private static ?FontMetrics $fontMetrics = null;
 
+    public static function pageCount(string $type): int
+    {
+        return count(self::SECTIONS[$type] ?? []);
+    }
+
     public function render(Program $program): string
     {
+        if (! $program->isGenerated()) {
+            throw new \LogicException("{$program->typeLabel()} programs are uploaded, not generated.");
+        }
+
         File::ensureDirectoryExists(storage_path('fonts'));
         $program->loadMissing('assets');
 
@@ -49,8 +67,11 @@ class ProgramPdfRenderer
 
         [$bytes, $pages] = $this->renderHtml($this->html($program, $fit));
 
-        if ($pages !== self::PAGE_COUNT) {
+        if ($pages !== self::pageCount($program->type)) {
             foreach (['cover' => 'cover', 'honors' => 'honors page'] as $section => $label) {
+                if (! in_array($section, self::SECTIONS[$program->type], true)) {
+                    continue;
+                }
                 if ($this->renderHtml($this->html($program, $fit, $section, probe: true))[1] > 1) {
                     throw ProgramDoesNotFit::section($label);
                 }
@@ -72,9 +93,11 @@ class ProgramPdfRenderer
         File::ensureDirectoryExists(storage_path('fonts'));
         $program->loadMissing('assets');
 
+        $sections = self::SECTIONS[$program->type] ?? [];
+
         return [
-            'agenda' => $this->fitSection($program, 'agenda', 'agenda page'),
-            'awards' => $this->fitSection($program, 'awards', 'award categories page'),
+            'agenda' => in_array('agenda', $sections, true) ? $this->fitSection($program, 'agenda', 'agenda page') : 1.0,
+            'awards' => in_array('awards', $sections, true) ? $this->fitSection($program, 'awards', 'award categories page') : 1.0,
         ];
     }
 
@@ -158,7 +181,8 @@ class ProgramPdfRenderer
             ),
         ];
 
-        $render = fn (string $section) => $only === null || $only === $section;
+        $typeSections = self::SECTIONS[$program->type] ?? self::SECTIONS['honors-ball'];
+        $render = fn (string $section) => in_array($section, $typeSections, true) && ($only === null || $only === $section);
 
         return view('pdf.program', [
             'p' => $program,

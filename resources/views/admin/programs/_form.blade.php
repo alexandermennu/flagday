@@ -2,6 +2,10 @@
     Program content form, shared by create and edit. Agenda items and award categories are
     repeatable rows (see resources/js/admin.js): add, remove, and reorder; names are
     re-indexed on every change so the submitted arrays follow the on-screen order.
+
+    The Program Type decides which sections apply: elements marked data-program-types are
+    shown only for the listed types (toggled live in admin.js; hidden fields are excluded
+    server-side by ProgramRequest, so they never block a save or overwrite saved content).
 --}}
 @csrf
 
@@ -12,6 +16,10 @@
     $agendaRows = old('agenda', $program->agenda ?? []);
     $awardRows = old('awards', $program->awards ?? []);
     $field = fn (string $name) => old($name, $name === 'event_date' ? $program->event_date?->format('Y-m-d') : $program->{$name});
+    $type = old('type', $program->type ?? 'honors-ball');
+    // Attributes for an element that applies only to some program types.
+    $forTypes = fn (string ...$types) => 'data-program-types="'.implode(' ', $types).'"'.(in_array($type, $types, true) ? '' : ' hidden');
+    $pdfMaxKb = \App\Models\Program::effectivePdfUploadMaxKb();
 @endphp
 
 @if ($errors->has('pdf'))
@@ -40,6 +48,22 @@
         <p class="{{ $help }}">Shown on the cover and the agenda page. Leave date, time or venue blank to print “To be announced”.</p>
 
         <div class="mt-5 grid gap-5 md:grid-cols-2">
+            <div class="md:col-span-2">
+                <label for="type" class="{{ $label }}">Program Type <span class="text-red-600">*</span></label>
+                <select name="type" id="type" required data-program-type
+                        @unless ($program->exists) data-type-reload="{{ route('admin.programs.create') }}" @endunless
+                        class="{{ $in }} md:max-w-sm">
+                    @foreach (\App\Models\Program::TYPES as $value => $text)
+                        <option value="{{ $value }}" @selected($type === $value)>{{ $text }}</option>
+                    @endforeach
+                </select>
+                <p class="{{ $help }}">
+                    Honors Ball: the four-page program is generated from this form.
+                    Baccalaureate: a one-page agenda is generated from this form.
+                    Convocation: upload the finished program PDF.
+                    Publishing puts the program on that event's public page.
+                </p>
+            </div>
             <div>
                 <label for="title" class="{{ $label }}">Event title <span class="text-red-600">*</span></label>
                 <input type="text" name="title" id="title" required maxlength="80" value="{{ $field('title') }}" class="{{ $in }}">
@@ -120,11 +144,12 @@
     </section>
 
     {{-- ============ Cover wordmark & images ============ --}}
-    <section class="rounded-2xl border border-slate-200 bg-white p-6">
+    <section class="rounded-2xl border border-slate-200 bg-white p-6" {!! $forTypes('honors-ball', 'baccalaureate') !!}>
         <h2 class="text-base font-bold text-ink">Cover wordmark &amp; images</h2>
-        <p class="{{ $help }}">The wordmark appears at the bottom right of the cover and on the honors page. Leave all three blank to hide it.</p>
+        <p class="{{ $help }}" {!! $forTypes('honors-ball') !!}>The wordmark appears at the bottom right of the cover and on the honors page. Leave all three blank to hide it.</p>
+        <p class="{{ $help }}" {!! $forTypes('baccalaureate') !!}>The Baccalaureate program is the agenda page only, which uses the main logo.</p>
 
-        <div class="mt-5 grid gap-5 md:grid-cols-3">
+        <div class="mt-5 grid gap-5 md:grid-cols-3" {!! $forTypes('honors-ball') !!}>
             <div>
                 <label for="mark_top" class="{{ $label }}">Wordmark top line</label>
                 <input type="text" name="mark_top" id="mark_top" maxlength="14" value="{{ $field('mark_top') }}" class="{{ $in }}">
@@ -142,7 +167,7 @@
         <div class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             @foreach (\App\Models\Program::IMAGE_SLOTS as $slot => $meta)
                 @php $current = $program->exists ? $program->imageDataUri($slot) : ($slot === 'primary_logo' ? asset('images/starz-logo.png') : null); @endphp
-                <div class="flex gap-4 rounded-xl border border-slate-200 p-4">
+                <div class="flex gap-4 rounded-xl border border-slate-200 p-4" {!! $slot === 'primary_logo' ? $forTypes('honors-ball', 'baccalaureate') : $forTypes('honors-ball') !!}>
                     <div class="flex h-20 w-20 shrink-0 items-center justify-center rounded-lg bg-[repeating-conic-gradient(#f1f5f9_0_25%,#fff_0_50%)] bg-[length:12px_12px]">
                         @if ($current)
                             <img src="{{ $current }}" alt="" class="max-h-16 max-w-16 object-contain">
@@ -169,7 +194,7 @@
     </section>
 
     {{-- ============ Agenda ============ --}}
-    <section class="rounded-2xl border border-slate-200 bg-white p-6" data-repeater="agenda">
+    <section class="rounded-2xl border border-slate-200 bg-white p-6" data-repeater="agenda" {!! $forTypes('honors-ball', 'baccalaureate') !!}>
         <h2 class="text-base font-bold text-ink">Program agenda</h2>
         <p class="{{ $help }}">Printed in order on page 2. “Highlight” prints large and bold (e.g. Presentation of Awards); “Section heading” prints bold, for a group label. Up to 26 items of up to 80 characters.</p>
 
@@ -188,7 +213,7 @@
     </section>
 
     {{-- ============ Honors page ============ --}}
-    <section class="rounded-2xl border border-slate-200 bg-white p-6">
+    <section class="rounded-2xl border border-slate-200 bg-white p-6" {!! $forTypes('honors-ball') !!}>
         <h2 class="text-base font-bold text-ink">Honors page</h2>
         <p class="{{ $help }}">The black page with large stacked lettering (page 3). Leave a line blank to omit it.</p>
 
@@ -213,7 +238,7 @@
     </section>
 
     {{-- ============ Award categories ============ --}}
-    <section class="rounded-2xl border border-slate-200 bg-white p-6" data-repeater="awards">
+    <section class="rounded-2xl border border-slate-200 bg-white p-6" data-repeater="awards" {!! $forTypes('honors-ball') !!}>
         <h2 class="text-base font-bold text-ink">Award categories</h2>
         <p class="{{ $help }}">Printed in three columns on page 4, in this order. Up to 12 categories; descriptions can total up to {{ number_format(\App\Http\Requests\ProgramRequest::MAX_AWARD_TEXT) }} characters (text shrinks automatically to fit).</p>
 
@@ -236,13 +261,34 @@
         </button>
     </section>
 
+    {{-- ============ Convocation program PDF ============ --}}
+    <section class="rounded-2xl border border-slate-200 bg-white p-6" {!! $forTypes('convocation') !!}>
+        <h2 class="text-base font-bold text-ink">Convocation program PDF</h2>
+        <p class="{{ $help }}">
+            Upload the complete, already-designed program. Nothing is generated from this form for Convocation —
+            this file is what Download PDF and the Convocation page serve. PDF only, up to {{ number_format($pdfMaxKb / 1024, 1) }} MB.
+        </p>
+
+        @if ($program->exists && $program->type === 'convocation' && $program->hasPdf())
+            <p class="mt-4 rounded-lg bg-slate-50 px-4 py-2.5 text-sm text-slate-700">
+                Current file: uploaded {{ $program->pdf_generated_at->format('M j, Y g:i A') }} &middot; {{ number_format($program->pdf_size / 1024) }} KB &middot;
+                <a href="{{ route('admin.programs.download', $program) }}" class="font-semibold text-ink underline">Download</a>.
+                Choosing a new file replaces it.
+            </p>
+        @endif
+
+        <input type="file" name="program_pdf" id="program_pdf" accept="application/pdf,.pdf"
+               class="mt-4 block w-full text-sm text-slate-600 file:mr-3 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-slate-700 hover:file:bg-slate-200">
+        @error('program_pdf') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+    </section>
+
     {{-- ============ Save ============ --}}
     <div class="sticky bottom-0 -mx-6 flex flex-wrap items-center gap-3 border-t border-slate-200 bg-slate-50/95 px-6 py-4 backdrop-blur">
         <button type="submit" name="action" value="save"
                 class="inline-flex items-center rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-800 transition hover:bg-slate-50">
             Save
         </button>
-        <button type="submit" name="action" value="generate"
+        <button type="submit" name="action" value="generate" {!! $forTypes('honors-ball', 'baccalaureate') !!}
                 class="inline-flex items-center rounded-lg bg-ink px-5 py-2.5 text-sm font-semibold text-gold-300 transition hover:bg-neutral-800">
             Save &amp; generate PDF
         </button>

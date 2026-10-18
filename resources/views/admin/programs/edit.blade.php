@@ -12,28 +12,32 @@
                     <div class="mt-1">@include('admin.programs._status', ['program' => $program])</div>
                 </div>
                 <div>
-                    <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Generated PDF</div>
+                    <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">{{ $program->isGenerated() ? 'Generated PDF' : 'Uploaded PDF' }}</div>
                     <div class="mt-1 text-slate-700">
                         @if ($program->hasPdf())
-                            {{ $program->pdf_generated_at->format('M j, Y g:i A') }} &middot; {{ $program->pdf_page_count }} pages &middot; {{ number_format($program->pdf_size / 1024) }} KB
+                            {{ $program->pdf_generated_at->format('M j, Y g:i A') }}
+                            @if ($program->pdf_page_count) &middot; {{ $program->pdf_page_count }} {{ Str::plural('page', $program->pdf_page_count) }} @endif
+                            &middot; {{ number_format($program->pdf_size / 1024) }} KB
                         @else
-                            <span class="text-slate-400">Not generated yet</span>
+                            <span class="text-slate-400">{{ $program->isGenerated() ? 'Not generated yet' : 'Not uploaded yet' }}</span>
                         @endif
                     </div>
                 </div>
             </div>
 
             <div class="flex flex-wrap gap-2">
-                <a href="{{ route('admin.programs.preview', $program) }}" target="_blank" rel="noopener"
-                   class="inline-flex items-center rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
-                    Preview
-                </a>
-                <form method="POST" action="{{ route('admin.programs.generate', $program) }}">
-                    @csrf
-                    <button type="submit" class="inline-flex items-center rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
-                        {{ $program->hasPdf() ? 'Regenerate PDF' : 'Generate PDF' }}
-                    </button>
-                </form>
+                @if ($program->isGenerated())
+                    <a href="{{ route('admin.programs.preview', $program) }}" target="_blank" rel="noopener"
+                       class="inline-flex items-center rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                        Preview
+                    </a>
+                    <form method="POST" action="{{ route('admin.programs.generate', $program) }}">
+                        @csrf
+                        <button type="submit" class="inline-flex items-center rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                            {{ $program->hasPdf() ? 'Regenerate PDF' : 'Generate PDF' }}
+                        </button>
+                    </form>
+                @endif
                 @if ($program->hasPdf())
                     <a href="{{ route('admin.programs.download', $program) }}"
                        class="inline-flex items-center rounded-lg bg-ink px-4 py-2 text-sm font-semibold text-gold-300 transition hover:bg-neutral-800">
@@ -41,7 +45,7 @@
                     </a>
                 @endif
                 <form method="POST" action="{{ route('admin.programs.publish', $program) }}"
-                      onsubmit="return confirm('Publish this program as version {{ $program->published_version + 1 }}? The PDF will be regenerated from the saved content.')">
+                      onsubmit="return confirm('Publish this program to the {{ $program->typeLabel() }} page as version {{ $program->published_version + 1 }}?{{ $program->isGenerated() ? ' The PDF will be regenerated from the saved content.' : '' }}')">
                     @csrf
                     <button type="submit" class="inline-flex items-center rounded-lg bg-gold-400 px-4 py-2 text-sm font-semibold text-ink transition hover:bg-gold-300">
                         {{ $program->published_at ? 'Publish update' : 'Publish' }}
@@ -55,7 +59,16 @@
                 The program was edited after this PDF was generated. Regenerate it (or publish an update) so the download matches the saved content.
             </p>
         @endif
-        <p class="mt-3 text-xs text-slate-500">Preview and the generated PDF use the <strong>saved</strong> content — save your changes first.</p>
+        <p class="mt-3 text-xs text-slate-500">
+            @if ($program->isGenerated())
+                Preview and the generated PDF use the <strong>saved</strong> content — save your changes first.
+            @else
+                The uploaded PDF is published as-is. Upload a replacement in the form below, save, then publish again.
+            @endif
+            @if ($program->published_at)
+                Published to the <a href="{{ route('events.show', $program->type) }}" target="_blank" rel="noopener" class="font-semibold underline">{{ $program->typeLabel() }} page</a>.
+            @endif
+        </p>
     </div>
 
     <form method="POST" action="{{ route('admin.programs.update', $program) }}" enctype="multipart/form-data" id="program-form">

@@ -17,6 +17,19 @@ class Program extends Model
 {
     use HasFactory;
 
+    /**
+     * Program types, keyed by the graduation event slug (config/graduation.php) whose
+     * public page the program is published to.
+     */
+    public const TYPES = [
+        'honors-ball' => 'Honors Ball',
+        'baccalaureate' => 'Baccalaureate',
+        'convocation' => 'Convocation',
+    ];
+
+    /** Types whose PDF is generated from the form; convocation uses an uploaded PDF instead. */
+    public const GENERATED_TYPES = ['honors-ball', 'baccalaureate'];
+
     public const AGENDA_STYLES = [
         'item' => 'Agenda item',
         'feature' => 'Highlight (large, bold)',
@@ -85,10 +98,67 @@ class Program extends Model
         return $this->pdf_generated_at !== null;
     }
 
-    /** True when content changed after the stored PDF was generated. */
+    public function isGenerated(): bool
+    {
+        return in_array($this->type, self::GENERATED_TYPES, true);
+    }
+
+    public function typeLabel(): string
+    {
+        return self::TYPES[$this->type] ?? $this->type;
+    }
+
+    /**
+     * True when content changed after the stored PDF was generated. An uploaded PDF
+     * doesn't depend on the form content, so it never goes out of date.
+     */
     public function pdfIsStale(): bool
     {
-        return $this->hasPdf() && $this->updated_at->greaterThan($this->pdf_generated_at);
+        return $this->isGenerated() && $this->hasPdf() && $this->updated_at->greaterThan($this->pdf_generated_at);
+    }
+
+    /** The most recently published program of the given type that has a published PDF. */
+    public static function publishedFor(string $type): ?self
+    {
+        return static::query()
+            ->where('type', $type)
+            ->whereNotNull('published_at')
+            ->whereHas('pdf', fn ($query) => $query->whereNotNull('published_data'))
+            ->latest('published_at')
+            ->first();
+    }
+
+    /** Largest PDF upload accepted, in kilobytes (configurable via PROGRAM_PDF_MAX_KB). */
+    public static function pdfUploadMaxKb(): int
+    {
+        return (int) config('graduation.program_pdf_max_kb');
+    }
+
+    /**
+     * What the server will actually accept: PHP's own upload limits can be lower than the
+     * app setting, in which case the upload fails before validation runs.
+     */
+    public static function effectivePdfUploadMaxKb(): int
+    {
+        $toKb = function (string $value): int {
+            $value = trim($value);
+            $number = (int) $value;
+
+            return match (strtoupper(substr($value, -1))) {
+                'G' => $number * 1024 * 1024,
+                'M' => $number * 1024,
+                'K' => $number,
+                default => (int) ceil($number / 1024),
+            };
+        };
+
+        $limits = array_filter([
+            self::pdfUploadMaxKb(),
+            $toKb((string) ini_get('upload_max_filesize')),
+            $toKb((string) ini_get('post_max_size')),
+        ], fn (int $kb) => $kb > 0);
+
+        return min($limits);
     }
 
     public function pdfFilename(): string
@@ -97,15 +167,32 @@ class Program extends Model
     }
 
     /**
-     * Starting content for a new program, taken from the Special Honors Awards program
-     * the university supplied. Event-specific details (date, time, venue, host, edition
-     * number) are deliberately left blank rather than carried over from a past year.
+     * Starting content for a new program of the given type. The Honors Ball starts from
+     * the Special Honors Awards program the university supplied; Baccalaureate and
+     * Convocation start with only the shared institution details, since no agenda was
+     * supplied for them. Event-specific details (date, time, venue, host, edition number)
+     * are deliberately left blank rather than carried over from a past year.
      *
      * @return array<string, mixed>
      */
-    public static function templateDefaults(): array
+    public static function templateDefaults(string $type = 'honors-ball'): array
     {
+        if ($type !== 'honors-ball') {
+            return [
+                'type' => $type,
+                'title' => self::TYPES[$type] ?? 'Program',
+                'class_year' => (string) config('graduation.class_year'),
+                'institution_name' => config('graduation.institution'),
+                'institution_address_line1' => 'Airfield, Sinkor',
+                'institution_address_line2' => 'Montserrado Co. Liberia',
+                'contact_website' => 'www.starzit.com',
+                'agenda' => [],
+                'awards' => [],
+            ];
+        }
+
         return [
+            'type' => 'honors-ball',
             'title' => 'Special Honors Awards',
             'class_year' => (string) config('graduation.class_year'),
             'edition_label' => 'Annual Special Honors Awards',

@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use App\Models\Program;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
@@ -19,8 +21,31 @@ class Graduation
      */
     public static function events(): Collection
     {
+        $published = self::eventsWithPublishedProgram();
+
         return collect(config('graduation.events', []))
-            ->map(fn (array $event, string $slug) => self::present($slug, $event));
+            ->map(fn (array $event, string $slug) => self::present($slug, $event, in_array($slug, $published, true)));
+    }
+
+    /**
+     * Event slugs that have a program published from the admin. A published program takes
+     * precedence over a program_pdf URL set in config.
+     *
+     * @return array<int, string>
+     */
+    private static function eventsWithPublishedProgram(): array
+    {
+        try {
+            return Program::query()
+                ->whereNotNull('published_at')
+                ->whereHas('pdf', fn ($query) => $query->whereNotNull('published_data'))
+                ->distinct()
+                ->pluck('type')
+                ->all();
+        } catch (QueryException) {
+            // The programs tables don't exist yet (migrations not run): fall back to config.
+            return [];
+        }
     }
 
     public static function find(string $slug): ?array
@@ -58,9 +83,10 @@ class Graduation
      * @param  array<string, mixed>  $event
      * @return array<string, mixed>
      */
-    private static function present(string $slug, array $event): array
+    private static function present(string $slug, array $event, bool $hasPublishedProgram = false): array
     {
         $pdf = $event['program_pdf'] ?? null;
+        $configUrl = filled($pdf) ? (Str::startsWith($pdf, ['http://', 'https://']) ? $pdf : asset($pdf)) : null;
 
         return array_merge($event, [
             'slug' => $slug,
@@ -69,7 +95,8 @@ class Graduation
             'venue_label' => self::orPlaceholder($event['venue'] ?? null),
             'venue_address' => $event['venue_address'] ?? null,
             'dress_code_label' => self::orPlaceholder($event['dress_code'] ?? null),
-            'program_url' => filled($pdf) ? (Str::startsWith($pdf, ['http://', 'https://']) ? $pdf : asset($pdf)) : null,
+            'program_url' => $hasPublishedProgram ? route('events.program', $slug) : $configUrl,
+            'program_download_url' => $hasPublishedProgram ? route('events.program', [$slug, 'download' => 1]) : null,
             'rsvp' => (bool) ($event['rsvp'] ?? false),
         ]);
     }

@@ -9,14 +9,17 @@ use App\Models\Program;
 use App\Services\ProgramImageProcessor;
 use App\Services\ProgramPdfRenderer;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 /**
- * Admin management of printable graduation programs: content forms, PDF generation
- * (stored, so Download always serves the last explicitly generated version), on-the-fly
- * preview, and publishing.
+ * Admin management of graduation programs: content forms, PDF generation (stored, so
+ * Download always serves the last explicitly generated version), on-the-fly preview, and
+ * publishing to the program type's public event page. Honors Ball and Baccalaureate PDFs
+ * are generated from the form; Convocation programs are an uploaded PDF.
  */
 class ProgramController extends Controller
 {
@@ -33,10 +36,12 @@ class ProgramController extends Controller
         ]);
     }
 
-    public function create(): View
+    public function create(Request $request): View
     {
+        $type = array_key_exists($request->query('type'), Program::TYPES) ? $request->query('type') : 'honors-ball';
+
         return view('admin.programs.create', [
-            'program' => new Program(Program::templateDefaults()),
+            'program' => new Program(Program::templateDefaults($type)),
         ]);
     }
 
@@ -45,6 +50,7 @@ class ProgramController extends Controller
         $program = DB::transaction(function () use ($request) {
             $program = Program::create($request->programData());
             $this->syncImages($program, $request);
+            $this->storeUpload($program, $request->file('program_pdf'));
 
             return $program;
         });
@@ -61,15 +67,29 @@ class ProgramController extends Controller
 
     public function update(ProgramRequest $request, Program $program): RedirectResponse
     {
-        DB::transaction(function () use ($program, $request) {
+        $typeChanged = $request->input('type') !== $program->type;
+
+        DB::transaction(function () use ($program, $request, $typeChanged) {
             $program->fill($request->programData());
             // Always bump updated_at so an image-only change still marks the PDF out of date.
             $program->updated_at = now();
             $program->save();
+
+            // A PDF made for the old type must never be served (or stay published) under the new one.
+            if ($typeChanged) {
+                $program->pdf()->delete();
+                $program->forceFill(['published_at' => null, 'pdf_generated_at' => null, 'pdf_size' => null, 'pdf_page_count' => null])->save();
+            }
+
             $this->syncImages($program, $request);
+            $this->storeUpload($program, $request->file('program_pdf'));
         });
 
-        return $this->afterSave($program, $request, 'Program saved.');
+        $message = $typeChanged
+            ? "Program saved as {$program->typeLabel()}. Its previous PDF was removed and it is unpublished until you publish again."
+            : 'Program saved.';
+
+        return $this->afterSave($program, $request, $message);
     }
 
     public function destroy(Program $program): RedirectResponse
@@ -82,6 +102,10 @@ class ProgramController extends Controller
     /** Explicitly (re)generates and stores the PDF from the saved content. */
     public function generate(Program $program): RedirectResponse
     {
+        if (! $program->isGenerated()) {
+            return back()->withErrors(['pdf' => "{$program->typeLabel()} programs use an uploaded PDF and are not generated."]);
+        }
+
         if ($error = $this->storePdf($program)) {
             return back()->withErrors(['pdf' => $error]);
         }
@@ -89,21 +113,37 @@ class ProgramController extends Controller
         return back()->with('success', 'PDF generated. Use Download PDF to save it.');
     }
 
-    /** Marks the program published as a new version and regenerates its PDF. */
+    /**
+     * Marks the program published as a new version and freezes a copy of its PDF for the
+     * public event page — regenerating it first for generated types.
+     */
     public function publish(Program $program): RedirectResponse
     {
-        if ($error = $this->storePdf($program)) {
-            return back()->withErrors(['pdf' => "Not published: {$error}"]);
+        if ($program->isGenerated()) {
+            if ($error = $this->storePdf($program)) {
+                return back()->withErrors(['pdf' => "Not published: {$error}"]);
+            }
+        } elseif (! $program->hasPdf()) {
+            return back()->withErrors(['pdf' => 'Not published: upload the program PDF first.']);
         }
 
-        Program::withoutTimestamps(function () use ($program) {
-            $program->forceFill([
-                'published_at' => now(),
-                'published_version' => $program->published_version + 1,
-            ])->save();
+        DB::transaction(function () use ($program) {
+            $pdf = $program->pdf()->firstOrFail();
+            $pdf->update(['published_data' => $pdf->data]);
+
+            Program::withoutTimestamps(function () use ($program) {
+                $program->forceFill([
+                    'published_at' => now(),
+                    'published_version' => $program->published_version + 1,
+                ])->save();
+            });
         });
 
-        return back()->with('success', "Published version {$program->published_version}. The PDF was regenerated.");
+        $page = Program::TYPES[$program->type];
+
+        return back()->with('success', $program->isGenerated()
+            ? "Published version {$program->published_version} to the {$page} page. The PDF was regenerated."
+            : "Published version {$program->published_version} to the {$page} page.");
     }
 
     public function download(Program $program): Response|RedirectResponse
@@ -111,7 +151,9 @@ class ProgramController extends Controller
         $pdf = $program->pdf;
 
         if (! $pdf) {
-            return back()->withErrors(['pdf' => 'No PDF has been generated yet. Click “Generate PDF” first.']);
+            return back()->withErrors(['pdf' => $program->isGenerated()
+                ? 'No PDF has been generated yet. Click “Generate PDF” first.'
+                : 'No PDF has been uploaded yet.']);
         }
 
         return response($pdf->bytes(), 200, [
@@ -123,6 +165,10 @@ class ProgramController extends Controller
     /** Renders the current saved content without storing it, shown inline in the browser. */
     public function preview(Program $program): Response|RedirectResponse
     {
+        if (! $program->isGenerated()) {
+            return back()->withErrors(['pdf' => "{$program->typeLabel()} programs use an uploaded PDF and have no generated preview."]);
+        }
+
         try {
             $bytes = $this->renderer->render($program);
         } catch (ProgramDoesNotFit $e) {
@@ -139,7 +185,7 @@ class ProgramController extends Controller
     {
         $redirect = redirect()->route('admin.programs.edit', $program);
 
-        if ($request->input('action') === 'generate') {
+        if ($request->input('action') === 'generate' && $program->isGenerated()) {
             return ($error = $this->storePdf($program))
                 ? $redirect->with('success', $message)->withErrors(['pdf' => $error])
                 : $redirect->with('success', "{$message} PDF generated.");
@@ -167,7 +213,7 @@ class ProgramController extends Controller
                 $program->forceFill([
                     'pdf_generated_at' => now(),
                     'pdf_size' => strlen($bytes),
-                    'pdf_page_count' => ProgramPdfRenderer::PAGE_COUNT,
+                    'pdf_page_count' => ProgramPdfRenderer::pageCount($program->type),
                 ])->save();
             });
         });
@@ -175,8 +221,32 @@ class ProgramController extends Controller
         return null;
     }
 
+    /** Stores an uploaded Convocation PDF as the program's working PDF (replacing any previous upload). */
+    private function storeUpload(Program $program, ?UploadedFile $file): void
+    {
+        if (! $file || $program->isGenerated()) {
+            return;
+        }
+
+        $bytes = (string) file_get_contents($file->getRealPath());
+        $program->pdf()->updateOrCreate([], ['data' => base64_encode($bytes)]);
+
+        Program::withoutTimestamps(function () use ($program, $bytes) {
+            $program->forceFill([
+                'pdf_generated_at' => now(),
+                'pdf_size' => strlen($bytes),
+                'pdf_page_count' => null,
+            ])->save();
+        });
+    }
+
     private function syncImages(Program $program, ProgramRequest $request): void
     {
+        // Convocation has no generated pages, so its (hidden) image fields are ignored.
+        if (! $program->isGenerated()) {
+            return;
+        }
+
         foreach ((array) $request->input('remove_images', []) as $slot) {
             $program->assets()->where('slot', $slot)->delete();
         }

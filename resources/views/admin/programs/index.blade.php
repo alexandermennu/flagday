@@ -5,8 +5,9 @@
 @section('content')
     <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <p class="max-w-2xl text-sm text-slate-500">
-            Enter a graduation program's content and generate its four-page printable PDF
-            (cover, agenda, honors page, and award categories).
+            Create the program for each graduation event: the Honors Ball (four generated pages),
+            Baccalaureate (a generated agenda page), or Convocation (an uploaded PDF), and publish
+            it to that event's page.
         </p>
         <a href="{{ route('admin.programs.create') }}"
            class="inline-flex items-center justify-center rounded-lg bg-ink px-4 py-2 text-sm font-semibold text-gold-300 transition hover:bg-neutral-800">
@@ -30,7 +31,7 @@
                     <tr class="border-b border-slate-100 last:border-0">
                         <td class="px-4 py-3">
                             <a href="{{ route('admin.programs.edit', $program) }}" class="font-semibold text-ink hover:underline">{{ $program->title }}</a>
-                            <div class="text-xs text-slate-500">Class of {{ $program->class_year }}</div>
+                            <div class="text-xs text-slate-500">{{ $program->typeLabel() }} &middot; Class of {{ $program->class_year }}</div>
                         </td>
                         <td class="px-4 py-3 text-slate-600">{{ $program->event_date?->format('M j, Y') ?? 'Not set' }}</td>
                         <td class="px-4 py-3">
