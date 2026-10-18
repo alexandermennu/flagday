@@ -20,8 +20,6 @@
         ['right: 8%; top: 14%', 64, -8, 7, 0, 0.85, 'hidden lg:block'],
         ['right: 23%; top: 32%', 40, 10, 8.5, -2, 0.55, 'hidden lg:block'],
         ['right: 5%; top: 56%', 50, 6, 6.5, -4, 0.7, 'hidden lg:block'],
-        ['right: 17%; top: 74%', 30, -12, 9, -1, 0.45, 'hidden lg:block'],
-        ['right: 27%; top: 9%', 26, 14, 7.5, -3, 0.4, 'hidden xl:block'],
         ['right: 5%; top: 5%', 30, -10, 7, 0, 0.7, 'lg:hidden'],
         ['right: 17%; top: 10%', 20, 12, 8, -2.5, 0.5, 'lg:hidden'],
     ];
@@ -58,12 +56,8 @@
     if ($layout === 'centered') {
         $caps = [
             ['left: 6%; top: 16%', 56, 8, 7.5, 0, 0.8, 'hidden lg:block'],
-            ['left: 13%; top: 44%', 34, -10, 8.5, -2.5, 0.5, 'hidden lg:block'],
-            ['left: 4%; top: 68%', 44, -6, 6.5, -4, 0.65, 'hidden lg:block'],
             ['right: 6%; top: 20%', 62, -8, 7, -1, 0.85, 'hidden lg:block'],
             ['right: 14%; top: 56%', 36, 10, 9, -3, 0.5, 'hidden lg:block'],
-            ['right: 5%; top: 78%', 30, -12, 8, -1.5, 0.45, 'hidden lg:block'],
-            ['left: 15%; top: 84%', 24, 14, 7.5, -3.5, 0.4, 'hidden xl:block'],
             ['right: 6%; top: 4%', 30, -10, 7, 0, 0.7, 'lg:hidden'],
             ['left: 7%; top: 8%', 22, 12, 8, -2.5, 0.5, 'lg:hidden'],
         ];
