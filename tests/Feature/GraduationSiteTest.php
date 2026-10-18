@@ -99,6 +99,17 @@ class GraduationSiteTest extends TestCase
         $this->get(route('events.show', 'baccalaureate'))->assertDontSee('RSVP for the Baccalaureate');
     }
 
+    public function test_honors_ball_hero_has_the_decorative_celebration_layer_only(): void
+    {
+        $this->get(route('events.show', 'honors-ball'))
+            ->assertOk()
+            ->assertSee('class="hero-fx" aria-hidden="true"', escape: false)
+            ->assertSee('RSVP for the Honors Ball');
+
+        $this->get(route('events.show', 'baccalaureate'))->assertDontSee('hero-fx', escape: false);
+        $this->get(route('events.show', 'convocation'))->assertDontSee('hero-fx', escape: false);
+    }
+
     public function test_unknown_event_returns_404(): void
     {
         $this->get('/events/prom')->assertNotFound();

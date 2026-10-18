@@ -60,3 +60,90 @@ html {
         animation: none;
     }
 }
+
+/* ---------------------------------------------------------------------------------------
+   Hero celebration (resources/views/events/_hero-celebration.blade.php): floating caps,
+   twinkling sparkles and occasional small fireworks. Decorative only — behind the content,
+   never clickable, transform/opacity animations only, and still for reduced motion.
+   --------------------------------------------------------------------------------------- */
+.hero-fx {
+    position: absolute;
+    inset: 0;
+    z-index: -10;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.hero-fx__cap {
+    position: absolute;
+    color: var(--color-gold-400);
+    filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.55));
+    animation: hero-cap-float var(--duration, 7s) ease-in-out var(--delay, 0s) infinite;
+}
+
+@keyframes hero-cap-float {
+    0%, 100% { transform: translateY(0) rotate(var(--tilt, 0deg)); }
+    50% { transform: translateY(-14px) rotate(calc(var(--tilt, 0deg) + 5deg)); }
+}
+
+.hero-fx__spark {
+    position: absolute;
+    border-radius: 9999px;
+    background: var(--color-gold-300);
+    box-shadow: 0 0 6px rgba(238, 203, 94, 0.8);
+    opacity: 0;
+    animation: hero-twinkle var(--duration, 5s) ease-in-out var(--delay, 0s) infinite;
+}
+
+.hero-fx__spark--star {
+    border-radius: 0;
+    box-shadow: none;
+    background: var(--color-gold-200);
+    clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+}
+
+@keyframes hero-twinkle {
+    0%, 100% { opacity: 0; transform: translateY(0) scale(0.6); }
+    50% { opacity: var(--peak, 0.7); transform: translateY(-10px) scale(1); }
+}
+
+.hero-fx__firework {
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+
+.hero-fx__ray {
+    position: absolute;
+    left: -1px;
+    top: -5px;
+    width: 2px;
+    height: 10px;
+    border-radius: 2px;
+    background: linear-gradient(to top, rgba(244, 223, 149, 0), var(--color-gold-300));
+    opacity: 0;
+    animation: hero-firework var(--cycle, 10s) ease-out var(--delay, 0s) infinite;
+}
+
+/* The burst plays in the first ~12% of each cycle, then rests — so fireworks are occasional. */
+@keyframes hero-firework {
+    0% { opacity: 0; transform: rotate(var(--angle)) translateY(0) scaleY(0.3); }
+    2% { opacity: 1; }
+    12% { opacity: 0; transform: rotate(var(--angle)) translateY(calc(var(--radius, 26px) * -1)) scaleY(1); }
+    100% { opacity: 0; transform: rotate(var(--angle)) translateY(calc(var(--radius, 26px) * -1)) scaleY(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-fx__cap,
+    .hero-fx__spark {
+        animation: none;
+    }
+
+    .hero-fx__spark {
+        opacity: calc(var(--peak, 0.7) * 0.6);
+    }
+
+    .hero-fx__firework {
+        display: none;
+    }
+}
