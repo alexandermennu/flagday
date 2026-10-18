@@ -13,7 +13,7 @@
 
     <div class="w-full max-w-sm px-5">
         <div class="mb-8 flex flex-col items-center text-center">
-            <x-seal class="h-16 w-16" />
+            <x-seal class="h-24 w-24" />
             <p class="mt-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-400">{{ config('graduation.institution') }} &middot; Class of {{ config('graduation.class_year') }}</p>
             <h1 class="mt-1 font-display text-2xl font-semibold text-white">Honors Ball RSVP</h1>
         </div>

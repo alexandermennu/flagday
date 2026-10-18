@@ -12,7 +12,7 @@
     <div class="flex min-h-screen">
         <aside class="hidden w-64 shrink-0 border-r border-slate-200 bg-white sm:block">
             <div class="flex items-center gap-3 border-b border-slate-200 px-6 py-5">
-                <x-seal class="h-9 w-9 shrink-0" />
+                <x-seal class="h-10 w-10 shrink-0" />
                 <span class="leading-tight">
                     <span class="block text-[10px] font-semibold uppercase tracking-wider text-gold-600">{{ config('graduation.institution') }}</span>
                     <span class="block text-sm font-bold text-ink">Admin</span>

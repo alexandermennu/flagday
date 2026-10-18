@@ -18,7 +18,7 @@
 <header class="sticky top-0 z-40 border-b border-white/10 bg-ink/95 text-white backdrop-blur" style="top: env(safe-area-inset-top, 0px)">
     <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3 lg:px-8">
         <a href="{{ route('landing') }}" class="flex min-w-0 items-center gap-3">
-            <x-seal class="h-10 w-10 shrink-0" />
+            <x-seal class="h-12 w-12 shrink-0" />
             <span class="min-w-0 leading-tight">
                 <span class="block truncate font-display text-base font-semibold tracking-wide text-white">{{ config('graduation.institution') }}</span>
                 <span class="block text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-400">Class of {{ config('graduation.class_year') }}</span>

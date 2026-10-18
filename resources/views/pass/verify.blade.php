@@ -11,7 +11,7 @@
 <body class="flex min-h-screen items-center justify-center bg-ink p-6 font-sans text-slate-900 antialiased">
 
     <div class="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-        <x-seal class="mx-auto h-14 w-14" />
+        <x-seal class="mx-auto h-20 w-20" />
         <p class="mt-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-600">{{ config('graduation.institution') }} &middot; Class of {{ config('graduation.class_year') }}</p>
 
         <div class="mx-auto mt-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-green-700">

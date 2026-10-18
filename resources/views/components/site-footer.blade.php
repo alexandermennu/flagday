@@ -4,7 +4,7 @@
         <div class="grid gap-10 md:grid-cols-3">
             <div>
                 <a href="{{ route('landing') }}" class="flex items-center gap-3">
-                    <x-seal class="h-12 w-12 shrink-0" />
+                    <x-seal class="h-16 w-16 shrink-0" />
                     <span class="leading-tight">
                         <span class="block font-display text-lg font-semibold text-white">{{ config('graduation.institution') }}</span>
                         <span class="block text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-400">Class of {{ config('graduation.class_year') }}</span>

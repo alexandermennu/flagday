@@ -15,17 +15,17 @@
 
 @section('content')
     {{-- ============ Hero ============ --}}
-    {{-- 4rem + 1px = the sticky header's height, so header + hero together fill the screen. --}}
-    <section class="relative isolate flex min-h-[calc(100svh-4rem-1px)] flex-1 flex-col overflow-hidden bg-ink text-white">
+    {{-- 4.5rem + 1px = the sticky header's height, so header + hero together fill the screen. --}}
+    <section class="relative isolate flex min-h-[calc(100svh-4.5rem-1px)] flex-1 flex-col overflow-hidden bg-ink text-white">
         <div class="pointer-events-none absolute inset-0 -z-10">
             <div class="absolute left-1/2 top-0 h-[42rem] w-[42rem] -translate-x-1/2 -translate-y-1/3 rounded-full bg-gold-500/20 blur-3xl"></div>
             <div class="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:22px_22px] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]"></div>
         </div>
 
         <div class="mx-auto my-auto w-full max-w-5xl px-5 py-8 text-center sm:py-16 short:py-8 lg:px-8">
-            <x-seal class="animate-fade-in-up mx-auto h-16 w-16 sm:h-24 sm:w-24 short:h-16 short:w-16" />
+            <x-seal class="animate-fade-in-up mx-auto h-24 w-24 drop-shadow-[0_8px_30px_rgba(231,185,58,0.25)] sm:h-40 sm:w-40 short:h-28 short:w-28 shorter:h-24 shorter:w-24" />
 
-            <p class="animate-fade-in-up mt-6 inline-flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-400 sm:text-xs sm:tracking-[0.3em] short:mt-4 [animation-delay:80ms]">
+            <p class="animate-fade-in-up mt-6 inline-flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-400 max-sm:mt-5 sm:text-xs sm:tracking-[0.3em] short:mt-4 [animation-delay:80ms]">
                 <span class="h-px w-6 bg-gold-500/70 sm:w-8"></span>
                 Digital Graduation Program
                 <span class="h-px w-6 bg-gold-500/70 sm:w-8"></span>

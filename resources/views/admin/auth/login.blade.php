@@ -12,7 +12,7 @@
 
     <div class="w-full max-w-sm px-6">
         <div class="mb-8 flex flex-col items-center text-center">
-            <x-seal class="h-14 w-14" />
+            <x-seal class="h-20 w-20" />
             <p class="mt-4 text-[11px] font-semibold uppercase tracking-wider text-gold-600">{{ config('graduation.institution') }}</p>
             <h1 class="text-lg font-bold text-ink">Admin Dashboard</h1>
         </div>
