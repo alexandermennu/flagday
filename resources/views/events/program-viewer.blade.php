@@ -39,9 +39,15 @@
                 </a>
             </div>
 
-            {{-- The book. flipbook.js fills [data-flipbook-book] once the pages are rendered. --}}
+            {{-- The book. flipbook.js fills [data-flipbook-book] once the pages are rendered; the
+                 zoom layer sits exactly over it and shows sharp, pannable copies of the open pages. --}}
             <div class="relative mt-6 flex flex-1 items-center justify-center" style="min-height: 18rem">
-                <div data-flipbook-book class="w-full" aria-label="{{ $event['name'] }} program pages"></div>
+                <div data-flipbook-frame class="relative w-full">
+                    <div data-flipbook-book class="w-full" aria-label="{{ $event['name'] }} program pages"></div>
+                    <div data-flipbook-zoom hidden class="absolute inset-0 cursor-grab touch-none select-none overflow-hidden bg-ink active:cursor-grabbing">
+                        <div data-flipbook-zoom-content class="absolute left-0 top-0 origin-top-left will-change-transform"></div>
+                    </div>
+                </div>
 
                 <p data-flipbook-status role="status" class="absolute inset-0 flex items-center justify-center text-sm text-neutral-400">
                     Loading the program…
@@ -64,7 +70,8 @@
             </div>
 
             {{-- Controls --}}
-            <div class="mt-6 flex items-center justify-center gap-4" data-flipbook-controls hidden>
+            <div class="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-4" data-flipbook-controls hidden>
+            <div class="flex items-center justify-center gap-4">
                 <button type="button" data-flipbook-prev aria-label="Previous page"
                         class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/25 text-white transition hover:border-gold-400 hover:text-gold-300 disabled:cursor-not-allowed disabled:opacity-30">
                     <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" /></svg>
@@ -75,8 +82,25 @@
                     <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" /></svg>
                 </button>
             </div>
+
+            {{-- Zoom --}}
+            <div class="flex items-center justify-center gap-2" role="group" aria-label="Zoom">
+                <button type="button" data-flipbook-zoom-out aria-label="Zoom out"
+                        class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/25 text-white transition hover:border-gold-400 hover:text-gold-300 disabled:cursor-not-allowed disabled:opacity-30">
+                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M4 10a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H4.75A.75.75 0 014 10z" clip-rule="evenodd" /></svg>
+                </button>
+                <button type="button" data-flipbook-zoom-reset aria-label="Reset zoom"
+                        class="inline-flex h-11 min-w-16 items-center justify-center rounded-full border border-white/25 px-3 text-sm font-medium tabular-nums text-neutral-300 transition hover:border-gold-400 hover:text-gold-300 disabled:cursor-default disabled:opacity-60">
+                    <span data-flipbook-zoom-level>100%</span>
+                </button>
+                <button type="button" data-flipbook-zoom-in aria-label="Zoom in"
+                        class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/25 text-white transition hover:border-gold-400 hover:text-gold-300 disabled:cursor-not-allowed disabled:opacity-30">
+                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" /></svg>
+                </button>
+            </div>
+            </div>
             <p class="mt-3 text-center text-xs text-neutral-500" data-flipbook-hint hidden>
-                Drag or tap the page corners to turn pages — or use the arrow keys.
+                Drag or tap the page corners to turn pages, or use the arrow keys. Double-click, pinch or use + to zoom; drag to move around.
             </p>
         </div>
     </section>
