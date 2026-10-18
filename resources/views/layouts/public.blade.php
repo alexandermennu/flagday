@@ -23,7 +23,9 @@
         @yield('content')
     </main>
 
-    <x-site-footer />
+    @sectionMissing('no_footer')
+        <x-site-footer />
+    @endif
 
 </body>
 </html>

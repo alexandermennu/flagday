@@ -10,7 +10,7 @@
             </span>
         </a>
         @if ($back)
-            <a href="{{ route('landing') }}" class="shrink-0 text-sm font-medium text-neutral-300 transition hover:text-gold-300">&larr; <span class="hidden sm:inline">Back to </span>events</a>
+            <a href="{{ route('events.show', 'honors-ball') }}" class="shrink-0 text-sm font-medium text-neutral-300 transition hover:text-gold-300">&larr; <span class="hidden sm:inline">Back to </span>Honors Ball</a>
         @endif
     </div>
 </header>

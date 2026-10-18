@@ -17,8 +17,8 @@
     <section class="relative isolate overflow-hidden bg-ink text-white">
         <div class="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_80%_-10%,rgba(231,185,58,0.3),transparent_55%)]"></div>
         <div class="mx-auto max-w-5xl px-5 pb-14 pt-10 sm:pb-20 sm:pt-14 lg:px-8">
-            <a href="{{ route('landing') }}#events" class="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-400 transition hover:text-gold-300">
-                &larr; All graduation events
+            <a href="{{ route('class.show') }}#events" class="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-400 transition hover:text-gold-300">
+                &larr; Class of {{ config('graduation.class_year') }} events
             </a>
             <p class="mt-8 text-xs font-semibold uppercase tracking-[0.3em] text-gold-400">{{ $event['kicker'] }}</p>
             <h1 class="mt-3 font-display text-5xl font-bold sm:text-7xl">

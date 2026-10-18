@@ -23,6 +23,10 @@
     --color-ink: #0b0b0c;
 }
 
+/* Desktop/tablet screens that are short (e.g. 1366x768 laptops) — used to tighten the
+   landing hero so it still fits in one viewport. */
+@custom-variant short (@media (min-width: 640px) and (max-height: 820px));
+
 html {
     scroll-behavior: smooth;
 }

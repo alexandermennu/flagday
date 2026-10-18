@@ -17,6 +17,8 @@ Route::get('/', function () {
     return view('landing');
 })->name('landing');
 
+Route::view('/class-of-2026', 'class-of-2026')->name('class.show');
+
 Route::get('/events/{slug}', [EventController::class, 'show'])->name('events.show');
 
 // The old Flag Day hub — kept as a redirect so any printed/shared links still land somewhere.

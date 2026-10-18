@@ -16,11 +16,11 @@
             </div>
 
             <nav aria-label="Footer">
-                <h2 class="text-xs font-semibold uppercase tracking-[0.2em] text-gold-400">Graduation Events</h2>
+                <h2 class="text-xs font-semibold uppercase tracking-[0.2em] text-gold-400">Explore</h2>
                 <ul class="mt-4 space-y-2.5">
-                    @foreach (\App\Support\Graduation::events() as $slug => $event)
-                        <li><a href="{{ route('events.show', $slug) }}" class="text-sm transition hover:text-gold-300">{{ $event['name'] }}</a></li>
-                    @endforeach
+                    <li><a href="{{ route('landing') }}" class="text-sm transition hover:text-gold-300">Home</a></li>
+                    <li><a href="{{ route('class.show') }}" class="text-sm transition hover:text-gold-300">Class of {{ config('graduation.class_year') }}</a></li>
+                    <li><a href="{{ route('events.show', 'honors-ball') }}" class="text-sm transition hover:text-gold-300">Honors Ball</a></li>
                     <li><a href="{{ route('rsvp.create') }}" class="text-sm transition hover:text-gold-300">RSVP — Honors Ball</a></li>
                 </ul>
             </nav>
