@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Mail\Concerns\SendsAsInstitution;
 use App\Models\Attendee;
 use App\Services\DigitalInviteService;
 use Illuminate\Mail\Mailable;
@@ -11,13 +12,13 @@ use Illuminate\Mail\Mailables\Envelope;
 
 class RsvpConfirmation extends Mailable
 {
+    use SendsAsInstitution;
+
     // Sent synchronously (see Attendee::sendConfirmationEmail()) rather than queued —
     // this is the confirmation on the critical RSVP path, and queuing it makes delivery
     // silently depend on a queue worker actually running in production.
     //
-    // No explicit reply-to here — config('mail.reply_to') is applied globally to every
-    // mailer automatically by Illuminate\Mail\MailManager (same mechanism as the global
-    // "from" address), so setting it per-Mailable would just double it up.
+    // No reply-to is set, so replies go to the From address.
     public function __construct(public Attendee $attendee)
     {
     }
@@ -25,6 +26,7 @@ class RsvpConfirmation extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: $this->institutionSender(),
             subject: "You're confirmed — ".config('event.name'),
         );
     }

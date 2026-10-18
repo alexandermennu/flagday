@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Mail\Concerns\SendsAsInstitution;
 use App\Models\Attendee;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -9,8 +10,9 @@ use Illuminate\Mail\Mailables\Envelope;
 
 class RsvpDeclinedAcknowledgement extends Mailable
 {
-    // Sent synchronously — see the note on RsvpConfirmation. Reply-to is applied
-    // globally by MailManager (config('mail.reply_to')), not set here.
+    use SendsAsInstitution;
+
+    // Sent synchronously — see the note on RsvpConfirmation.
     public function __construct(public Attendee $attendee)
     {
     }
@@ -18,6 +20,7 @@ class RsvpDeclinedAcknowledgement extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: $this->institutionSender(),
             subject: "We'll miss you — ".config('event.name'),
         );
     }

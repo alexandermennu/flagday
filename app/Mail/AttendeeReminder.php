@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Mail\Concerns\SendsAsInstitution;
 use App\Models\Attendee;
 use App\Services\DigitalInviteService;
 use Illuminate\Bus\Queueable;
@@ -14,7 +15,7 @@ use Illuminate\Queue\SerializesModels;
 
 class AttendeeReminder extends Mailable implements ShouldQueue
 {
-    use Queueable, SerializesModels;
+    use Queueable, SendsAsInstitution, SerializesModels;
 
     public function __construct(public Attendee $attendee)
     {
@@ -23,6 +24,7 @@ class AttendeeReminder extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: $this->institutionSender(),
             subject: 'Reminder — '.config('event.name').' is coming up',
         );
     }

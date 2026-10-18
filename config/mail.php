@@ -112,23 +112,9 @@ return [
 
     'from' => [
         'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Global "Reply-To" Address
-    |--------------------------------------------------------------------------
-    |
-    | Optional — not a stock Laravel config key, but a convention this app's
-    | mailables read (see App\Mail\Concerns\HasEventReplyTo) so replies to the
-    | noreply@ sending address land somewhere a human actually reads.
-    |
-    */
-
-    'reply_to' => [
-        'address' => env('MAIL_REPLY_TO_ADDRESS'),
-        'name' => env('MAIL_REPLY_TO_NAME', env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel'))),
+        // Display name for anything not using App\Mail\Concerns\SendsAsInstitution —
+        // the guest-facing RSVP emails always send as config('graduation.institution').
+        'name' => env('MAIL_FROM_NAME', 'Starz University'),
     ],
 
 ];
