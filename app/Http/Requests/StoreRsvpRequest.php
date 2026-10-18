@@ -46,4 +46,20 @@ class StoreRsvpRequest extends FormRequest
             'guests.*.position' => ['required_with:guests', 'string', 'max:255'],
         ];
     }
+
+    /**
+     * Field names as they appear on the form — the columns are still organization/position.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'organization' => 'affiliation',
+            'position' => 'role',
+            'guests.*.organization' => 'guest affiliation',
+            'guests.*.position' => 'guest role',
+            'guests.*.full_name' => 'guest name',
+        ];
+    }
 }

@@ -6,7 +6,7 @@ use App\Http\Controllers\Admin\CheckInController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\CalendarController;
-use App\Http\Controllers\FlagDayController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\PassVerificationController;
 use App\Http\Controllers\RsvpAccessController;
 use App\Http\Controllers\RsvpController;
@@ -17,10 +17,13 @@ Route::get('/', function () {
     return view('landing');
 })->name('landing');
 
-Route::get('/flag-day', [FlagDayController::class, 'show'])->name('flag-day.show');
+Route::get('/events/{slug}', [EventController::class, 'show'])->name('events.show');
 
-// The RSVP form sits behind a shared passcode (see RequireRsvpPasscode) — anyone can
-// click "RSVP" in the nav, but must enter the code before the form itself loads.
+// The old Flag Day hub — kept as a redirect so any printed/shared links still land somewhere.
+Route::redirect('/flag-day', '/', 301);
+
+// The RSVP form (Honors Ball only) can sit behind a shared passcode (see RequireRsvpPasscode),
+// switched off by default via event.rsvp_passcode_required.
 Route::get('/rsvp/access', [RsvpAccessController::class, 'show'])->name('rsvp.access');
 Route::post('/rsvp/access', [RsvpAccessController::class, 'store'])
     ->middleware('throttle:10,1')

@@ -6,6 +6,21 @@ use Tests\TestCase;
 
 class RsvpAccessTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // The gate is off by default; these tests cover its behavior when switched on.
+        config(['event.rsvp_passcode_required' => true, 'event.rsvp_passcode' => 'SU2026']);
+    }
+
+    public function test_rsvp_form_is_open_without_a_passcode_when_the_gate_is_disabled(): void
+    {
+        config(['event.rsvp_passcode_required' => false]);
+
+        $this->get(route('rsvp.create'))->assertOk()->assertSee('Honors Ball RSVP');
+    }
+
     public function test_rsvp_form_redirects_to_the_passcode_screen_when_not_yet_unlocked(): void
     {
         $this->get(route('rsvp.create'))->assertRedirect(route('rsvp.access'));

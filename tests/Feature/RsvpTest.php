@@ -18,7 +18,7 @@ class RsvpTest extends TestCase
     {
         parent::setUp();
 
-        // The RSVP form sits behind a passcode gate (see RsvpAccessTest) — these tests
+        // The RSVP form can sit behind a passcode gate (see RsvpAccessTest) — these tests
         // exercise the form itself, so start each one already past that gate.
         $this->withSession(['rsvp_access_granted' => true]);
     }

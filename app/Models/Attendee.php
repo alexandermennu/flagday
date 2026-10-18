@@ -52,21 +52,21 @@ class Attendee extends Model
     }
 
     /**
-     * A short, human-presentable code (e.g. "NFD179-7X2K8F") shown on the digital ticket
+     * A short, human-presentable code (e.g. "SU26-7X2K8F") shown on the digital ticket
      * — distinct from invite_token, which is the long opaque value encoded in the QR code.
      * Avoids visually ambiguous characters (0/O, 1/I/L) since guests may read it aloud or
      * type it in by hand.
      */
     protected static function generateConfirmationId(): string
     {
-        $edition = date('Y', strtotime(config('event.date'))) - 1847;
+        $year = substr((string) config('graduation.class_year'), -2);
         $charset = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 
         $code = collect(range(1, 6))
             ->map(fn () => $charset[random_int(0, strlen($charset) - 1)])
             ->implode('');
 
-        return "NFD{$edition}-{$code}";
+        return "SU{$year}-{$code}";
     }
 
     public function guests(): HasMany

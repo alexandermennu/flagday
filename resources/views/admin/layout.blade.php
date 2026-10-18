@@ -14,8 +14,8 @@
             <div class="flex items-center gap-3 border-b border-slate-200 px-6 py-5">
                 <x-seal class="h-9 w-9 shrink-0" />
                 <span class="leading-tight">
-                    <span class="block text-[10px] font-semibold uppercase tracking-wider text-red-700">Republic of Liberia</span>
-                    <span class="block text-sm font-bold text-blue-950">Admin</span>
+                    <span class="block text-[10px] font-semibold uppercase tracking-wider text-gold-600">{{ config('graduation.institution') }}</span>
+                    <span class="block text-sm font-bold text-ink">Admin</span>
                 </span>
             </div>
             @php
@@ -24,19 +24,19 @@
             @endphp
             <nav class="space-y-1 px-3 py-4">
                 <a href="{{ route('admin.dashboard') }}"
-                   class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition {{ request()->routeIs('admin.dashboard') ? 'bg-blue-950 text-white' : 'text-slate-600 hover:bg-slate-100' }}">
+                   class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition {{ request()->routeIs('admin.dashboard') ? 'bg-ink text-white' : 'text-slate-600 hover:bg-slate-100' }}">
                     <span aria-hidden="true">📊</span> Dashboard
                 </a>
                 <a href="{{ route('admin.attendees.index') }}"
-                   class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition {{ $isInvitees ? 'bg-blue-950 text-white' : 'text-slate-600 hover:bg-slate-100' }}">
+                   class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition {{ $isInvitees ? 'bg-ink text-white' : 'text-slate-600 hover:bg-slate-100' }}">
                     <span aria-hidden="true">👥</span> Invitees
                 </a>
                 <a href="{{ route('admin.attendees.index', ['status' => 'responded']) }}"
-                   class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition {{ $isResponses ? 'bg-blue-950 text-white' : 'text-slate-600 hover:bg-slate-100' }}">
+                   class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition {{ $isResponses ? 'bg-ink text-white' : 'text-slate-600 hover:bg-slate-100' }}">
                     <span aria-hidden="true">📨</span> RSVP Responses
                 </a>
                 <a href="{{ route('admin.reports.index') }}"
-                   class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition {{ request()->routeIs('admin.reports.*') ? 'bg-blue-950 text-white' : 'text-slate-600 hover:bg-slate-100' }}">
+                   class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition {{ request()->routeIs('admin.reports.*') ? 'bg-ink text-white' : 'text-slate-600 hover:bg-slate-100' }}">
                     <span aria-hidden="true">📈</span> Reports
                 </a>
             </nav>
@@ -44,7 +44,7 @@
 
         <div class="flex-1">
             <header class="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
-                <h1 class="text-lg font-bold text-blue-950">@yield('title', 'Dashboard')</h1>
+                <h1 class="text-lg font-bold text-ink">@yield('title', 'Dashboard')</h1>
                 <form method="POST" action="{{ route('admin.logout') }}">
                     @csrf
                     <button type="submit" class="text-sm font-medium text-slate-500 transition hover:text-red-700">Sign out</button>

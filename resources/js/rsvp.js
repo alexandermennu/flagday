@@ -109,17 +109,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div>
                         <label class="mb-1.5 block text-sm font-medium text-slate-700">Full Name <span class="text-red-600">*</span></label>
                         <input type="text" name="guests[${index}][full_name]"
-                               class="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
+                               class="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500">
                     </div>
                     <div>
-                        <label class="mb-1.5 block text-sm font-medium text-slate-700">Organization <span class="text-red-600">*</span></label>
+                        <label class="mb-1.5 block text-sm font-medium text-slate-700">Affiliation <span class="text-red-600">*</span></label>
                         <input type="text" name="guests[${index}][organization]"
-                               class="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
+                               class="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500">
                     </div>
                     <div>
-                        <label class="mb-1.5 block text-sm font-medium text-slate-700">Position <span class="text-red-600">*</span></label>
+                        <label class="mb-1.5 block text-sm font-medium text-slate-700">Role <span class="text-red-600">*</span></label>
                         <input type="text" name="guests[${index}][position]"
-                               class="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
+                               class="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500">
                     </div>
                 </div>
             </div>

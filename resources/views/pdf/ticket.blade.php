@@ -12,7 +12,8 @@
         }
 
         .header {
-            background-color: #1b2652;
+            background-color: #0b0b0c;
+            border-bottom: 3px solid #d4a024;
             border-bottom-left-radius: 28px;
             border-bottom-right-radius: 28px;
             padding: 26px 24px 20px;
@@ -39,7 +40,7 @@
         .header .subtitle {
             font-size: 11px;
             font-weight: bold;
-            color: #c7cbe0;
+            color: #e7b93a;
             letter-spacing: 2px;
             text-transform: uppercase;
             margin: 0;
@@ -53,7 +54,7 @@
             font-weight: bold;
             letter-spacing: 1.5px;
             text-transform: uppercase;
-            color: #1b2652;
+            color: #0b0b0c;
             margin: 0 0 8px 0;
         }
         .conf-id-box {
@@ -64,7 +65,7 @@
             font-size: 19px;
             font-weight: bold;
             letter-spacing: 1px;
-            color: #b91c1c;
+            color: #8c5d19;
             margin: 0 0 20px 0;
         }
 
@@ -80,12 +81,12 @@
             width: 22px;
             height: 22px;
             border-radius: 5px;
-            background-color: #1b2652;
+            background-color: #0b0b0c;
             text-align: center;
         }
         .info-icon img { width: 13px; height: 13px; margin-top: 4.5px; }
         .info-label { font-size: 9px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; color: #94a3b8; margin: 0; }
-        .info-value { font-size: 12.5px; font-weight: bold; color: #1b2652; margin: 2px 0 0 0; }
+        .info-value { font-size: 12.5px; font-weight: bold; color: #0b0b0c; margin: 2px 0 0 0; }
 
         .qr-frame { display: inline-block; border: 1px solid #e2e8f0; border-radius: 10px; padding: 8px; }
         .qr-frame img { width: 108px; height: 108px; }
@@ -97,19 +98,19 @@
         table.details-row td { width: 25%; text-align: center; vertical-align: top; padding: 0 3px; }
         .detail-icon img { width: 18px; height: 18px; }
         .detail-label { font-size: 8px; font-weight: bold; letter-spacing: 0.75px; text-transform: uppercase; color: #94a3b8; margin: 5px 0 3px 0; }
-        .detail-value { font-size: 10px; font-weight: bold; color: #1b2652; line-height: 1.35; margin: 0; }
+        .detail-value { font-size: 10px; font-weight: bold; color: #0b0b0c; line-height: 1.35; margin: 0; }
 
-        .footer { background-color: #1b2652; color: #ffffff; padding: 20px 22px; margin-top: 16px; }
+        .footer { background-color: #0b0b0c; border-top: 3px solid #d4a024; color: #ffffff; padding: 20px 22px; margin-top: 16px; }
         table.footer-table { width: 100%; border-collapse: collapse; }
         table.footer-table td { vertical-align: middle; }
         .footer-logo-col { width: 56px; }
-        .footer-emblem { width: 46px; height: 46px; border-radius: 50%; background-color: #ffffff; text-align: center; }
-        .footer-emblem img { width: 32px; height: 32px; margin-top: 7px; }
+        .footer-emblem { width: 46px; height: 46px; text-align: center; }
+        .footer-emblem img { width: 46px; height: 46px; }
         .footer-center-col { width: 48%; text-align: center; padding: 0 10px; }
         .footer-event-name { font-size: 10.5px; font-weight: bold; letter-spacing: 0.75px; margin: 0 0 6px 0; text-transform: uppercase; }
-        .footer-tagline { font-size: 8.5px; font-style: italic; color: #d4af37; margin: 0; line-height: 1.45; }
+        .footer-tagline { font-size: 8.5px; font-style: italic; color: #e7b93a; margin: 0; line-height: 1.45; }
         .footer-contact-col { width: 34%; text-align: right; }
-        .footer-contact-heading { font-size: 9px; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase; color: #d4af37; margin: 0 0 6px 0; }
+        .footer-contact-heading { font-size: 9px; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase; color: #e7b93a; margin: 0 0 6px 0; }
         .footer-contact-line { font-size: 8px; color: #e2e5f0; margin: 0 0 3px 0; line-height: 1.5; }
         .footer-contact-line:last-child { margin-bottom: 0; }
     </style>
@@ -117,12 +118,11 @@
 <body>
     @php
         $icon = fn (string $name, string $color) => \App\Services\IconFactory::dataUri($name, $color);
-        $edition = \Illuminate\Support\Number::ordinal(date('Y', strtotime(config('event.date'))) - 1847);
     @endphp
 
     <div class="header">
         <div class="check-badge">
-            <img src="{{ $icon('check', '#1b2652') }}" alt="">
+            <img src="{{ $icon('check', '#0b0b0c') }}" alt="">
         </div>
         <p class="title">Attendance Confirmed.</p>
         <p class="subtitle">Your Spot Is Secured</p>
@@ -150,7 +150,7 @@
                                 <span class="info-icon"><img src="{{ $icon('building', '#ffffff') }}" alt=""></span>
                             </td>
                             <td>
-                                <p class="info-label">Organization</p>
+                                <p class="info-label">Affiliation</p>
                                 <p class="info-value">{{ $attendee->organization }}</p>
                             </td>
                         </tr>
@@ -159,7 +159,7 @@
                                 <span class="info-icon"><img src="{{ $icon('briefcase', '#ffffff') }}" alt=""></span>
                             </td>
                             <td>
-                                <p class="info-label">Position</p>
+                                <p class="info-label">Role</p>
                                 <p class="info-value">{{ $attendee->position }}</p>
                             </td>
                         </tr>
@@ -179,27 +179,31 @@
         <table class="details-row">
             <tr>
                 <td>
-                    <div class="detail-icon"><img src="{{ $icon('calendar', '#1b2652') }}" alt=""></div>
+                    <div class="detail-icon"><img src="{{ $icon('calendar', '#0b0b0c') }}" alt=""></div>
                     <p class="detail-label">Date</p>
                     <p class="detail-value">
-                        {{ date('F j, Y', strtotime(config('event.date'))) }}<br>
-                        ({{ date('l', strtotime(config('event.date'))) }})
+                        @if (config('event.date'))
+                            {{ date('F j, Y', strtotime(config('event.date'))) }}<br>
+                            ({{ date('l', strtotime(config('event.date'))) }})
+                        @else
+                            {{ \App\Support\Graduation::PLACEHOLDER }}
+                        @endif
                     </p>
                 </td>
                 <td>
-                    <div class="detail-icon"><img src="{{ $icon('clock', '#1b2652') }}" alt=""></div>
+                    <div class="detail-icon"><img src="{{ $icon('clock', '#0b0b0c') }}" alt=""></div>
                     <p class="detail-label">Time</p>
-                    <p class="detail-value">{{ date('g:i A', strtotime(config('event.start_time'))) }}<br>Prompt</p>
+                    <p class="detail-value">{{ \App\Support\Graduation::formatTime(config('event.start_time')) }}</p>
                 </td>
                 <td>
-                    <div class="detail-icon"><img src="{{ $icon('pin', '#1b2652') }}" alt=""></div>
+                    <div class="detail-icon"><img src="{{ $icon('pin', '#0b0b0c') }}" alt=""></div>
                     <p class="detail-label">Venue</p>
-                    <p class="detail-value">{{ config('event.venue') }}<br>{{ config('event.venue_address') }}</p>
+                    <p class="detail-value">{{ \App\Support\Graduation::orPlaceholder(config('event.venue')) }}@if (config('event.venue_address'))<br>{{ config('event.venue_address') }}@endif</p>
                 </td>
                 <td>
-                    <div class="detail-icon"><img src="{{ $icon('tie', '#1b2652') }}" alt=""></div>
+                    <div class="detail-icon"><img src="{{ $icon('tie', '#0b0b0c') }}" alt=""></div>
                     <p class="detail-label">Dress Code</p>
-                    <p class="detail-value">{{ config('event.dress_code') }}</p>
+                    <p class="detail-value">{{ \App\Support\Graduation::orPlaceholder(config('event.dress_code')) }}</p>
                 </td>
             </tr>
         </table>
@@ -210,20 +214,19 @@
             <tr>
                 <td class="footer-logo-col">
                     <div class="footer-emblem">
-                        <img src="{{ \App\Services\IconFactory::emblemDataUri('moe') }}" alt="Ministry of Education">
+                        <img src="{{ \App\Services\IconFactory::emblemDataUri('crest') }}" alt="{{ config('graduation.institution') }}">
                     </div>
                 </td>
                 <td class="footer-center-col">
-                    <p class="footer-event-name">{{ $edition }} National Flag Day Celebration</p>
-                    <p class="footer-tagline">&ldquo;{{ config('event.theme') }}&rdquo;</p>
+                    <p class="footer-event-name">{{ config('event.name') }}</p>
+                    <p class="footer-tagline">{{ config('graduation.institution') }} &middot; Class of {{ config('graduation.class_year') }}</p>
                 </td>
                 <td class="footer-contact-col">
                     <p class="footer-contact-heading">Contact Us</p>
-                    <p class="footer-contact-line">{{ config('event.contact_phone') }}</p>
-                    <p class="footer-contact-line">{{ config('event.contact_phone_secondary') }}</p>
-                    <p class="footer-contact-line">WhatsApp: {{ config('event.contact_whatsapp') }}</p>
-                    <p class="footer-contact-line">{{ config('event.contact_email') }}</p>
-                    <p class="footer-contact-line">{{ config('event.contact_website') }}</p>
+                    <p class="footer-contact-line">{{ config('graduation.contact_phone') ?: \App\Support\Graduation::PLACEHOLDER }}</p>
+                    @if (config('graduation.contact_email'))
+                        <p class="footer-contact-line">{{ config('graduation.contact_email') }}</p>
+                    @endif
                 </td>
             </tr>
         </table>

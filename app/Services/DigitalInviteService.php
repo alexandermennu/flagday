@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Attendee;
+use App\Support\Graduation;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Endroid\QrCode\ErrorCorrectionLevel;
@@ -31,13 +32,15 @@ class DigitalInviteService
     {
         $timezone = config('event.timezone');
         $start = Carbon::parse(config('event.date').' '.config('event.start_time'), $timezone)->setTimezone('UTC');
-        $end = Carbon::parse(config('event.date').' '.config('event.end_time'), $timezone)->setTimezone('UTC');
-        $host = parse_url(config('app.url'), PHP_URL_HOST) ?: 'flagday.local';
+        $end = filled(config('event.end_time'))
+            ? Carbon::parse(config('event.date').' '.config('event.end_time'), $timezone)->setTimezone('UTC')
+            : $start->copy()->addHours(4);
+        $host = parse_url(config('app.url'), PHP_URL_HOST) ?: 'graduation.local';
 
         $lines = [
             'BEGIN:VCALENDAR',
             'VERSION:2.0',
-            'PRODID:-//Republic of Liberia//National Flag Day RSVP//EN',
+            'PRODID:-//Starz University//Class of 2026 Graduation//EN',
             'METHOD:PUBLISH',
             'BEGIN:VEVENT',
             'UID:'.sprintf('attendee-%d@%s', $attendee->id, $host),
@@ -45,7 +48,7 @@ class DigitalInviteService
             'DTSTART:'.$start->format('Ymd\THis\Z'),
             'DTEND:'.$end->format('Ymd\THis\Z'),
             'SUMMARY:'.$this->escapeIcsText(config('event.name')),
-            'LOCATION:'.$this->escapeIcsText(config('event.venue').', '.config('event.venue_address')),
+            'LOCATION:'.$this->escapeIcsText(Graduation::orPlaceholder(config('event.venue'), config('event.venue_address'))),
             'DESCRIPTION:'.$this->escapeIcsText(
                 "You're confirmed for ".config('event.name').'. Present your digital ticket at the entrance.'
             ),

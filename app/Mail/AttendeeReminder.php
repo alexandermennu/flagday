@@ -44,7 +44,7 @@ class AttendeeReminder extends Mailable implements ShouldQueue
         $invites = app(DigitalInviteService::class);
 
         return [
-            Attachment::fromData(fn () => $invites->pdf($this->attendee), '179th_National_Flag_Day_Event_Pass.pdf')
+            Attachment::fromData(fn () => $invites->pdf($this->attendee), 'Starz_University_Honors_Ball_Event_Pass.pdf')
                 ->withMime('application/pdf'),
         ];
     }

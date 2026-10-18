@@ -33,7 +33,7 @@ class SendTestRsvpEmail extends Command
         $attendee = new Attendee([
             'first_name' => 'Test',
             'last_name' => 'Recipient',
-            'organization' => 'Ministry of Education',
+            'organization' => 'Starz University',
             'position' => 'Mail Delivery Test',
             'status' => AttendeeStatus::Confirmed,
         ]);

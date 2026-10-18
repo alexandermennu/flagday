@@ -10,8 +10,8 @@ namespace App\Services;
  * not render inline <svg> markup in this environment (verified: even a trivial
  * <circle>/<rect> renders blank), and email clients have inconsistent inline-SVG support.
  *
- * The brand emblems (emblemDataUri()) are the real Seal of the Republic of Liberia and
- * Ministry of Education logo files from public/images/branding, base64-embedded rather
+ * The brand emblem (emblemDataUri()) is the Starz University crest file from
+ * public/images/branding, base64-embedded rather
  * than referenced by path so they render identically regardless of server file layout —
  * the same reasoning as embedding the QR code image inline.
  */
@@ -45,16 +45,14 @@ class IconFactory
     }
 
     /**
-     * The official brand marks — "seal" is the Seal of the Republic of Liberia, "moe" is
-     * the Ministry of Education logo — read from public/images/branding and embedded as
-     * data URIs. Used wherever a placeholder emblem previously appeared: side by side on
-     * the confirmation email's signature block, and "moe" alone on the PDF ticket footer.
+     * The brand mark — "crest" is the Starz University crest — read from
+     * public/images/branding and embedded as a data URI. Used on the confirmation
+     * email's signature block and the PDF ticket footer.
      */
     public static function emblemDataUri(string $name): string
     {
         $file = match ($name) {
-            'seal' => 'liberian-seal.svg',
-            'moe' => 'moe-logo.png',
+            'crest' => 'starz-crest.svg',
         };
 
         $path = public_path("images/branding/{$file}");

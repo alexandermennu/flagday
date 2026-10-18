@@ -35,8 +35,19 @@ class PassVerificationTest extends TestCase
         $response->assertSee('Deputy Director');
         $response->assertSee($attendee->confirmation_id);
         $response->assertSee('Confirmed');
-        $response->assertSee('National Flag Day Celebration');
-        $response->assertSee(date('g:i A', strtotime(config('event.start_time'))));
+        $response->assertSee(config('event.name'));
+        $response->assertSee('To be announced');
+    }
+
+    public function test_verify_page_shows_configured_event_time(): void
+    {
+        config(['event.date' => '2026-12-05', 'event.start_time' => '18:30']);
+        $attendee = Attendee::factory()->confirmed()->create();
+
+        $response = $this->get(route('pass.verify', $attendee->invite_token));
+
+        $response->assertSee('Saturday, December 5, 2026');
+        $response->assertSee('6:30 PM');
     }
 
     public function test_verify_page_does_not_mark_the_attendee_as_checked_in(): void

@@ -1,43 +1,56 @@
 @extends('emails.layout')
 
-@php
-    $edition = \Illuminate\Support\Number::ordinal(date('Y', strtotime(config('event.date'))) - 1847);
-@endphp
-
 @section('content')
     <p>Dear {{ $attendee->full_name }},</p>
 
-    <p>Thank you for confirming your attendance at the {{ $edition }} {{ config('event.name') }} Celebration.</p>
-
     <p>
-        We sincerely appreciate your response and look forward to welcoming you as we commemorate this important
-        national occasion under the theme:
+        Thank you for confirming your attendance at the {{ config('graduation.institution') }}
+        Class of {{ config('graduation.class_year') }} Honors Ball.
     </p>
 
-    <p><em>&ldquo;{{ config('event.theme') }}&rdquo;</em></p>
+    <table class="details">
+        <tr>
+            <td class="label">Date</td>
+            <td class="value">{{ \App\Support\Graduation::formatDate(config('event.date')) }}</td>
+        </tr>
+        <tr>
+            <td class="label">Time</td>
+            <td class="value">{{ \App\Support\Graduation::formatTime(config('event.start_time')) }}</td>
+        </tr>
+        <tr>
+            <td class="label">Venue</td>
+            <td class="value">{{ \App\Support\Graduation::orPlaceholder(config('event.venue'), config('event.venue_address')) }}</td>
+        </tr>
+    </table>
 
     <p>
-        Your official Event Pass is attached to this email. Please present it upon arrival for verification and
-        entry. <a href="{{ route('calendar.show', $attendee->invite_token) }}" class="calendar-link">Add to Calendar</a>
+        Your Event Pass is attached to this email. Please present it upon arrival for verification and entry.
+        @if (\App\Support\Graduation::rsvpEventIsScheduled())
+            <a href="{{ route('calendar.show', $attendee->invite_token) }}" class="calendar-link">Add to Calendar</a>
+        @endif
     </p>
 
-    <p>Your presence is greatly valued, and we look forward to celebrating this historic national occasion with you.</p>
+    <p>
+        Any details still marked &ldquo;{{ \App\Support\Graduation::PLACEHOLDER }}&rdquo; will be published on the
+        <a href="{{ route('events.show', 'honors-ball') }}" class="calendar-link">Honors Ball page</a> once confirmed.
+    </p>
+
+    <p>We look forward to celebrating the Class of {{ config('graduation.class_year') }} with you.</p>
 
     <p>With appreciation,</p>
 
     <div class="emblems">
-        <img src="{{ \App\Services\IconFactory::emblemDataUri('seal') }}" alt="Seal of the Republic of Liberia">
-        <img src="{{ \App\Services\IconFactory::emblemDataUri('moe') }}" alt="Ministry of Education">
+        <img src="{{ \App\Services\IconFactory::emblemDataUri('crest') }}" alt="{{ config('graduation.institution') }}">
     </div>
-    <p class="emblem-captions"><span>Republic of Liberia</span><span>Ministry of Education</span></p>
 
     <p class="signature">
-        <strong>{{ $edition }} National Flag Day Planning Committee</strong><br>
-        Office of the Assistant Minister<br>
-        Bureau of Student Personnel Services<br>
-        Ministry of Education, Republic of Liberia<br>
-        Phone: {{ config('event.contact_phone') }} / {{ config('event.contact_phone_secondary') }}<br>
-        WhatsApp: {{ config('event.contact_whatsapp') }}<br>
-        Website: {{ config('event.contact_website') }}
+        <strong>Class of {{ config('graduation.class_year') }} Graduation Committee</strong><br>
+        {{ config('graduation.institution') }}<br>
+        @if (config('graduation.contact_phone'))
+            Phone: {{ config('graduation.contact_phone') }}<br>
+        @endif
+        @if (config('graduation.contact_email'))
+            Email: {{ config('graduation.contact_email') }}<br>
+        @endif
     </p>
 @endsection

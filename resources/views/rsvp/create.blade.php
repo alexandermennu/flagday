@@ -3,35 +3,30 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>RSVP — {{ config('event.name') }} | Republic of Liberia</title>
+    <title>RSVP — {{ config('event.name') }}</title>
 
     @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/rsvp.js'])
 </head>
-<body class="min-h-screen bg-slate-50 font-sans text-slate-900 antialiased">
+<body class="min-h-screen bg-neutral-50 font-sans text-slate-900 antialiased">
 
-    <header class="border-b border-slate-200 bg-white">
-        <div class="mx-auto flex max-w-[760px] items-center justify-between px-6 py-4">
-            <a href="{{ route('landing') }}" class="flex items-center gap-3">
-                <x-seal class="h-9 w-9 shrink-0" />
-                <span class="leading-tight">
-                    <span class="block text-[11px] font-semibold uppercase tracking-wider text-red-700">Republic of Liberia</span>
-                    <span class="block text-sm font-bold text-blue-950">Ministry of Education</span>
-                </span>
-            </a>
-            <a href="{{ route('landing') }}" class="text-sm font-medium text-slate-500 transition hover:text-blue-950">&larr; Back to event page</a>
-        </div>
-    </header>
+    <x-rsvp-header />
 
     <main class="mx-auto max-w-[760px] px-6 py-16">
         <div class="text-center">
-            <h1 class="text-3xl font-bold tracking-tight text-blue-950 sm:text-4xl">
-                {{ \Illuminate\Support\Number::ordinal(date('Y', strtotime(config('event.date'))) - 1847) }} Flag Day RSVP Form
-            </h1>
-            <p class="mt-4 text-slate-600">
-                Kindly fill the form below to secure your spot (Note: This form is only applicable those that
-                received an official invitation letter!)
+            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-gold-600">RSVP &middot; Honors Ball</p>
+            <h1 class="mt-3 font-display text-4xl font-semibold text-ink sm:text-5xl">Honors Ball RSVP</h1>
+            <p class="mx-auto mt-4 max-w-lg text-neutral-600">
+                Kindly complete the form below to confirm your attendance at the {{ config('graduation.institution') }}
+                Class of {{ config('graduation.class_year') }} Honors Ball.
             </p>
+            @if (config('event.date') || config('event.venue'))
+                <p class="mt-3 text-sm text-neutral-500">
+                    {{ \App\Support\Graduation::formatDate(config('event.date')) }}
+                    &middot; {{ \App\Support\Graduation::formatTime(config('event.start_time')) }}
+                    &middot; {{ \App\Support\Graduation::orPlaceholder(config('event.venue')) }}
+                </p>
+            @endif
         </div>
 
         <div class="mt-10 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm sm:p-10">
@@ -53,7 +48,7 @@
                 $oldGuests = old('guests', []);
                 $hasGuests = count($oldGuests) > 0;
 
-                $inputClass = 'w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950';
+                $inputClass = 'w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500';
             @endphp
 
             <form method="POST" action="{{ route('rsvp.store') }}" id="rsvp-form" class="space-y-10">
@@ -61,9 +56,9 @@
 
                 {{-- ============ Step 1: Attendance ============ --}}
                 <section class="text-center">
-                    <h2 class="text-xl font-bold text-blue-950">Will you attend the National Flag Day Celebration?</h2>
+                    <h2 class="text-xl font-bold text-ink">Will you attend the Honors Ball?</h2>
                     <div class="mt-5 flex flex-wrap items-center justify-center gap-3">
-                        <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border-2 border-[#1b2652] bg-[#1b2652] px-5 py-2.5 text-sm font-semibold text-white transition has-[:checked]:ring-2 has-[:checked]:ring-[#1b2652] has-[:checked]:ring-offset-2">
+                        <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border-2 border-ink bg-ink px-5 py-2.5 text-sm font-semibold text-white transition has-[:checked]:ring-2 has-[:checked]:ring-gold-500 has-[:checked]:ring-offset-2">
                             <input type="radio" name="status" id="attendance-yes" value="confirmed" class="sr-only" {{ $showYes ? 'checked' : '' }}>
                             <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                 <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
@@ -84,8 +79,8 @@
                 <div id="attend-yes-block" class="{{ $showYes ? '' : 'hidden' }} space-y-10">
                     <section>
                         <div class="mb-6">
-                            <h2 class="text-lg font-bold text-blue-950">Your Information</h2>
-                            <p class="mt-1 text-sm text-slate-500">Tell us who you are and where you're joining us from.</p>
+                            <h2 class="text-lg font-bold text-ink">Your Information</h2>
+                            <p class="mt-1 text-sm text-slate-500">Tell us who you are and how you're connected to the Class of {{ config('graduation.class_year') }}.</p>
                         </div>
 
                         <div class="grid gap-x-6 gap-y-5 sm:grid-cols-2">
@@ -101,7 +96,7 @@
                             <div>
                                 <label for="email" class="mb-1.5 block text-sm font-semibold text-slate-700">Email <span class="text-red-600">*</span></label>
                                 <input type="email" name="email" id="email" data-sync-field="email" value="{{ old('email') }}" placeholder="example@example.com" class="{{ $inputClass }}">
-                                <p class="mt-1.5 text-xs text-slate-500">Your digital ticket and confirmation will be sent here.</p>
+                                <p class="mt-1.5 text-xs text-slate-500">Your digital Event Pass and confirmation will be sent here.</p>
                             </div>
                             <div>
                                 <label for="phone" class="mb-1.5 block text-sm font-semibold text-slate-700">Phone Number</label>
@@ -109,31 +104,31 @@
                             </div>
 
                             <div>
-                                <label for="organization" class="mb-1.5 block text-sm font-semibold text-slate-700">Organization/Agency <span class="text-red-600">*</span></label>
-                                <input type="text" name="organization" id="organization" data-sync-field="organization" value="{{ old('organization') }}" class="{{ $inputClass }}">
+                                <label for="organization" class="mb-1.5 block text-sm font-semibold text-slate-700">Affiliation <span class="text-red-600">*</span></label>
+                                <input type="text" name="organization" id="organization" data-sync-field="organization" value="{{ old('organization') }}" placeholder="e.g. Starz University" class="{{ $inputClass }}">
                             </div>
                             <div>
-                                <label for="department" class="mb-1.5 block text-sm font-semibold text-slate-700">Department/Division/Unit</label>
+                                <label for="department" class="mb-1.5 block text-sm font-semibold text-slate-700">Department / Program</label>
                                 <input type="text" name="department" id="department" value="{{ old('department') }}" class="{{ $inputClass }}">
                             </div>
 
                             <div class="sm:col-span-2">
-                                <label for="position" class="mb-1.5 block text-sm font-semibold text-slate-700">Position <span class="text-red-600">*</span></label>
+                                <label for="position" class="mb-1.5 block text-sm font-semibold text-slate-700">Role <span class="text-red-600">*</span></label>
                                 <input type="text" name="position" id="position" value="{{ old('position') }}" class="{{ $inputClass }}">
-                                <p class="mt-1.5 text-xs text-slate-500">Your official title or role.</p>
+                                <p class="mt-1.5 text-xs text-slate-500">e.g. Graduate, Parent, Faculty, Guest.</p>
                             </div>
                         </div>
                     </section>
 
                     <section id="additional-guests-section">
                         <div class="mb-6">
-                            <h2 class="text-lg font-bold text-blue-950">Additional Guests</h2>
+                            <h2 class="text-lg font-bold text-ink">Additional Guests</h2>
                             <p class="mt-1 text-sm text-slate-500">Bringing anyone with you? Let us know so we can prepare for them too.</p>
                         </div>
 
                         <p class="mb-3 text-sm font-semibold text-slate-700">Will you bring additional guest(s)?</p>
                         <div class="flex flex-wrap gap-3">
-                            <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border-2 border-slate-300 px-5 py-2 text-sm font-semibold text-slate-700 transition has-[:checked]:border-red-700 has-[:checked]:bg-red-50 has-[:checked]:text-red-700">
+                            <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border-2 border-slate-300 px-5 py-2 text-sm font-semibold text-slate-700 transition has-[:checked]:border-gold-500 has-[:checked]:bg-gold-50 has-[:checked]:text-ink">
                                 <input type="radio" data-guest-toggle name="has_guests_choice" value="yes" class="sr-only" {{ $hasGuests ? 'checked' : '' }}>
                                 Yes
                             </label>
@@ -145,7 +140,7 @@
 
                         <div id="guest-count-field" class="mt-5 {{ $hasGuests ? '' : 'hidden' }}">
                             <label for="guest_count_select" class="mb-1.5 block text-sm font-semibold text-slate-700">How many additional guests?</label>
-                            <select id="guest_count_select" class="w-full max-w-[200px] rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-950 focus:outline-none focus:ring-1 focus:ring-blue-950">
+                            <select id="guest_count_select" class="w-full max-w-[200px] rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500">
                                 <option value="">Select&hellip;</option>
                                 @for ($i = 1; $i <= 5; $i++)
                                     <option value="{{ $i }}" {{ count($oldGuests) === $i ? 'selected' : '' }}>{{ $i }}</option>
@@ -163,11 +158,11 @@
                                             <input type="text" name="guests[{{ $i }}][full_name]" value="{{ $guest['full_name'] ?? '' }}" class="{{ $inputClass }} bg-white">
                                         </div>
                                         <div>
-                                            <label class="mb-1.5 block text-sm font-medium text-slate-700">Organization <span class="text-red-600">*</span></label>
+                                            <label class="mb-1.5 block text-sm font-medium text-slate-700">Affiliation <span class="text-red-600">*</span></label>
                                             <input type="text" name="guests[{{ $i }}][organization]" value="{{ $guest['organization'] ?? '' }}" class="{{ $inputClass }} bg-white">
                                         </div>
                                         <div>
-                                            <label class="mb-1.5 block text-sm font-medium text-slate-700">Position <span class="text-red-600">*</span></label>
+                                            <label class="mb-1.5 block text-sm font-medium text-slate-700">Role <span class="text-red-600">*</span></label>
                                             <input type="text" name="guests[{{ $i }}][position]" value="{{ $guest['position'] ?? '' }}" class="{{ $inputClass }} bg-white">
                                         </div>
                                     </div>
@@ -180,7 +175,7 @@
                 {{-- ============ No path ============ --}}
                 <div id="attend-no-block" class="{{ $showNo ? '' : 'hidden' }} space-y-6">
                     <div class="mb-2">
-                        <h2 class="text-lg font-bold text-blue-950">A Few Details</h2>
+                        <h2 class="text-lg font-bold text-ink">A Few Details</h2>
                         <p class="mt-1 text-sm text-slate-500">We're sorry you can't join us — just a few details so we can keep our records accurate.</p>
                     </div>
 
@@ -199,7 +194,7 @@
                             <input type="email" name="email" id="email_no" data-sync-field="email" value="{{ old('email') }}" placeholder="example@example.com" class="{{ $inputClass }}">
                         </div>
                         <div>
-                            <label for="organization_no" class="mb-1.5 block text-sm font-semibold text-slate-700">Organization/Agency <span class="text-red-600">*</span></label>
+                            <label for="organization_no" class="mb-1.5 block text-sm font-semibold text-slate-700">Affiliation <span class="text-red-600">*</span></label>
                             <input type="text" name="organization" id="organization_no" data-sync-field="organization" value="{{ old('organization') }}" class="{{ $inputClass }}">
                         </div>
                     </div>
@@ -211,12 +206,12 @@
                 </div>
 
                 <button type="submit" id="submit-button"
-                        class="{{ ($showYes || $showNo) ? '' : 'hidden' }} w-full rounded-md bg-red-700 px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-red-700/20 transition hover:bg-red-800 active:scale-[0.98]">
+                        class="{{ ($showYes || $showNo) ? '' : 'hidden' }} w-full rounded-full bg-gold-400 px-6 py-3.5 text-base font-semibold text-ink shadow-lg shadow-gold-500/20 transition hover:bg-gold-300 active:scale-[0.98]">
                     Submit RSVP
                 </button>
 
-                <div class="flex items-center justify-center gap-2 rounded-lg bg-red-50 px-4 py-3 text-center text-sm text-slate-500">
-                    <svg class="h-4 w-4 shrink-0 text-red-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <div class="flex items-center justify-center gap-2 rounded-lg bg-neutral-100 px-4 py-3 text-center text-sm text-slate-500">
+                    <svg class="h-4 w-4 shrink-0 text-gold-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                         <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" />
                     </svg>
                     Your response is secure and will only be used for event planning purposes.

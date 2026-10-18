@@ -8,24 +8,13 @@ document.addEventListener('DOMContentLoaded', () => {
             mobileMenu.classList.toggle('hidden', isOpen);
             menuToggle.setAttribute('aria-expanded', String(!isOpen));
         });
-    }
 
-    const searchInput = document.getElementById('school-search');
-    const schoolRows = document.querySelectorAll('[data-school-row]');
-    const emptyState = document.getElementById('school-empty-state');
-
-    function applySchoolFilters() {
-        const search = (searchInput?.value ?? '').trim().toLowerCase();
-        let visibleCount = 0;
-
-        schoolRows.forEach((row) => {
-            const isVisible = row.dataset.schoolName.includes(search);
-            row.classList.toggle('hidden', !isVisible);
-            if (isVisible) visibleCount += 1;
+        // Close the menu after tapping an in-page anchor so the target isn't hidden behind it.
+        mobileMenu.querySelectorAll('a').forEach((link) => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                menuToggle.setAttribute('aria-expanded', 'false');
+            });
         });
-
-        emptyState?.classList.toggle('hidden', visibleCount > 0);
     }
-
-    searchInput?.addEventListener('input', applySchoolFilters);
 });
