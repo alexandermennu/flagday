@@ -106,6 +106,9 @@ class GraduationSiteTest extends TestCase
             ->assertSee('class="hero-fx" aria-hidden="true"', escape: false)
             ->assertSee('RSVP for the Honors Ball');
 
+        // The home page hero uses the same celebration layer.
+        $this->get(route('landing'))->assertSee('class="hero-fx" aria-hidden="true"', escape: false);
+
         $this->get(route('events.show', 'baccalaureate'))->assertDontSee('hero-fx', escape: false);
         $this->get(route('events.show', 'convocation'))->assertDontSee('hero-fx', escape: false);
     }

@@ -21,6 +21,7 @@
             <div class="absolute left-1/2 top-0 h-[42rem] w-[42rem] -translate-x-1/2 -translate-y-1/3 rounded-full bg-gold-500/20 blur-3xl"></div>
             <div class="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:22px_22px] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]"></div>
         </div>
+        @include('events._hero-celebration', ['layout' => 'centered'])
 
         <div class="mx-auto my-auto w-full max-w-5xl px-5 py-8 text-center sm:py-16 short:py-8 lg:px-8">
             <x-seal class="animate-fade-in-up mx-auto h-24 w-24 drop-shadow-[0_8px_30px_rgba(231,185,58,0.25)] sm:h-40 sm:w-40 short:h-28 short:w-28 shorter:h-24 shorter:w-24" />

@@ -3,21 +3,27 @@
     sparkles and occasional small fireworks (styles: .hero-fx in resources/css/app.css).
     Sits behind the content, ignores the pointer, and is hidden from assistive technology.
 
-    Placement keeps the text clear: on large screens the hero copy fills the left ~60%, so
-    caps and fireworks stay in the right-hand area (and, on extra-wide screens, the outer
-    gutters). Below lg the copy runs full width, so only a couple of small caps and one
-    firework appear, tucked into the empty top-right corner above the heading.
+    Pass `layout` to match the hero:
+    - 'aside' (default, event pages): the copy fills the left ~60% on large screens, so caps
+      and fireworks stay in the right-hand area (and, on extra-wide screens, the outer
+      gutters). Below lg the copy runs full width, so only a couple of small caps and one
+      firework appear, tucked into the empty top-right corner above the heading.
+    - 'centered' (home page): the copy is centred, so the decorations frame it from the
+      outer left and right edges; on small screens they sit in the top corners beside the logo.
+    Positions were checked in the browser against the text and buttons at 360–1920px wide.
 --}}
 @php
-    // [right %, top %, size px, tilt deg, duration s, delay s, opacity, visibility classes]
+    $layout ??= 'aside';
+
+    // [css position, size px, tilt deg, duration s, delay s, opacity, visibility classes]
     $caps = [
-        [8, 14, 64, -8, 7, 0, 0.85, 'hidden lg:block'],
-        [23, 32, 40, 10, 8.5, -2, 0.55, 'hidden lg:block'],
-        [5, 56, 50, 6, 6.5, -4, 0.7, 'hidden lg:block'],
-        [17, 74, 30, -12, 9, -1, 0.45, 'hidden lg:block'],
-        [27, 9, 26, 14, 7.5, -3, 0.4, 'hidden xl:block'],
-        [5, 5, 30, -10, 7, 0, 0.7, 'lg:hidden'],
-        [17, 10, 20, 12, 8, -2.5, 0.5, 'lg:hidden'],
+        ['right: 8%; top: 14%', 64, -8, 7, 0, 0.85, 'hidden lg:block'],
+        ['right: 23%; top: 32%', 40, 10, 8.5, -2, 0.55, 'hidden lg:block'],
+        ['right: 5%; top: 56%', 50, 6, 6.5, -4, 0.7, 'hidden lg:block'],
+        ['right: 17%; top: 74%', 30, -12, 9, -1, 0.45, 'hidden lg:block'],
+        ['right: 27%; top: 9%', 26, 14, 7.5, -3, 0.4, 'hidden xl:block'],
+        ['right: 5%; top: 5%', 30, -10, 7, 0, 0.7, 'lg:hidden'],
+        ['right: 17%; top: 10%', 20, 12, 8, -2.5, 0.5, 'lg:hidden'],
     ];
 
     // [left %, top %, size px, duration s, delay s, peak opacity, star?, visibility classes]
@@ -48,6 +54,42 @@
         ['left: 4%; bottom: 18%', 18, 14, 9, 'hidden xl:block'],
         ['right: 9%; top: 6%', 16, 12, 2, 'lg:hidden'],
     ];
+
+    if ($layout === 'centered') {
+        $caps = [
+            ['left: 6%; top: 16%', 56, 8, 7.5, 0, 0.8, 'hidden lg:block'],
+            ['left: 13%; top: 44%', 34, -10, 8.5, -2.5, 0.5, 'hidden lg:block'],
+            ['left: 4%; top: 68%', 44, -6, 6.5, -4, 0.65, 'hidden lg:block'],
+            ['right: 6%; top: 20%', 62, -8, 7, -1, 0.85, 'hidden lg:block'],
+            ['right: 14%; top: 56%', 36, 10, 9, -3, 0.5, 'hidden lg:block'],
+            ['right: 5%; top: 78%', 30, -12, 8, -1.5, 0.45, 'hidden lg:block'],
+            ['left: 15%; top: 84%', 24, 14, 7.5, -3.5, 0.4, 'hidden xl:block'],
+            ['right: 6%; top: 4%', 30, -10, 7, 0, 0.7, 'lg:hidden'],
+            ['left: 7%; top: 8%', 22, 12, 8, -2.5, 0.5, 'lg:hidden'],
+        ];
+
+        $sparks = [
+            [3, 26, 3, 5.5, 0, 0.7, false, 'hidden lg:block'], [9, 58, 4, 6.5, -1.2, 0.8, true, 'hidden lg:block'],
+            [15, 30, 2, 4.8, -2.4, 0.6, false, 'hidden lg:block'], [6, 86, 3, 6, -0.6, 0.7, false, 'hidden lg:block'],
+            [17, 72, 2, 5.6, -3.4, 0.55, false, 'hidden xl:block'], [12, 12, 4, 6.8, -0.3, 0.75, true, 'hidden lg:block'],
+            [97, 30, 3, 6.4, -4, 0.7, false, 'hidden lg:block'], [90, 46, 5, 7, -3.1, 0.85, true, 'hidden lg:block'],
+            [86, 14, 2, 5, -2.2, 0.6, false, 'hidden lg:block'], [93, 66, 3, 5.2, -1.8, 0.7, false, 'hidden lg:block'],
+            [84, 88, 2, 6.2, -1, 0.55, false, 'hidden xl:block'], [96, 92, 3, 5.8, -2.9, 0.6, true, 'hidden lg:block'],
+            [30, 4, 2, 6, -1.4, 0.35, false, 'hidden lg:block'], [68, 3, 2, 6.6, -3.8, 0.35, false, 'hidden lg:block'],
+            // Small screens: the top corners beside the logo, and the far edges.
+            [6, 3, 2, 6, -1.4, 0.6, false, 'lg:hidden'], [18, 15, 3, 6.6, -3.8, 0.7, true, 'lg:hidden'],
+            [80, 13, 2, 5.4, -0.4, 0.6, false, 'lg:hidden'], [92, 15, 3, 7.2, -4.4, 0.65, true, 'lg:hidden'],
+            [3, 40, 2, 6.8, -2, 0.45, false, 'lg:hidden'], [96, 52, 2, 6.2, -3, 0.45, false, 'lg:hidden'],
+        ];
+
+        $fireworks = [
+            ['left: 5%; top: 10%', 26, 12, 1.5, 'hidden lg:block'],
+            ['right: 9%; bottom: 12%', 24, 13, 5.5, 'hidden lg:block'],
+            ['right: 4%; top: 40%', 20, 14, 9.5, 'hidden xl:block'],
+            ['left: 9%; bottom: 20%', 18, 15, 12, 'hidden xl:block'],
+            ['right: 14%; top: 9%', 16, 12, 2, 'lg:hidden'],
+        ];
+    }
 @endphp
 
 <div class="hero-fx" aria-hidden="true">
@@ -64,9 +106,9 @@
         </span>
     @endforeach
 
-    @foreach ($caps as [$right, $top, $size, $tilt, $duration, $delay, $opacity, $visibility])
+    @foreach ($caps as [$position, $size, $tilt, $duration, $delay, $opacity, $visibility])
         <svg class="hero-fx__cap {{ $visibility }}" viewBox="0 0 64 48" width="{{ $size }}" height="{{ round($size * 0.75) }}"
-             style="right: {{ $right }}%; top: {{ $top }}%; opacity: {{ $opacity }}; --tilt: {{ $tilt }}deg; --duration: {{ $duration }}s; --delay: {{ $delay }}s">
+             style="{{ $position }}; opacity: {{ $opacity }}; --tilt: {{ $tilt }}deg; --duration: {{ $duration }}s; --delay: {{ $delay }}s">
             {{-- Mortarboard: board, cap band, and tassel — gold on the dark hero. --}}
             <path d="M32 4 62 15 32 26 2 15Z" fill="currentColor" />
             <path d="M14 20.5v10c0 4.5 8 8 18 8s18-3.5 18-8v-10L32 27Z" fill="currentColor" opacity=".78" />
