@@ -116,6 +116,8 @@ class Graduation
             'dress_code_label' => self::orPlaceholder($event['dress_code'] ?? null),
             'program_url' => $hasPublishedProgram ? route('events.program', $slug) : $configUrl,
             'program_download_url' => $hasPublishedProgram ? route('events.program', [$slug, 'download' => 1]) : null,
+            // The page-turning viewer, when enabled for this event and it has a published program.
+            'flipbook_url' => $hasPublishedProgram && ($event['flipbook'] ?? false) ? route('events.program.viewer', $slug) : null,
             'rsvp' => (bool) ($event['rsvp'] ?? false),
         ]);
     }

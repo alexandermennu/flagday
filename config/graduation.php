@@ -15,6 +15,10 @@
 | `program_pdf` takes a URL or a path relative to /public (e.g. "programs/convocation.pdf");
 | leave it empty and the page shows "Program coming soon".
 |
+| `flipbook` shows the event's published program in the page-turning viewer
+| (/events/{slug}/program/view) instead of opening the raw PDF. It works for any
+| published program; set it to true to enable it for an event.
+|
 */
 
 return [
@@ -48,6 +52,7 @@ return [
             'dress_code' => env('EVENT_DRESS_CODE'),
             'program_pdf' => env('HONORS_BALL_PROGRAM_PDF'),
             'rsvp' => true,
+            'flipbook' => true,
         ],
 
         'baccalaureate' => [
@@ -62,6 +67,7 @@ return [
             'dress_code' => env('BACCALAUREATE_DRESS_CODE'),
             'program_pdf' => env('BACCALAUREATE_PROGRAM_PDF'),
             'rsvp' => false,
+            'flipbook' => false,
         ],
 
         'convocation' => [
@@ -76,6 +82,7 @@ return [
             'dress_code' => env('CONVOCATION_DRESS_CODE'),
             'program_pdf' => env('CONVOCATION_PROGRAM_PDF'),
             'rsvp' => false,
+            'flipbook' => false,
         ],
 
     ],

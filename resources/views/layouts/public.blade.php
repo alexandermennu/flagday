@@ -10,6 +10,7 @@
 
     @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/site.js'])
+    @stack('head')
 </head>
 <body class="flex min-h-screen flex-col bg-white font-sans text-neutral-900 antialiased">
 

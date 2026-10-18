@@ -27,6 +27,19 @@ class EventController extends Controller
         ]);
     }
 
+    /**
+     * The flipbook viewer for the event's published program. The PDF itself is rendered
+     * in the browser (resources/js/flipbook.js) from the program() route below.
+     */
+    public function viewer(string $slug): View
+    {
+        $event = Graduation::find($slug);
+
+        abort_if($event === null || $event['flipbook_url'] === null, 404);
+
+        return view('events.program-viewer', ['event' => $event]);
+    }
+
     /** Serves the event's published program PDF — the copy frozen at its last publish. */
     public function program(Request $request, string $slug): Response
     {

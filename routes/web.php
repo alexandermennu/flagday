@@ -28,6 +28,11 @@ Route::get('/events/{slug}/program', [EventController::class, 'program'])
     ->whereIn('slug', array_keys(\App\Models\Program::TYPES))
     ->name('events.program');
 
+// Page-turning flipbook viewer for the same published PDF (see config graduation.events.*.flipbook).
+Route::get('/events/{slug}/program/view', [EventController::class, 'viewer'])
+    ->whereIn('slug', array_keys(\App\Models\Program::TYPES))
+    ->name('events.program.viewer');
+
 // The old Flag Day hub — kept as a redirect so any printed/shared links still land somewhere.
 Route::redirect('/flag-day', '/', 301);
 

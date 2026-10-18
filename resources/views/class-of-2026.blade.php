@@ -72,9 +72,9 @@
                         </div>
                         @if ($event['program_url'])
                             <div class="flex flex-wrap gap-2">
-                                <a href="{{ $event['program_url'] }}" target="_blank" rel="noopener"
+                                <a href="{{ $event['flipbook_url'] ?? $event['program_url'] }}" @unless ($event['flipbook_url']) target="_blank" rel="noopener" @endunless
                                    class="inline-flex items-center justify-center rounded-full bg-gold-400 px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-300">
-                                    View Program (PDF)
+                                    {{ $event['flipbook_url'] ? 'View Program' : 'View Program (PDF)' }}
                                 </a>
                                 @if ($event['program_download_url'])
                                     <a href="{{ $event['program_download_url'] }}"
