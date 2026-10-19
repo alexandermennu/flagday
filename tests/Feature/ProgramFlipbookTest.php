@@ -54,6 +54,28 @@ class ProgramFlipbookTest extends TestCase
         $this->assertSame(4, preg_match_all('#/Type\s*/Page[^s]#', $pdf));
     }
 
+    public function test_honors_ball_shows_its_program_card_once_in_the_hero(): void
+    {
+        $this->publish('honors-ball');
+
+        $html = $this->get(route('events.show', 'honors-ball'))->assertOk()->getContent();
+        $heroEnd = strpos($html, 'Event Details</h2>');
+
+        $this->assertSame(1, substr_count($html, 'data-program-card'), 'The card appears exactly once.');
+        $this->assertLessThan($heroEnd, strpos($html, 'data-program-card'), 'The card sits in the hero, above Event Details.');
+        $this->assertStringContainsString(route('events.program.viewer', 'honors-ball'), substr($html, 0, $heroEnd));
+        $this->assertStringContainsString(route('events.program', ['honors-ball', 'download' => 1]), substr($html, 0, $heroEnd));
+        $this->assertStringContainsString('Go to the RSVP form', substr($html, $heroEnd), 'The RSVP card stays in the details section.');
+    }
+
+    public function test_other_events_keep_the_program_card_in_the_details_section(): void
+    {
+        $html = $this->get(route('events.show', 'baccalaureate'))->assertOk()->getContent();
+
+        $this->assertSame(1, substr_count($html, 'data-program-card'));
+        $this->assertGreaterThan(strpos($html, 'Event Details</h2>'), strpos($html, 'data-program-card'));
+    }
+
     public function test_events_without_the_flipbook_enabled_keep_the_plain_pdf_link(): void
     {
         $this->publish('baccalaureate');

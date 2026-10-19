@@ -5,6 +5,10 @@
 @section('description', $event['summary'])
 
 @php
+    // The Honors Ball shows its program card in the hero, beside the title; other events keep
+    // it in the sidebar of the details section.
+    $programInHero = $event['slug'] === 'honors-ball';
+
     $details = [
         ['label' => 'Date', 'value' => $event['date_label'], 'set' => filled($event['date'])],
         ['label' => 'Time', 'value' => $event['time_label'], 'set' => filled($event['time'])],
@@ -17,9 +21,10 @@
     <section class="relative isolate overflow-hidden bg-ink text-white">
         <div class="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_80%_-10%,rgba(231,185,58,0.3),transparent_55%)]"></div>
         @if ($event['slug'] === 'honors-ball')
-            @include('events._hero-celebration')
+            @include('events._hero-celebration', ['layout' => $programInHero ? 'aside-card' : 'aside'])
         @endif
-        <div class="mx-auto max-w-5xl px-5 pb-14 pt-10 sm:pb-20 sm:pt-14 lg:px-8">
+        <div class="mx-auto max-w-5xl px-5 pb-14 pt-10 sm:pb-20 sm:pt-14 lg:px-8 {{ $programInHero ? 'grid gap-10 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-center lg:gap-12' : '' }}">
+            <div>
             <a href="{{ route('class.show') }}#events" class="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-400 transition hover:text-gold-300">
                 &larr; Class of {{ config('graduation.class_year') }} events
             </a>
@@ -35,6 +40,11 @@
                    class="mt-8 inline-flex w-full items-center justify-center rounded-full bg-gold-400 px-8 py-4 text-base font-semibold text-ink shadow-lg shadow-gold-500/25 transition hover:bg-gold-300 active:scale-[0.98] sm:w-auto">
                     RSVP for the {{ $event['name'] }}
                 </a>
+            @endif
+            </div>
+
+            @if ($programInHero)
+                @include('events._program-card', ['surface' => 'border border-gold-400/35 bg-black/60 shadow-2xl shadow-black/50 backdrop-blur-sm'])
             @endif
         </div>
         <div class="h-1 bg-gradient-to-r from-transparent via-gold-500 to-transparent"></div>
@@ -59,34 +69,9 @@
             </div>
 
             <aside class="space-y-4">
-                <div class="rounded-2xl bg-ink p-6 text-white">
-                    <h2 class="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-400">Event Program</h2>
-                    @if ($event['program_url'])
-                        <p class="mt-3 text-sm text-neutral-300">Download the official program for the {{ $event['name'] }}.</p>
-                        @if ($event['flipbook_url'])
-                            <a href="{{ $event['flipbook_url'] }}"
-                               class="mt-5 inline-flex w-full items-center justify-center rounded-full bg-gold-400 px-5 py-3 text-sm font-semibold text-ink transition hover:bg-gold-300">
-                                View Program
-                            </a>
-                        @else
-                            <a href="{{ $event['program_url'] }}" target="_blank" rel="noopener"
-                               class="mt-5 inline-flex w-full items-center justify-center rounded-full bg-gold-400 px-5 py-3 text-sm font-semibold text-ink transition hover:bg-gold-300">
-                                View Program (PDF)
-                            </a>
-                        @endif
-                        @if ($event['program_download_url'])
-                            <a href="{{ $event['program_download_url'] }}"
-                               class="mt-3 inline-flex w-full items-center justify-center rounded-full border border-white/20 px-5 py-3 text-sm font-semibold text-white transition hover:border-gold-400 hover:text-gold-300">
-                                Download PDF
-                            </a>
-                        @endif
-                    @else
-                        <p class="mt-3 text-sm text-neutral-300">The program for this event will be available here soon.</p>
-                        <span class="mt-5 inline-flex w-full items-center justify-center rounded-full border border-white/15 px-5 py-3 text-sm font-semibold text-neutral-400">
-                            Program coming soon
-                        </span>
-                    @endif
-                </div>
+                @unless ($programInHero)
+                    @include('events._program-card')
+                @endunless
 
                 @if ($event['rsvp'])
                     <div class="rounded-2xl border border-gold-300 bg-gold-50 p-6">

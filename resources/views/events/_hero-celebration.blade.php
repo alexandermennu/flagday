@@ -8,6 +8,9 @@
       and fireworks stay in the right-hand area (and, on extra-wide screens, the outer
       gutters). Below lg the copy runs full width, so only a couple of small caps and one
       firework appear, tucked into the empty top-right corner above the heading.
+    - 'aside-card' (Honors Ball, with its program card in the hero's right column): the
+      decorations sit in the bands above and below the card and in the outer gutters; on small
+      screens (card stacked below the copy) they keep to the strip above the back link.
     - 'centered' (home page): the copy is centred, so the decorations frame it from the
       outer left and right edges; on small screens they sit in the top corners beside the logo.
     Positions were checked in the browser against the text and buttons at 360–1920px wide.
@@ -53,6 +56,39 @@
         ['right: 9%; top: 6%', 16, 12, 2, 'lg:hidden'],
     ];
 
+    if ($layout === 'aside-card') {
+        // The card fills roughly 62–83% across and 23–66% down on large screens.
+        $caps = [
+            ['right: 6%; top: 4%', 48, -8, 7, 0, 0.85, 'hidden lg:block'],
+            ['right: 24%; top: 8%', 30, 12, 8.5, -2, 0.55, 'hidden lg:block'],
+            ['right: 10%; top: 78%', 40, 6, 6.5, -4, 0.7, 'hidden lg:block'],
+            // Small screens: pinned in px to the strip above the back link (the stacked hero is tall).
+            ['right: 5%; top: 14px', 30, -10, 7, 0, 0.7, 'lg:hidden'],
+            ['right: 17%; top: 40px', 20, 12, 8, -2.5, 0.5, 'lg:hidden'],
+        ];
+
+        $sparks = [
+            [60, 6, 3, 5.5, 0, 0.7, false, 'hidden lg:block'], [70, 14, 4, 6.5, -1.2, 0.8, true, 'hidden lg:block'],
+            [86, 3, 2, 4.8, -2.4, 0.6, false, 'hidden lg:block'], [92, 16, 3, 6, -0.6, 0.7, false, 'hidden lg:block'],
+            [66, 76, 2, 5.2, -1.8, 0.6, false, 'hidden lg:block'], [80, 92, 3, 6.2, -1, 0.65, true, 'hidden lg:block'],
+            [94, 86, 2, 5.6, -0.9, 0.55, false, 'hidden lg:block'], [72, 88, 2, 6.8, -3.6, 0.5, false, 'hidden lg:block'],
+            [97, 40, 3, 7, -3.1, 0.75, true, 'hidden xl:block'], [96, 58, 2, 5, -2.2, 0.6, false, 'hidden xl:block'],
+            [4, 30, 2, 6.6, -1.5, 0.35, false, 'hidden xl:block'], [12, 84, 2, 7.4, -3.3, 0.3, false, 'hidden xl:block'],
+            [46, 3, 2, 5.4, -0.4, 0.3, false, 'hidden lg:block'], [2, 62, 3, 7, -4.8, 0.35, true, 'hidden xl:block'],
+            // Small screens: the strip above the back link.
+            [64, '6px', 2, 6, -1.4, 0.6, false, 'lg:hidden'], [82, '10px', 3, 6.6, -3.8, 0.7, true, 'lg:hidden'],
+            [93, '30px', 2, 5.4, -0.4, 0.6, false, 'lg:hidden'], [50, '8px', 2, 7.2, -4.4, 0.45, false, 'lg:hidden'],
+        ];
+
+        $fireworks = [
+            ['right: 16%; top: 5%', 22, 11, 1.5, 'hidden lg:block'],
+            ['right: 27%; top: 88%', 20, 13, 6, 'hidden lg:block'],
+            ['left: 3%; top: 22%', 20, 12, 3.5, 'hidden xl:block'],
+            ['left: 4%; bottom: 18%', 18, 14, 9, 'hidden xl:block'],
+            ['right: 9%; top: 48px', 16, 12, 2, 'lg:hidden'],
+        ];
+    }
+
     if ($layout === 'centered') {
         $caps = [
             ['left: 6%; top: 16%', 56, 8, 7.5, 0, 0.8, 'hidden lg:block'],
@@ -89,7 +125,7 @@
 <div class="hero-fx" aria-hidden="true">
     @foreach ($sparks as [$left, $top, $size, $duration, $delay, $peak, $star, $visibility])
         <span class="hero-fx__spark{{ $star ? ' hero-fx__spark--star' : '' }} {{ $visibility }}"
-              style="left: {{ $left }}%; top: {{ $top }}%; width: {{ $star ? $size * 2 : $size }}px; height: {{ $star ? $size * 2 : $size }}px; --duration: {{ $duration }}s; --delay: {{ $delay }}s; --peak: {{ $peak }}"></span>
+              style="left: {{ $left }}%; top: {{ is_string($top) ? $top : $top.'%' }}; width: {{ $star ? $size * 2 : $size }}px; height: {{ $star ? $size * 2 : $size }}px; --duration: {{ $duration }}s; --delay: {{ $delay }}s; --peak: {{ $peak }}"></span>
     @endforeach
 
     @foreach ($fireworks as [$position, $radius, $cycle, $delay, $visibility])
