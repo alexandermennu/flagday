@@ -141,25 +141,7 @@ class Program extends Model
      */
     public static function effectivePdfUploadMaxKb(): int
     {
-        $toKb = function (string $value): int {
-            $value = trim($value);
-            $number = (int) $value;
-
-            return match (strtoupper(substr($value, -1))) {
-                'G' => $number * 1024 * 1024,
-                'M' => $number * 1024,
-                'K' => $number,
-                default => (int) ceil($number / 1024),
-            };
-        };
-
-        $limits = array_filter([
-            self::pdfUploadMaxKb(),
-            $toKb((string) ini_get('upload_max_filesize')),
-            $toKb((string) ini_get('post_max_size')),
-        ], fn (int $kb) => $kb > 0);
-
-        return min($limits);
+        return \App\Support\UploadLimits::effectiveKb(self::pdfUploadMaxKb());
     }
 
     public function pdfFilename(): string

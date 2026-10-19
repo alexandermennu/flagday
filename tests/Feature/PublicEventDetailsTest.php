@@ -46,13 +46,14 @@ class PublicEventDetailsTest extends TestCase
 
     /**
      * The page's own details block — excluding the "More Graduation Events" cards further
-     * down, which (correctly) show the other events' details.
+     * down (on the other event pages), which correctly show the other events' details.
      */
     private function eventDetails(string $slug): string
     {
         $html = $this->get(route('events.show', $slug))->assertOk()->getContent();
         $start = strpos($html, 'Event Details</h2>');
-        $end = strpos($html, 'More Graduation Events');
+        // The Honors Ball page has a gallery instead of "More Graduation Events".
+        $end = strpos($html, 'More Graduation Events') ?: strpos($html, '</main>');
         $this->assertNotFalse($start);
         $this->assertNotFalse($end);
 

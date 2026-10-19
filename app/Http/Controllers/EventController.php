@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Gallery;
 use App\Models\Program;
 use App\Models\ProgramPdf;
 use App\Support\Graduation;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
@@ -24,7 +26,29 @@ class EventController extends Controller
         return view('events.show', [
             'event' => $event,
             'otherEvents' => Graduation::events()->except($slug),
+            'gallery' => $slug === 'honors-ball' ? $this->honorsBallGallery() : null,
         ]);
+    }
+
+    /**
+     * The Honors Ball gallery with its published photos, or null when it is hidden or has
+     * none published — the section is then left off the page.
+     */
+    private function honorsBallGallery(): ?Gallery
+    {
+        try {
+            $gallery = Gallery::where('key', Gallery::HONORS_BALL)->where('is_visible', true)->first();
+        } catch (QueryException) {
+            return null; // gallery tables not migrated yet
+        }
+
+        if ($gallery === null) {
+            return null;
+        }
+
+        $gallery->setRelation('photos', $gallery->publishedPhotos());
+
+        return $gallery->photos->isEmpty() ? null : $gallery;
     }
 
     /**

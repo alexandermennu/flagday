@@ -1,4 +1,4 @@
-{{-- Public detail page for one graduation event. Expects $event and $otherEvents. --}}
+{{-- Public detail page for one graduation event. Expects $event, $otherEvents and (Honors Ball) $gallery. --}}
 @extends('layouts.public')
 
 @section('title', $event['name'].' | '.config('graduation.institution').' Class of '.config('graduation.class_year'))
@@ -86,14 +86,21 @@
         </div>
     </section>
 
-    <section class="bg-white py-14 sm:py-20">
-        <div class="mx-auto max-w-5xl px-5 lg:px-8">
-            <h2 class="font-display text-3xl font-semibold text-ink">More Graduation Events</h2>
-            <div class="mt-8 grid gap-6 md:grid-cols-2">
-                @foreach ($otherEvents as $other)
-                    @include('events._card', ['event' => $other, 'index' => array_search($other['slug'], array_keys(config('graduation.events'))) + 1])
-                @endforeach
+    {{-- The Honors Ball shows its photo gallery here (admin → Gallery); other events list the rest. --}}
+    @if ($event['slug'] === 'honors-ball')
+        @if ($gallery)
+            @include('events._gallery', ['gallery' => $gallery, 'photos' => $gallery->photos])
+        @endif
+    @else
+        <section class="bg-white py-14 sm:py-20">
+            <div class="mx-auto max-w-5xl px-5 lg:px-8">
+                <h2 class="font-display text-3xl font-semibold text-ink">More Graduation Events</h2>
+                <div class="mt-8 grid gap-6 md:grid-cols-2">
+                    @foreach ($otherEvents as $other)
+                        @include('events._card', ['event' => $other, 'index' => array_search($other['slug'], array_keys(config('graduation.events'))) + 1])
+                    @endforeach
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
 @endsection

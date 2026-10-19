@@ -38,6 +38,10 @@ return [
     // are stored in the database, so keep it well under the database's packet limit.
     'program_pdf_max_kb' => (int) env('PROGRAM_PDF_MAX_KB', 20480),
 
+    // Largest gallery photo an administrator may upload, in KB (default 10 MB). Photos are
+    // resized on upload, so this only limits what the server has to accept.
+    'gallery_photo_max_kb' => (int) env('GALLERY_PHOTO_MAX_KB', 10240),
+
     'events' => [
 
         'honors-ball' => [

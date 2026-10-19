@@ -102,3 +102,49 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+// Reorderable lists (the gallery photo list): up/down buttons move a row; hidden order[]
+// inputs then submit in the on-screen order. Also keeps a live "N of 16 published" count.
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-sortable]').forEach((list) => {
+        const counter = document.querySelector('[data-published-counter]');
+
+        const refresh = () => {
+            const rows = Array.from(list.querySelectorAll(':scope > [data-sortable-row]'));
+            rows.forEach((row, index) => {
+                const number = row.querySelector('[data-sortable-number]');
+                if (number) number.textContent = index + 1;
+                row.querySelector('[data-sort="up"]').disabled = index === 0;
+                row.querySelector('[data-sort="down"]').disabled = index === rows.length - 1;
+            });
+
+            if (counter) {
+                const max = Number(counter.dataset.max);
+                const published = list.querySelectorAll('[data-publish-toggle]:checked').length;
+                counter.textContent = `${published} of ${max} published${published > max ? ' — too many' : ''}`;
+                counter.classList.toggle('bg-red-100', published > max);
+                counter.classList.toggle('text-red-700', published > max);
+            }
+        };
+
+        list.addEventListener('click', (event) => {
+            const button = event.target.closest('[data-sort]');
+            if (!button) return;
+            const row = button.closest('[data-sortable-row]');
+
+            if (button.dataset.sort === 'up' && row.previousElementSibling) {
+                list.insertBefore(row, row.previousElementSibling);
+            } else if (button.dataset.sort === 'down' && row.nextElementSibling) {
+                list.insertBefore(row.nextElementSibling, row);
+            }
+
+            refresh();
+            button.focus();
+        });
+        list.addEventListener('change', (event) => {
+            if (event.target.matches('[data-publish-toggle]')) refresh();
+        });
+
+        refresh();
+    });
+});

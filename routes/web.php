@@ -4,10 +4,12 @@ use App\Http\Controllers\Admin\AttendeeController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\CheckInController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\ProgramController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\GalleryPhotoController;
 use App\Http\Controllers\PassVerificationController;
 use App\Http\Controllers\RsvpAccessController;
 use App\Http\Controllers\RsvpController;
@@ -32,6 +34,11 @@ Route::get('/events/{slug}/program', [EventController::class, 'program'])
 Route::get('/events/{slug}/program/view', [EventController::class, 'viewer'])
     ->whereIn('slug', array_keys(\App\Models\Program::TYPES))
     ->name('events.program.viewer');
+
+// Published gallery photos (the Honors Ball gallery): 'thumb' for the grid, 'full' for the lightbox.
+Route::get('/gallery/photos/{photo}/{variant}', [GalleryPhotoController::class, 'show'])
+    ->whereIn('variant', ['thumb', 'full'])
+    ->name('gallery.photo');
 
 // The old Flag Day hub — kept as a redirect so any printed/shared links still land somewhere.
 Route::redirect('/flag-day', '/', 301);
@@ -87,5 +94,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('programs/{program}/publish', [ProgramController::class, 'publish'])->name('programs.publish');
         Route::get('programs/{program}/download', [ProgramController::class, 'download'])->name('programs.download');
         Route::get('programs/{program}/preview', [ProgramController::class, 'preview'])->name('programs.preview');
+
+        Route::get('gallery', [GalleryController::class, 'edit'])->name('gallery.edit');
+        Route::put('gallery', [GalleryController::class, 'updateSettings'])->name('gallery.update');
+        Route::post('gallery/photos', [GalleryController::class, 'upload'])->name('gallery.photos.store');
+        Route::put('gallery/photos', [GalleryController::class, 'updatePhotos'])->name('gallery.photos.update');
+        Route::delete('gallery/photos/{photo}', [GalleryController::class, 'destroyPhoto'])->name('gallery.photos.destroy');
+        Route::get('gallery/photos/{photo}/{variant}', [GalleryController::class, 'image'])
+            ->whereIn('variant', ['thumb', 'full'])
+            ->name('gallery.photos.image');
     });
 });

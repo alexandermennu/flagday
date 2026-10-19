@@ -43,6 +43,10 @@
                    class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition {{ request()->routeIs('admin.programs.*') ? 'bg-ink text-white' : 'text-slate-600 hover:bg-slate-100' }}">
                     <span aria-hidden="true">📘</span> Programs
                 </a>
+                <a href="{{ route('admin.gallery.edit') }}"
+                   class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition {{ request()->routeIs('admin.gallery.*') ? 'bg-ink text-white' : 'text-slate-600 hover:bg-slate-100' }}">
+                    <span aria-hidden="true">🖼️</span> Gallery
+                </a>
             </nav>
         </aside>
 
