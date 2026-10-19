@@ -26,10 +26,8 @@
         <div class="mx-auto my-auto w-full max-w-5xl px-5 py-8 text-center sm:py-16 short:py-8 lg:px-8">
             <x-seal class="animate-fade-in-up mx-auto h-24 w-24 drop-shadow-[0_8px_30px_rgba(231,185,58,0.25)] sm:h-40 sm:w-40 short:h-28 short:w-28 shorter:h-24 shorter:w-24" />
 
-            <p class="animate-fade-in-up mt-6 inline-flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-400 max-sm:mt-5 sm:text-xs sm:tracking-[0.3em] short:mt-4 [animation-delay:80ms]">
-                <span class="h-px w-6 bg-gold-500/70 sm:w-8"></span>
+            <p class="animate-fade-in-up mt-6 inline-flex items-center gap-3 align-middle text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-400 max-sm:mt-5 sm:text-xs sm:tracking-[0.3em] short:mt-4 [animation-delay:80ms]">
                 Digital Graduation Program
-                <span class="h-px w-6 bg-gold-500/70 sm:w-8"></span>
             </p>
 
             <h1 class="animate-fade-in-up mt-5 short:mt-3 [animation-delay:160ms]">
