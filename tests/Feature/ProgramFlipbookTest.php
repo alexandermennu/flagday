@@ -35,7 +35,8 @@ class ProgramFlipbookTest extends TestCase
             ->assertSee(route('events.program', ['honors-ball', 'download' => 1]))
             ->assertSee('RSVP for the Honors Ball');
 
-        $this->get(route('class.show'))->assertSee(route('events.program.viewer', 'honors-ball'));
+        // The Class of 2026 page no longer lists program booklets; the event page is the way in.
+        $this->get(route('class.show'))->assertDontSee(route('events.program.viewer', 'honors-ball'));
 
         $this->get(route('events.program.viewer', 'honors-ball'))
             ->assertOk()

@@ -145,7 +145,7 @@ class ProgramTypesTest extends TestCase
         $this->get(route('events.show', 'baccalaureate'))
             ->assertSee(route('events.program', 'baccalaureate'))
             ->assertSee('Download PDF');
-        $this->get(route('class.show'))->assertSee(route('events.program', 'baccalaureate'));
+        $this->get(route('class.show'))->assertDontSee(route('events.program', 'baccalaureate')); // booklets list removed from this page
 
         $this->assertSame(1, $this->pageCount($this->get(route('events.program', 'baccalaureate'))->getContent()));
         $this->get(route('events.program', 'honors-ball'))->assertNotFound();

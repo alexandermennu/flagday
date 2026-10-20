@@ -1,6 +1,6 @@
 {{--
-    The "Class of 2026" page — every graduation event with its published details, plus the
-    digital program booklets. Content comes from config/graduation.php via App\Support\Graduation.
+    The "Class of 2026" page — every graduation event with its published details.
+    Content comes from config/graduation.php via App\Support\Graduation.
 --}}
 @extends('layouts.public')
 
@@ -23,12 +23,11 @@
             </h1>
             <p class="mt-3 text-sm font-semibold uppercase tracking-[0.2em] text-neutral-400">{{ $institution }}</p>
             <p class="mt-6 max-w-2xl text-lg leading-relaxed text-neutral-300">
-                Three occasions to honor the Class of {{ $classYear }}. Details and program booklets are published here
-                as they are confirmed, so check back before each event.
+                Three occasions to honor the Class of {{ $classYear }}. Details are published here as they are
+                confirmed, so check back before each event.
             </p>
             <div class="mt-8 flex flex-wrap gap-3">
                 <a href="#events" class="inline-flex items-center justify-center rounded-full border border-white/25 px-6 py-3 text-sm font-semibold text-white transition hover:border-gold-400 hover:text-gold-300">Graduation Events</a>
-                <a href="#programs" class="inline-flex items-center justify-center rounded-full border border-white/25 px-6 py-3 text-sm font-semibold text-white transition hover:border-gold-400 hover:text-gold-300">Program Booklets</a>
             </div>
         </div>
         <div class="h-1 bg-gradient-to-r from-transparent via-gold-500 to-transparent"></div>
@@ -46,72 +45,6 @@
                     </div>
                 @endforeach
             </div>
-        </div>
-    </section>
-
-    {{-- ============ Program booklets ============ --}}
-    <section id="programs" class="scroll-mt-20 bg-white py-16 sm:py-20">
-        <div class="mx-auto max-w-5xl px-5 lg:px-8">
-            <h2 class="text-center font-display text-4xl font-semibold text-ink sm:text-5xl">Digital Program Booklets</h2>
-            <p class="mx-auto mt-4 max-w-xl text-center text-neutral-600">The official program for each event, available to view or download once published.</p>
-
-            <ul class="mt-10 divide-y divide-neutral-200 rounded-2xl border border-neutral-200">
-                @foreach ($events as $slug => $event)
-                    <li class="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
-                        <div class="flex items-center gap-4">
-                            <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-ink text-gold-400" aria-hidden="true">
-                                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-                                    <path stroke-linejoin="round" d="M6 3h8l4 4v14H6z" />
-                                    <path stroke-linejoin="round" d="M14 3v4h4M9 12h6M9 16h6" />
-                                </svg>
-                            </span>
-                            <div>
-                                <h3 class="font-display text-xl font-semibold text-ink">{{ $event['name'] }} Program</h3>
-                                <p class="text-sm text-neutral-500">{{ $event['date_label'] }}</p>
-                            </div>
-                        </div>
-                        @if ($event['program_url'])
-                            <div class="flex flex-wrap gap-2">
-                                <a href="{{ $event['flipbook_url'] ?? $event['program_url'] }}" @unless ($event['flipbook_url']) target="_blank" rel="noopener" @endunless
-                                   class="inline-flex items-center justify-center rounded-full bg-gold-400 px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-300">
-                                    {{ $event['flipbook_url'] ? 'View Program' : 'View Program (PDF)' }}
-                                </a>
-                                @if ($event['program_download_url'])
-                                    <a href="{{ $event['program_download_url'] }}"
-                                       class="inline-flex items-center justify-center rounded-full border border-neutral-300 px-6 py-3 text-sm font-semibold text-ink transition hover:border-ink">
-                                        Download
-                                    </a>
-                                @endif
-                            </div>
-                        @else
-                            <span class="inline-flex items-center justify-center rounded-full border border-neutral-200 px-6 py-3 text-sm font-semibold text-neutral-400">
-                                Program coming soon
-                            </span>
-                        @endif
-                    </li>
-                @endforeach
-            </ul>
-        </div>
-    </section>
-
-    {{-- ============ How it works ============ --}}
-    <section class="bg-neutral-50 py-16 sm:py-20">
-        <div class="mx-auto max-w-5xl px-5 lg:px-8">
-            <h2 class="text-center font-display text-3xl font-semibold text-ink sm:text-4xl">Your Guide to Graduation</h2>
-
-            <ol class="mt-10 grid gap-6 sm:grid-cols-3">
-                @foreach ([
-                    ['title' => 'Explore the events', 'body' => 'Review the date, time, venue, and dress code for each graduation event.'],
-                    ['title' => 'RSVP to the Honors Ball', 'body' => 'Confirm your attendance online. You can update your response any time before the event.'],
-                    ['title' => 'Bring your digital pass', 'body' => 'Your confirmation email includes an Event Pass with a QR code for check-in at the Honors Ball.'],
-                ] as $step)
-                    <li class="rounded-2xl border border-neutral-200 bg-white p-6">
-                        <span class="flex h-10 w-10 items-center justify-center rounded-full bg-ink font-display text-lg font-semibold text-gold-400">{{ $loop->iteration }}</span>
-                        <h3 class="mt-4 text-base font-semibold text-ink">{{ $step['title'] }}</h3>
-                        <p class="mt-2 text-sm leading-relaxed text-neutral-600">{{ $step['body'] }}</p>
-                    </li>
-                @endforeach
-            </ol>
         </div>
     </section>
 @endsection

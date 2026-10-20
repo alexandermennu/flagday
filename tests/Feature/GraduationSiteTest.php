@@ -40,20 +40,26 @@ class GraduationSiteTest extends TestCase
         ], array_map(fn ($link) => [$link[2], $link[1]], $links));
     }
 
-    public function test_class_of_2026_page_lists_events_and_program_booklets(): void
+    public function test_class_of_2026_page_lists_the_events_without_booklets_or_guide(): void
     {
         config(['graduation.events.convocation.program_pdf' => 'programs/convocation.pdf']);
 
         $this->get(route('class.show'))
             ->assertOk()
+            ->assertSee('Graduation Events')
             ->assertSee('Baccalaureate')
             ->assertSee('Convocation')
             ->assertSee('Honors Ball')
-            ->assertSee('Digital Program Booklets')
-            ->assertSee(asset('programs/convocation.pdf'))
-            ->assertSee('Program coming soon')
             ->assertSee('id="baccalaureate"', escape: false)
-            ->assertSee('<footer', escape: false);
+            ->assertSee('<footer', escape: false)
+            // Both sections were removed from this page (programs stay on each event page).
+            ->assertDontSee('Digital Program Booklets')
+            ->assertDontSee('Your Guide to Graduation')
+            ->assertDontSee('href="#programs"', escape: false)
+            ->assertDontSee(asset('programs/convocation.pdf'));
+
+        // The program itself is still offered on the event's own page.
+        $this->get(route('events.show', 'convocation'))->assertSee(asset('programs/convocation.pdf'));
     }
 
     public function test_honors_ball_page_has_rsvp_entry_point_and_program_slot(): void
