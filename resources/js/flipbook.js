@@ -289,7 +289,10 @@ function showSinglePage(viewer, image, maxHeight) {
     root.querySelector('[data-flipbook-prev]').disabled = true;
     root.querySelector('[data-flipbook-next]').disabled = true;
     root.querySelector('[data-flipbook-controls]').hidden = false;
-    root.querySelector('[data-flipbook-hint]').hidden = false;
+    // Nothing to turn on a one-page program, so the hint only covers zooming.
+    const hint = root.querySelector('[data-flipbook-hint]');
+    hint.textContent = 'Double-click, pinch or use + to zoom; drag to move around.';
+    hint.hidden = false;
 }
 
 /**

@@ -77,25 +77,68 @@ class ProgramFlipbookTest extends TestCase
         $this->assertGreaterThan(strpos($html, 'Event Details</h2>'), strpos($html, 'data-program-card'));
     }
 
-    public function test_events_without_the_flipbook_enabled_keep_the_plain_pdf_link(): void
+    public function test_baccalaureate_program_opens_in_the_same_viewer_with_its_own_pdf(): void
     {
+        $this->publish('honors-ball');
         $this->publish('baccalaureate');
 
-        $this->get(route('events.program.viewer', 'baccalaureate'))->assertNotFound();
+        // The card's view button goes to the branded viewer, not the raw PDF.
         $this->get(route('events.show', 'baccalaureate'))
+            ->assertSee(route('events.program.viewer', 'baccalaureate'))
+            ->assertDontSee('View Program (PDF)')
+            ->assertSee(route('events.program', ['baccalaureate', 'download' => 1]));
+
+        // The viewer is handed the Baccalaureate PDF — never the Honors Ball one.
+        $this->get(route('events.program.viewer', 'baccalaureate'))
+            ->assertOk()
+            ->assertSee('Baccalaureate Program')
+            ->assertSee('data-pdf-url="'.route('events.program', 'baccalaureate').'"', escape: false)
+            ->assertDontSee(route('events.program', 'honors-ball'))
+            ->assertSee(route('events.program', ['baccalaureate', 'download' => 1]));
+
+        // That URL serves the one-page Baccalaureate program (the Honors Ball one has four pages).
+        $pdf = $this->get(route('events.program', 'baccalaureate'))->assertOk()->assertHeader('Content-Type', 'application/pdf')->getContent();
+        $this->assertSame(1, preg_match_all('#/Type\s*/Page[^s]#', $pdf));
+        $this->assertStringStartsWith('attachment;', $this->get(route('events.program', ['baccalaureate', 'download' => 1]))->headers->get('Content-Disposition'));
+
+        // Honors Ball is unchanged.
+        $this->get(route('events.program.viewer', 'honors-ball'))
+            ->assertOk()
+            ->assertSee('data-pdf-url="'.route('events.program', 'honors-ball').'"', escape: false);
+    }
+
+    public function test_events_without_the_flipbook_enabled_keep_the_plain_pdf_link(): void
+    {
+        $this->publishConvocation();
+
+        $this->get(route('events.program.viewer', 'convocation'))->assertNotFound();
+        $this->get(route('events.show', 'convocation'))
             ->assertSee('View Program (PDF)')
-            ->assertDontSee(route('events.program.viewer', 'baccalaureate'));
+            ->assertDontSee(route('events.program.viewer', 'convocation'));
     }
 
     public function test_the_viewer_can_be_enabled_for_another_event_by_config(): void
     {
-        config(['graduation.events.baccalaureate.flipbook' => true]);
-        $this->publish('baccalaureate');
+        config(['graduation.events.convocation.flipbook' => true]);
+        $this->publishConvocation();
 
-        $this->get(route('events.show', 'baccalaureate'))->assertSee(route('events.program.viewer', 'baccalaureate'));
-        $this->get(route('events.program.viewer', 'baccalaureate'))
+        $this->get(route('events.show', 'convocation'))->assertSee(route('events.program.viewer', 'convocation'));
+        $this->get(route('events.program.viewer', 'convocation'))
             ->assertOk()
-            ->assertSee('Baccalaureate Program')
-            ->assertSee('data-pdf-url="'.route('events.program', 'baccalaureate').'"', escape: false);
+            ->assertSee('Convocation Program')
+            ->assertSee('data-pdf-url="'.route('events.program', 'convocation').'"', escape: false);
+    }
+
+    /** Convocation programs are uploaded rather than generated, so give it a PDF before publishing. */
+    private function publishConvocation(): Program
+    {
+        $this->actingAs(User::factory()->create());
+        $program = Program::factory()->create(['type' => 'convocation']);
+        $program->pdf()->create(['data' => base64_encode("%PDF-1.4\n%%EOF\n")]);
+        $program->forceFill(['pdf_generated_at' => now(), 'pdf_size' => 15])->save();
+        $this->post(route('admin.programs.publish', $program))->assertSessionHasNoErrors();
+        auth()->logout();
+
+        return $program;
     }
 }

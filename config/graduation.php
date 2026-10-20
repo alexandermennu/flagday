@@ -71,7 +71,7 @@ return [
             'dress_code' => env('BACCALAUREATE_DRESS_CODE'),
             'program_pdf' => env('BACCALAUREATE_PROGRAM_PDF'),
             'rsvp' => false,
-            'flipbook' => false,
+            'flipbook' => true,
         ],
 
         'convocation' => [
