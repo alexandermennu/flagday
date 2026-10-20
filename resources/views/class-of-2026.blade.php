@@ -34,14 +34,23 @@
     </section>
 
     {{-- ============ Events ============ --}}
-    <section id="events" class="scroll-mt-20 bg-neutral-50 py-16 sm:py-20">
-        <div class="mx-auto max-w-7xl px-5 lg:px-8">
-            <h2 class="text-center font-display text-4xl font-semibold text-ink sm:text-5xl">Graduation Events</h2>
+    {{-- Desktop (xl): introduction on the left (30% including the gap), the three cards in one row on the right (70%).
+         Below xl the introduction sits above the cards: three across from lg, stacked on smaller screens. --}}
+    <section id="events" class="scroll-mt-20 bg-neutral-50 py-14 sm:py-16">
+        <div class="mx-auto max-w-7xl px-5 lg:px-8 xl:grid xl:grid-cols-[minmax(0,1fr)_70%] xl:items-center xl:gap-10">
+            <div class="max-w-xl xl:max-w-none">
+                <h2 class="font-display text-4xl font-semibold text-ink sm:text-5xl">Graduation Events</h2>
+                <div class="mt-5 h-1 w-14 bg-gold-500" aria-hidden="true"></div>
+                <p class="mt-5 leading-relaxed text-neutral-600">
+                    Three occasions to celebrate the Class of {{ $classYear }}. Select an event for its date, venue,
+                    dress code and program.
+                </p>
+            </div>
 
-            <div class="mt-12 grid gap-6 lg:grid-cols-3">
+            <div class="mt-10 grid gap-5 lg:grid-cols-3 xl:mt-0">
                 @foreach ($events as $slug => $event)
-                    <div id="{{ $slug }}" class="flex scroll-mt-24 flex-col [&>article]:flex-1">
-                        @include('events._card', ['event' => $event, 'index' => $loop->iteration])
+                    <div id="{{ $slug }}" class="flex min-w-0 scroll-mt-24 flex-col [&>article]:flex-1">
+                        @include('events._card', ['event' => $event, 'index' => $loop->iteration, 'square' => true])
                     </div>
                 @endforeach
             </div>
