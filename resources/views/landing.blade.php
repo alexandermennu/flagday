@@ -41,13 +41,14 @@
             </p>
 
             <div class="animate-fade-in-up mt-8 flex flex-col items-stretch justify-center gap-3 sm:mt-10 sm:flex-row sm:items-center short:mt-7 [animation-delay:320ms]">
-                <a href="{{ route('rsvp.create') }}"
+                {{-- Goes to the Graduation Events section (Class of 2026 page), where each event's card leads to its program sheet. --}}
+                <a href="{{ route('class.show') }}#events"
                    class="inline-flex items-center justify-center gap-2 rounded-full bg-gold-400 px-8 py-4 text-base font-semibold text-ink shadow-lg shadow-gold-500/25 transition hover:bg-gold-300 active:scale-[0.98]">
-                    RSVP for the Honors Ball
+                    View Program Sheets
                 </a>
-                <a href="{{ route('class.show') }}"
+                <a href="{{ route('protocols.show') }}"
                    class="inline-flex items-center justify-center rounded-full border border-white/25 px-8 py-4 text-base font-semibold text-white transition hover:border-gold-400 hover:text-gold-300">
-                    View Graduation Events
+                    Protocols &amp; Calendar
                 </a>
             </div>
 

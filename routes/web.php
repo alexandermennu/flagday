@@ -22,6 +22,9 @@ Route::get('/', function () {
 
 Route::view('/class-of-2026', 'class-of-2026')->name('class.show');
 
+// Graduation-day protocols and the calendar of events (content: config/schedule.php).
+Route::view('/protocols-calendar', 'protocols')->name('protocols.show');
+
 Route::get('/events/{slug}', [EventController::class, 'show'])->name('events.show');
 
 // The published program PDF for an event (Honors Ball / Baccalaureate / Convocation) — viewed
