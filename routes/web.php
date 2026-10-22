@@ -7,10 +7,13 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\ProgramController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\ScheduleController;
+use App\Http\Controllers\Admin\ScheduleEventController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\GalleryPhotoController;
 use App\Http\Controllers\PassVerificationController;
+use App\Http\Controllers\ProtocolsController;
 use App\Http\Controllers\RsvpAccessController;
 use App\Http\Controllers\RsvpController;
 use App\Http\Middleware\RequireRsvpPasscode;
@@ -22,8 +25,8 @@ Route::get('/', function () {
 
 Route::view('/class-of-2026', 'class-of-2026')->name('class.show');
 
-// Graduation-day protocols and the calendar of events (content: config/schedule.php).
-Route::view('/protocols-calendar', 'protocols')->name('protocols.show');
+// Graduation-day protocols and the calendar of events (managed in admin → Protocols & Calendar).
+Route::get('/protocols-calendar', [ProtocolsController::class, 'show'])->name('protocols.show');
 
 Route::get('/events/{slug}', [EventController::class, 'show'])->name('events.show');
 
@@ -106,5 +109,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('gallery/photos/{photo}/{variant}', [GalleryController::class, 'image'])
             ->whereIn('variant', ['thumb', 'full'])
             ->name('gallery.photos.image');
+
+        Route::get('schedule', [ScheduleController::class, 'index'])->name('schedule.index');
+        Route::put('schedule/settings', [ScheduleController::class, 'updateSettings'])->name('schedule.settings.update');
+        Route::post('schedule/protocols', [ScheduleController::class, 'storeProtocol'])->name('schedule.protocols.store');
+        Route::put('schedule/protocols', [ScheduleController::class, 'updateProtocols'])->name('schedule.protocols.update');
+        Route::delete('schedule/protocols/{protocol}', [ScheduleController::class, 'destroyProtocol'])->name('schedule.protocols.destroy');
+        Route::put('schedule/events', [ScheduleController::class, 'updateEvents'])->name('schedule.events.order');
+        Route::post('schedule/events/sort', [ScheduleController::class, 'sortEvents'])->name('schedule.events.sort');
+        Route::resource('schedule/events', ScheduleEventController::class)
+            ->only(['create', 'store', 'edit', 'update', 'destroy'])
+            ->names('schedule.events')
+            ->parameters(['events' => 'event']);
     });
 });

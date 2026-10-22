@@ -47,6 +47,10 @@
                    class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition {{ request()->routeIs('admin.gallery.*') ? 'bg-ink text-white' : 'text-slate-600 hover:bg-slate-100' }}">
                     <span aria-hidden="true">🖼️</span> Gallery
                 </a>
+                <a href="{{ route('admin.schedule.index') }}"
+                   class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition {{ request()->routeIs('admin.schedule.*') ? 'bg-ink text-white' : 'text-slate-600 hover:bg-slate-100' }}">
+                    <span aria-hidden="true">🗓️</span> Protocols &amp; Calendar
+                </a>
             </nav>
         </aside>
 
