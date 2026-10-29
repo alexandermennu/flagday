@@ -84,7 +84,7 @@
                 @if ($events->isEmpty())
                     <p class="mt-8 text-neutral-500">The calendar of events will be published here.</p>
                 @else
-                    <div class="mt-8 space-y-6">
+                    <div class="mt-8 space-y-4">
                         @foreach ($events as $event)
                             @php
                                 $details = array_filter([
@@ -96,32 +96,32 @@
                                     ($event->dress_code_label ?: 'Dress code') => $event->dress_code,
                                 ]);
                             @endphp
-                            <article class="border-l-2 border-gold-500 bg-neutral-50 px-5 py-4" data-calendar-entry>
+                            <article class="border border-neutral-200/80 bg-[#faf8f4] px-5 py-5 sm:px-6" data-calendar-entry>
                                 <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-                                    <p class="text-xs font-bold uppercase tracking-[0.15em] text-ink">{{ $event->dateLabel() ?? 'Date to be announced' }}</p>
+                                    <p class="text-xs font-bold uppercase tracking-[0.15em] text-gold-700">{{ $event->dateLabel() ?? 'Date to be announced' }}</p>
                                     @if (! $confirmed && $event->event_date)
                                         <span class="border border-gold-500/50 bg-gold-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-gold-800">
                                             {{ $sourceYear ?: 'Previous' }} date &middot; to be confirmed
                                         </span>
                                     @endif
                                 </div>
-                                <h3 class="mt-1.5 font-display text-xl font-semibold text-ink">{{ $event->title }}</h3>
+                                <h3 class="mt-2 font-display text-xl font-semibold leading-snug text-ink">{{ $event->title }}</h3>
                                 @if ($event->attendance)
-                                    <p class="text-sm text-neutral-600">({{ $event->attendance }})</p>
+                                    <p class="mt-0.5 text-sm text-neutral-600">({{ $event->attendance }})</p>
+                                @endif
+                                @if ($event->description)
+                                    <p class="mt-2 text-sm leading-relaxed text-neutral-700">{{ $event->description }}</p>
                                 @endif
 
                                 @if ($details)
-                                    <dl class="mt-3 grid grid-cols-[6.5rem_minmax(0,1fr)] gap-x-3 gap-y-1.5 text-sm">
+                                    <dl class="mt-4 grid grid-cols-[6.5rem_minmax(0,1fr)] gap-x-3 gap-y-2 border-t border-neutral-200/80 pt-4 text-sm">
                                         @foreach ($details as $label => $value)
                                             <dt class="pt-px text-[11px] font-semibold uppercase tracking-wider text-neutral-500">{{ $label }}</dt>
-                                            <dd class="font-semibold text-neutral-900">{{ $value }}</dd>
+                                            <dd class="break-words font-semibold text-neutral-900">{{ $value }}</dd>
                                         @endforeach
                                     </dl>
                                 @endif
 
-                                @if ($event->description)
-                                    <p class="mt-3 text-sm leading-relaxed text-neutral-700">{{ $event->description }}</p>
-                                @endif
                                 @foreach ($event->notes ?? [] as $note)
                                     <p class="mt-2 text-sm leading-relaxed text-neutral-700">{{ $note }}</p>
                                 @endforeach

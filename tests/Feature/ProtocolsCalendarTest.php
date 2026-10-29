@@ -168,9 +168,10 @@ class ProtocolsCalendarTest extends TestCase
         $this->assertSame(['Arrive by 5:45 p.m.', 'Bring your invitation.'], $event->notes);
 
         $this->get(route('protocols.show'))->assertSeeInOrder([
-            'Friday, November 20, 2026', 'Senior Dinner', '(Seniors only)', '6:00 p.m. – 9:00 p.m.', 'Main Campus Hall',
-            'Guest Speaker', 'Dr. Jane Doe', 'Guest of honor', 'The University President', 'Dress code', 'Formal',
-            'An evening for the graduating class.', 'Arrive by 5:45 p.m.', 'Bring your invitation.',
+            // Description sits directly under the title; then the aligned details; then the information lines.
+            'Friday, November 20, 2026', 'Senior Dinner', '(Seniors only)', 'An evening for the graduating class.',
+            '6:00 p.m. – 9:00 p.m.', 'Main Campus Hall', 'Guest Speaker', 'Dr. Jane Doe',
+            'Guest of honor', 'The University President', 'Dress code', 'Formal', 'Arrive by 5:45 p.m.', 'Bring your invitation.',
         ]);
 
         $this->put(route('admin.schedule.events.update', $event), [
