@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\Program;
+use App\Models\ScheduleEvent;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -24,9 +25,31 @@ class Graduation
     public static function events(): Collection
     {
         $published = self::publishedPrograms();
+        $dressCodes = self::calendarDressCodes();
 
         return collect(config('graduation.events', []))
-            ->map(fn (array $event, string $slug) => self::present($slug, $event, $published->get($slug)));
+            ->map(fn (array $event, string $slug) => self::present($slug, $event, $published->get($slug), $dressCodes->get($slug)));
+    }
+
+    /**
+     * The dress code saved on the published Calendar of Events entry linked to each event
+     * page (admin → Protocols & Calendar → "Event page"), keyed by event slug.
+     *
+     * @return Collection<string, string>
+     */
+    private static function calendarDressCodes(): Collection
+    {
+        try {
+            return ScheduleEvent::query()
+                ->where('is_published', true)
+                ->whereNotNull('event_slug')
+                ->whereNotNull('dress_code')
+                ->where('dress_code', '!=', '')
+                ->pluck('dress_code', 'event_slug');
+        } catch (QueryException) {
+            // The schedule tables (or the event_slug column) don't exist yet: fall back to config.
+            return collect();
+        }
     }
 
     /**
@@ -89,15 +112,20 @@ class Graduation
      * @param  array<string, mixed>  $event
      * @return array<string, mixed>
      */
-    private static function present(string $slug, array $event, ?Program $published = null): array
+    private static function present(string $slug, array $event, ?Program $published = null, ?string $dressCode = null): array
     {
         $pdf = $event['program_pdf'] ?? null;
         $configUrl = filled($pdf) ? (Str::startsWith($pdf, ['http://', 'https://']) ? $pdf : asset($pdf)) : null;
         $hasPublishedProgram = $published !== null;
 
+        // The program form has no dress code; it comes from the linked Calendar of Events
+        // entry, falling back to config when none is saved there.
+        if (filled($dressCode)) {
+            $event['dress_code'] = $dressCode;
+        }
+
         // A published program's details replace config entirely — an empty field shows
-        // "To be announced" rather than mixing in another source. (The program form has no
-        // dress code, so that one still comes from config.)
+        // "To be announced" rather than mixing in another source.
         if ($published) {
             $event = array_merge($event, [
                 'date' => $published->event_date?->toDateString(),

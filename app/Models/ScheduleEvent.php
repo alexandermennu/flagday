@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class ScheduleEvent extends Model
 {
     protected $fillable = [
-        'title', 'event_date', 'start_time', 'end_time', 'time_note', 'venue', 'theme', 'speaker_label', 'speaker',
+        'title', 'event_slug', 'event_date', 'start_time', 'end_time', 'time_note', 'venue', 'theme', 'speaker_label', 'speaker',
         'guest_of_honor', 'attendance', 'dress_code_label', 'dress_code', 'description', 'notes', 'position', 'is_published',
     ];
 

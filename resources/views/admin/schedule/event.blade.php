@@ -90,6 +90,16 @@
                     <input type="text" name="dress_code" id="dress_code" maxlength="120" value="{{ $field('dress_code') }}" class="{{ $in }}">
                 </div>
             </div>
+            <div>
+                <label for="event_slug" class="{{ $label }}">Event page</label>
+                <select name="event_slug" id="event_slug" class="{{ $in }}">
+                    <option value="">None</option>
+                    @foreach (config('graduation.events', []) as $slug => $page)
+                        <option value="{{ $slug }}" @selected($field('event_slug') === $slug)>{{ $page['name'] }}</option>
+                    @endforeach
+                </select>
+                <p class="{{ $help }}">The dress code above is shown on this event's public page.</p>
+            </div>
             <div class="md:col-span-2">
                 <label for="description" class="{{ $label }}">Description</label>
                 <textarea name="description" id="description" rows="3" maxlength="2000" class="{{ $in }}">{{ $field('description') }}</textarea>

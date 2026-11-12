@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ScheduleEventRequest extends FormRequest
 {
@@ -18,6 +19,12 @@ class ScheduleEventRequest extends FormRequest
     {
         return [
             'title' => ['required', 'string', 'max:120'],
+            // The public event page this entry describes; each page takes its dress code from here.
+            'event_slug' => [
+                'nullable',
+                Rule::in(array_keys(config('graduation.events', []))),
+                Rule::unique('schedule_events', 'event_slug')->ignore($this->route('event')),
+            ],
             'event_date' => ['nullable', 'date'],
             'start_time' => ['nullable', 'date_format:H:i'],
             'end_time' => ['nullable', 'date_format:H:i', 'after:start_time'],
@@ -38,7 +45,7 @@ class ScheduleEventRequest extends FormRequest
 
     public function attributes(): array
     {
-        return ['notes_text' => 'information lines', 'end_time' => 'end time', 'start_time' => 'start time'];
+        return ['notes_text' => 'information lines', 'event_slug' => 'event page', 'end_time' => 'end time', 'start_time' => 'start time'];
     }
 
     /**

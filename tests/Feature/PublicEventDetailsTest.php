@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Program;
+use App\Models\ScheduleEvent;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -76,7 +77,7 @@ class PublicEventDetailsTest extends TestCase
             ->assertSee('Starlight Ballroom')
             ->assertSee('12 Tubman Boulevard, Monrovia')
             ->assertDontSee('Config Ballroom')
-            // Dress code isn't on the program form, so it still comes from config.
+            // No calendar entry has a dress code for it, so it still comes from config.
             ->assertSee('Black Tie')
             // PDF buttons and RSVP are unchanged.
             ->assertSee(route('events.program', 'honors-ball'))
@@ -176,5 +177,36 @@ class PublicEventDetailsTest extends TestCase
         $this->get(route('events.show', 'convocation'))
             ->assertSee('Newer Venue')
             ->assertDontSee('Older Venue');
+    }
+
+    public function test_each_event_page_shows_the_dress_code_saved_on_its_calendar_entry(): void
+    {
+        // The seeded calendar links "Awards Night", "Baccalaureate Service" and "Commencement
+        // Convocation 2025" to the three event pages.
+        ScheduleEvent::where('event_slug', 'honors-ball')->update(['dress_code' => 'Gold & Black Formal']);
+        ScheduleEvent::where('event_slug', 'baccalaureate')->update(['dress_code' => 'Sunday Best']);
+        ScheduleEvent::where('event_slug', 'convocation')->update(['dress_code' => 'Red & White']);
+
+        $honorsBall = $this->eventDetails('honors-ball');
+        $this->assertStringContainsString('Gold &amp; Black Formal', $honorsBall);
+        $this->assertStringNotContainsString('Black Tie', $honorsBall);
+
+        $baccalaureate = $this->eventDetails('baccalaureate');
+        $this->assertStringContainsString('Sunday Best', $baccalaureate);
+        $this->assertStringNotContainsString('Red &amp; White', $baccalaureate);
+
+        $this->assertStringContainsString('Red &amp; White', $this->eventDetails('convocation'));
+    }
+
+    public function test_dress_code_shows_to_be_announced_when_none_is_saved(): void
+    {
+        config(['graduation.events.baccalaureate.dress_code' => null]);
+        ScheduleEvent::where('event_slug', 'baccalaureate')->update(['dress_code' => null]);
+
+        $this->assertMatchesRegularExpression('/Dress Code.*?>\s*To be announced\s*</s', $this->eventDetails('baccalaureate'));
+
+        // An unpublished calendar entry's dress code isn't shown either.
+        ScheduleEvent::where('event_slug', 'baccalaureate')->update(['dress_code' => 'Draft Attire', 'is_published' => false]);
+        $this->assertStringNotContainsString('Draft Attire', $this->eventDetails('baccalaureate'));
     }
 }

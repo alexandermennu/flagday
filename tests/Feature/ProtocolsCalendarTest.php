@@ -194,6 +194,27 @@ class ProtocolsCalendarTest extends TestCase
             ->assertDontSee('Bring your invitation.');
     }
 
+    public function test_a_calendar_entry_linked_to_an_event_page_supplies_its_dress_code(): void
+    {
+        $this->admin()->post(route('admin.schedule.events.store'), [
+            'title' => 'Senior Dinner',
+            'event_slug' => 'honors-ball',
+            'dress_code' => 'Black Tie',
+            'is_published' => '1',
+        ])->assertSessionHasErrors('event_slug'); // "Awards Night" is already linked to the Honors Ball
+
+        $awards = ScheduleEvent::where('event_slug', 'honors-ball')->sole();
+        $this->put(route('admin.schedule.events.update', $awards), [
+            'title' => $awards->title,
+            'event_slug' => 'honors-ball',
+            'dress_code' => 'Black Tie',
+            'is_published' => '1',
+        ])->assertSessionHasNoErrors();
+
+        $this->get(route('events.show', 'honors-ball'))->assertSee('Black Tie');
+        $this->get(route('admin.schedule.events.edit', $awards))->assertSee('<option value="honors-ball" selected', escape: false);
+    }
+
     public function test_calendar_validation_rejects_bad_input(): void
     {
         $event = ScheduleEvent::first();
