@@ -87,7 +87,7 @@ return [
             'dress_code' => env('CONVOCATION_DRESS_CODE'),
             'program_pdf' => env('CONVOCATION_PROGRAM_PDF'),
             'rsvp' => false,
-            'flipbook' => false,
+            'flipbook' => true,
         ],
 
     ],

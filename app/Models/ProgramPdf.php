@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -19,8 +20,14 @@ class ProgramPdf extends Model
 
     public const PUBLISHED = 'published';
 
-    /** Bytes per stored part (4 MB as base64). */
-    private const PART_BYTES = 3 * 1024 * 1024;
+    /**
+     * Bytes per stored part. Each part written or read costs the database a few times its
+     * size in memory, so parts stay small enough for many at once on a 512 MiB database.
+     */
+    public const PART_BYTES = 1024 * 1024;
+
+    /** Lock that lets one large PDF write run at a time, bounding the database's memory use. */
+    public const WRITE_LOCK = 'program-pdf-writes';
 
     protected $fillable = ['program_id'];
 
@@ -59,6 +66,11 @@ class ProgramPdf extends Model
 
     /** Freezes the working copy as the published copy, copied inside the database. */
     public function publishWorking(): void
+    {
+        Cache::lock(self::WRITE_LOCK, 120)->block(60, fn () => $this->copyWorkingToPublished());
+    }
+
+    private function copyWorkingToPublished(): void
     {
         $this->parts()->where('variant', self::PUBLISHED)->delete();
 

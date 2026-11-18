@@ -186,7 +186,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 resolve(data);
             } else {
                 const firstError = data.errors ? Object.values(data.errors)[0][0] : null;
-                reject(new Error(firstError || data.message || `The upload failed (error ${xhr.status}). Please try again.`));
+                const failure = new Error(firstError || data.message || `The upload failed (error ${xhr.status}). Please try again.`);
+                failure.status = xhr.status;
+                reject(failure);
             }
         });
         xhr.addEventListener('error', () => reject(new Error('The connection was lost while uploading. Check your connection and save again.')));
@@ -224,7 +226,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const upload = await send(input.dataset.uploadUrl, JSON.stringify({ size: file.size }), 'application/json');
             for (let offset = 0; offset < file.size; offset += upload.chunk_size) {
                 const chunk = file.slice(offset, offset + upload.chunk_size);
-                await send(`${upload.append_url}?offset=${offset}`, chunk, 'application/octet-stream', (loaded) => showProgress(offset + loaded, file.size));
+                // The server writes one chunk at a time across all uploads; if it is busy, wait and retry.
+                for (let attempt = 1; ; attempt++) {
+                    try {
+                        await send(`${upload.append_url}?offset=${offset}`, chunk, 'application/octet-stream', (loaded) => showProgress(offset + loaded, file.size));
+                        break;
+                    } catch (failure) {
+                        if (failure.status !== 503 || attempt === 3) throw failure;
+                        await new Promise((resolve) => setTimeout(resolve, 2000 * attempt));
+                    }
+                }
             }
 
             bar.style.width = '100%';

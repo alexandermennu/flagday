@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Program;
+use App\Models\ProgramPdf;
 use App\Models\ProgramPdfPart;
 use App\Models\ProgramPdfUpload;
 use App\Support\UploadLimits;
+use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -22,8 +25,8 @@ use Illuminate\Support\Str;
  */
 class ProgramPdfUploadController extends Controller
 {
-    /** Largest chunk the browser sends: 4 MB, or less if PHP's limits are lower. */
-    private const CHUNK_KB = 4096;
+    /** Largest chunk the browser sends: one stored part (1 MB), or less if PHP's limits are lower. */
+    private const CHUNK_KB = ProgramPdf::PART_BYTES / 1024;
 
     public function store(Request $request): JsonResponse
     {
@@ -34,8 +37,8 @@ class ProgramPdfUploadController extends Controller
             ['size.max' => 'The program PDF may not be larger than '.number_format($maxKb / 1024, 1).' MB.'],
         );
 
-        // Uploads that were started but never saved with the form.
-        ProgramPdfUpload::where('updated_at', '<', now()->subDay())->delete();
+        // Uploads that were started but never saved with the form (also pruned daily).
+        ProgramPdfUpload::abandoned()->delete();
 
         $upload = ProgramPdfUpload::create([
             'token' => (string) Str::uuid(),
@@ -69,8 +72,9 @@ class ProgramPdfUploadController extends Controller
         }
 
         try {
-            // Each chunk is its own part, so no stored value grows with the file.
-            $stored = DB::transaction(function () use ($upload, $offset, $length, $bytes) {
+            // Each chunk is its own part, so no stored value grows with the file; one chunk is
+            // written at a time across all uploads, so concurrent uploads can't add up.
+            $stored = Cache::lock(ProgramPdf::WRITE_LOCK, 60)->block(30, fn () => DB::transaction(function () use ($upload, $offset, $length, $bytes) {
                 $claimed = ProgramPdfUpload::whereKey($upload->id)
                     ->where('received_size', $offset)
                     ->update(['received_size' => $offset + $length]);
@@ -85,7 +89,9 @@ class ProgramPdfUploadController extends Controller
                 }
 
                 return $claimed > 0;
-            });
+            }));
+        } catch (LockTimeoutException) {
+            return response()->json(['message' => 'The server is busy. Please try again.'], 503);
         } catch (QueryException $e) {
             Log::error('Program PDF upload chunk could not be stored', ['offset' => $offset, 'size' => $length, 'error' => $e->getMessage()]);
             $upload->delete();

@@ -109,6 +109,7 @@ class ProgramFlipbookTest extends TestCase
 
     public function test_events_without_the_flipbook_enabled_keep_the_plain_pdf_link(): void
     {
+        config(['graduation.events.convocation.flipbook' => false]);
         $this->publishConvocation();
 
         $this->get(route('events.program.viewer', 'convocation'))->assertNotFound();
@@ -117,9 +118,8 @@ class ProgramFlipbookTest extends TestCase
             ->assertDontSee(route('events.program.viewer', 'convocation'));
     }
 
-    public function test_the_viewer_can_be_enabled_for_another_event_by_config(): void
+    public function test_convocation_program_opens_in_the_flipbook_viewer(): void
     {
-        config(['graduation.events.convocation.flipbook' => true]);
         $this->publishConvocation();
 
         $this->get(route('events.show', 'convocation'))->assertSee(route('events.program.viewer', 'convocation'));

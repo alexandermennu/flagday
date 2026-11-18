@@ -155,4 +155,34 @@ class ProgramPdfUploadTest extends TestCase
 
         $this->start(10)->assertUnauthorized();
     }
+
+    public function test_abandoned_uploads_and_their_parts_are_pruned(): void
+    {
+        $abandoned = $this->start(12)->json('token');
+        $this->sendChunk($abandoned, 0, '%PDF-1')->assertOk();
+        $recent = $this->start(12)->json('token');
+        $this->sendChunk($recent, 0, '%PDF-1')->assertOk();
+        ProgramPdfUpload::where('token', $abandoned)->toBase()->update(['updated_at' => now()->subDays(2)]);
+
+        $this->artisan('model:prune', ['--model' => [ProgramPdfUpload::class]])->assertSuccessful();
+
+        $this->assertFalse(ProgramPdfUpload::where('token', $abandoned)->exists());
+        $this->assertTrue(ProgramPdfUpload::where('token', $recent)->exists());
+        $this->assertSame(1, ProgramPdfPart::count(), 'Only the recent upload\'s part is left.');
+    }
+
+    public function test_deleting_a_program_removes_its_stored_parts(): void
+    {
+        $program = Program::factory()->create(['type' => 'convocation']);
+        $this->put(route('admin.programs.update', $program), array_merge(Program::factory()->raw(), [
+            'type' => 'convocation',
+            'program_pdf_upload' => $this->upload('%PDF-1.4 to be deleted'),
+        ]))->assertSessionHasNoErrors();
+        $this->post(route('admin.programs.publish', $program))->assertSessionHasNoErrors();
+        $this->assertSame(2, ProgramPdfPart::count());
+
+        $this->delete(route('admin.programs.destroy', $program));
+
+        $this->assertSame(0, ProgramPdfPart::count());
+    }
 }
