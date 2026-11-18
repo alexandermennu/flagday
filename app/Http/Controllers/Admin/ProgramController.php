@@ -6,6 +6,8 @@ use App\Exceptions\ProgramDoesNotFit;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProgramRequest;
 use App\Models\Program;
+use App\Models\ProgramPdf;
+use App\Models\ProgramPdfUpload;
 use App\Services\ProgramImageProcessor;
 use App\Services\ProgramPdfRenderer;
 use Illuminate\Http\RedirectResponse;
@@ -14,6 +16,7 @@ use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * Admin management of graduation programs: content forms, PDF generation (stored, so
@@ -50,7 +53,7 @@ class ProgramController extends Controller
         $program = DB::transaction(function () use ($request) {
             $program = Program::create($request->programData());
             $this->syncImages($program, $request);
-            $this->storeUpload($program, $request->file('program_pdf'));
+            $this->storeUpload($program, $request->file('program_pdf'), $request->validated('program_pdf_upload'));
 
             return $program;
         });
@@ -82,7 +85,7 @@ class ProgramController extends Controller
             }
 
             $this->syncImages($program, $request);
-            $this->storeUpload($program, $request->file('program_pdf'));
+            $this->storeUpload($program, $request->file('program_pdf'), $request->validated('program_pdf_upload'));
         });
 
         $message = $typeChanged
@@ -128,8 +131,9 @@ class ProgramController extends Controller
         }
 
         DB::transaction(function () use ($program) {
-            $pdf = $program->pdf()->firstOrFail();
-            $pdf->update(['published_data' => $pdf->data]);
+            // Copied inside the database, so a large PDF never passes through PHP.
+            $program->pdf()->select('id')->firstOrFail();
+            $program->pdf()->update(['published_data' => DB::raw('data')]);
 
             Program::withoutTimestamps(function () use ($program) {
                 $program->forceFill([
@@ -146,20 +150,14 @@ class ProgramController extends Controller
             : "Published version {$program->published_version} to the {$page} page.");
     }
 
-    public function download(Program $program): Response|RedirectResponse
+    public function download(Program $program): StreamedResponse|RedirectResponse
     {
-        $pdf = $program->pdf;
-
-        if (! $pdf) {
-            return back()->withErrors(['pdf' => $program->isGenerated()
-                ? 'No PDF has been generated yet. Click “Generate PDF” first.'
-                : 'No PDF has been uploaded yet.']);
-        }
-
-        return response($pdf->bytes(), 200, [
+        return ProgramPdf::stream($program->id, 'data', [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="'.$program->pdfFilename().'"',
-        ]);
+        ]) ?? back()->withErrors(['pdf' => $program->isGenerated()
+            ? 'No PDF has been generated yet. Click “Generate PDF” first.'
+            : 'No PDF has been uploaded yet.']);
     }
 
     /** Renders the current saved content without storing it, shown inline in the browser. */
@@ -221,20 +219,42 @@ class ProgramController extends Controller
         return null;
     }
 
-    /** Stores an uploaded Convocation PDF as the program's working PDF (replacing any previous upload). */
-    private function storeUpload(Program $program, ?UploadedFile $file): void
+    /**
+     * Stores an uploaded Convocation PDF as the program's working PDF (replacing any previous
+     * upload) — either a file posted with the form, or a completed chunked upload (see
+     * ProgramPdfUploadController), which is copied inside the database.
+     */
+    private function storeUpload(Program $program, ?UploadedFile $file, ?string $uploadToken = null): void
     {
-        if (! $file || $program->isGenerated()) {
+        if ((! $file && ! $uploadToken) || $program->isGenerated()) {
             return;
         }
 
-        $bytes = (string) file_get_contents($file->getRealPath());
-        $program->pdf()->updateOrCreate([], ['data' => base64_encode($bytes)]);
+        if ($file) {
+            $bytes = (string) file_get_contents($file->getRealPath());
+            $program->pdf()->updateOrCreate([], ['data' => base64_encode($bytes)]);
+            $size = strlen($bytes);
+        } else {
+            $upload = ProgramPdfUpload::where('token', $uploadToken)->firstOrFail(['id', 'total_size']);
+            $source = DB::table('program_pdf_uploads')->where('id', $upload->id);
 
-        Program::withoutTimestamps(function () use ($program, $bytes) {
+            if ($program->pdf()->exists()) {
+                $program->pdf()->update(['data' => DB::raw('(select data from program_pdf_uploads where id = '.(int) $upload->id.')')]);
+            } else {
+                DB::table('program_pdfs')->insertUsing(
+                    ['program_id', 'data', 'created_at', 'updated_at'],
+                    $source->selectRaw('?, data, ?, ?', [$program->id, now(), now()]),
+                );
+            }
+
+            $upload->delete();
+            $size = $upload->total_size;
+        }
+
+        Program::withoutTimestamps(function () use ($program, $size) {
             $program->forceFill([
                 'pdf_generated_at' => now(),
-                'pdf_size' => strlen($bytes),
+                'pdf_size' => $size,
                 'pdf_page_count' => null,
             ])->save();
         });

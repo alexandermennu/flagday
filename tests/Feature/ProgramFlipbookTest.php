@@ -51,7 +51,7 @@ class ProgramFlipbookTest extends TestCase
             ->assertSee('data-flipbook-next', escape: false);
 
         // The PDF it loads is the real, four-page generated program.
-        $pdf = $this->get(route('events.program', 'honors-ball'))->assertOk()->getContent();
+        $pdf = $this->get(route('events.program', 'honors-ball'))->assertOk()->streamedContent();
         $this->assertSame(4, preg_match_all('#/Type\s*/Page[^s]#', $pdf));
     }
 
@@ -97,7 +97,7 @@ class ProgramFlipbookTest extends TestCase
             ->assertSee(route('events.program', ['baccalaureate', 'download' => 1]));
 
         // That URL serves the one-page Baccalaureate program (the Honors Ball one has four pages).
-        $pdf = $this->get(route('events.program', 'baccalaureate'))->assertOk()->assertHeader('Content-Type', 'application/pdf')->getContent();
+        $pdf = $this->get(route('events.program', 'baccalaureate'))->assertOk()->assertHeader('Content-Type', 'application/pdf')->streamedContent();
         $this->assertSame(1, preg_match_all('#/Type\s*/Page[^s]#', $pdf));
         $this->assertStringStartsWith('attachment;', $this->get(route('events.program', ['baccalaureate', 'download' => 1]))->headers->get('Content-Disposition'));
 

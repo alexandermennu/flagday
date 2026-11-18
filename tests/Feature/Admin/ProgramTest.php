@@ -125,7 +125,7 @@ class ProgramTest extends TestCase
         $response->assertHeader('Content-Type', 'application/pdf');
         $response->assertHeader('Content-Disposition', 'attachment; filename="starz-university-special-honors-awards-2026-program.pdf"');
 
-        $pdf = $response->getContent();
+        $pdf = $response->streamedContent();
         $this->assertStringStartsWith('%PDF', $pdf);
         $this->assertSame(4, $this->pageCount($pdf));
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\Program;
+use App\Models\ProgramPdfUpload;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -58,6 +59,15 @@ class ProgramRequest extends FormRequest
                 $handle && fclose($handle);
                 if ($signature !== '%PDF-') {
                     $fail('The program PDF must be a valid PDF file.');
+                }
+            }],
+            // A completed chunked upload (ProgramPdfUploadController), sent instead of program_pdf.
+            'program_pdf_upload' => ['exclude_unless:type,convocation', 'nullable', 'uuid', function (string $attribute, mixed $value, Closure $fail) {
+                $upload = ProgramPdfUpload::where('token', $value)->first(['total_size', 'received_size']);
+                if (! $upload?->isComplete()) {
+                    $fail('The program PDF upload did not finish. Choose the file again and save.');
+                } elseif ($upload->total_size > Program::pdfUploadMaxKb() * 1024) {
+                    $fail('The program PDF may not be larger than '.number_format(Program::pdfUploadMaxKb() / 1024, 1).' MB.');
                 }
             }],
             'title' => ['required', 'string', 'max:80'],
@@ -141,7 +151,7 @@ class ProgramRequest extends FormRequest
      */
     public function programData(): array
     {
-        $data = collect($this->validated())->except(['images', 'remove_images', 'program_pdf'])->all();
+        $data = collect($this->validated())->except(['images', 'remove_images', 'program_pdf', 'program_pdf_upload'])->all();
 
         // Sections excluded for this type are left untouched (not emptied) when saving.
         if (array_key_exists('agenda', $data)) {

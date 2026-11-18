@@ -148,3 +148,105 @@ document.addEventListener('DOMContentLoaded', () => {
         refresh();
     });
 });
+
+// Convocation program PDF: sent in small chunks before the form is submitted (see
+// ProgramPdfUploadController), with a progress bar, so a large file never has to fit in a
+// single request. The form is then submitted with the upload's token instead of the file.
+document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('program_pdf');
+    if (!input?.dataset.uploadUrl) return;
+
+    const form = input.form;
+    const section = input.closest('[data-program-types]');
+    const tokenField = form.querySelector('[name="program_pdf_upload"]');
+    const progress = section.querySelector('[data-upload-progress]');
+    const bar = progress.querySelector('[data-upload-bar]');
+    const label = progress.querySelector('[data-upload-label]');
+    const error = section.querySelector('[data-upload-error]');
+    const csrf = form.querySelector('input[name="_token"]').value;
+    const maxBytes = Number(input.dataset.maxBytes);
+    const mb = (bytes) => (bytes / 1048576).toFixed(1);
+    let uploading = false;
+
+    const send = (url, body, contentType, onProgress) => new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', url);
+        xhr.setRequestHeader('X-CSRF-TOKEN', csrf);
+        xhr.setRequestHeader('Accept', 'application/json');
+        xhr.setRequestHeader('Content-Type', contentType);
+        if (onProgress) xhr.upload.addEventListener('progress', (event) => onProgress(event.loaded));
+        xhr.addEventListener('load', () => {
+            let data = {};
+            try {
+                data = JSON.parse(xhr.responseText);
+            } catch {
+                // Not JSON (e.g. an error page from the server or edge).
+            }
+            if (xhr.status >= 200 && xhr.status < 300) {
+                resolve(data);
+            } else {
+                const firstError = data.errors ? Object.values(data.errors)[0][0] : null;
+                reject(new Error(firstError || data.message || `The upload failed (error ${xhr.status}). Please try again.`));
+            }
+        });
+        xhr.addEventListener('error', () => reject(new Error('The connection was lost while uploading. Check your connection and save again.')));
+        xhr.send(body);
+    });
+
+    const showProgress = (sent, total) => {
+        const percent = Math.min(100, Math.floor((sent / total) * 100));
+        bar.style.width = `${percent}%`;
+        label.textContent = `Uploading… ${percent}% (${mb(sent)} of ${mb(total)} MB)`;
+    };
+
+    form.addEventListener('submit', async (event) => {
+        const file = input.files[0];
+        // Only when a file is chosen and the Convocation section applies.
+        if (!file || section.hidden) return;
+
+        event.preventDefault();
+        if (uploading) return;
+
+        error.hidden = true;
+        if (file.size > maxBytes) {
+            error.textContent = `The program PDF may not be larger than ${mb(maxBytes)} MB.`;
+            error.hidden = false;
+            return;
+        }
+
+        const buttons = form.querySelectorAll('button[type="submit"]');
+        uploading = true;
+        buttons.forEach((button) => { button.disabled = true; });
+        progress.hidden = false;
+        showProgress(0, file.size);
+
+        try {
+            const upload = await send(input.dataset.uploadUrl, JSON.stringify({ size: file.size }), 'application/json');
+            for (let offset = 0; offset < file.size; offset += upload.chunk_size) {
+                const chunk = file.slice(offset, offset + upload.chunk_size);
+                await send(`${upload.append_url}?offset=${offset}`, chunk, 'application/octet-stream', (loaded) => showProgress(offset + loaded, file.size));
+            }
+
+            bar.style.width = '100%';
+            label.textContent = 'Upload complete. Saving…';
+            tokenField.value = upload.token;
+            input.value = '';
+
+            // form.submit() doesn't include the clicked button, so carry its value along.
+            if (event.submitter?.name) {
+                const action = document.createElement('input');
+                action.type = 'hidden';
+                action.name = event.submitter.name;
+                action.value = event.submitter.value;
+                form.append(action);
+            }
+            form.submit();
+        } catch (failure) {
+            uploading = false;
+            buttons.forEach((button) => { button.disabled = false; });
+            progress.hidden = true;
+            error.textContent = failure.message;
+            error.hidden = false;
+        }
+    });
+});

@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\CheckInController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\ProgramController;
+use App\Http\Controllers\Admin\ProgramPdfUploadController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\ScheduleEventController;
@@ -100,6 +101,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('programs/{program}/publish', [ProgramController::class, 'publish'])->name('programs.publish');
         Route::get('programs/{program}/download', [ProgramController::class, 'download'])->name('programs.download');
         Route::get('programs/{program}/preview', [ProgramController::class, 'preview'])->name('programs.preview');
+        Route::post('program-uploads', [ProgramPdfUploadController::class, 'store'])->name('program-uploads.store');
+        Route::post('program-uploads/{token}', [ProgramPdfUploadController::class, 'append'])->name('program-uploads.append');
 
         Route::get('gallery', [GalleryController::class, 'edit'])->name('gallery.edit');
         Route::put('gallery', [GalleryController::class, 'updateSettings'])->name('gallery.update');

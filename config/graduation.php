@@ -33,10 +33,11 @@ return [
 
     'contact_phone' => env('GRAD_CONTACT_PHONE'),
 
-    // Largest Convocation program PDF an administrator may upload, in KB (default 20 MB).
-    // PHP's upload_max_filesize / post_max_size must be at least this large, and uploads
-    // are stored in the database, so keep it well under the database's packet limit.
-    'program_pdf_max_kb' => (int) env('PROGRAM_PDF_MAX_KB', 20480),
+    // Largest Convocation program PDF an administrator may upload, in KB (default 100 MB).
+    // The admin form uploads it in small chunks, so PHP's upload limits don't cap it; it is
+    // stored base64-encoded in the database (about 4/3 the file size), so on MySQL the
+    // server's max_allowed_packet must be larger than that.
+    'program_pdf_max_kb' => (int) env('PROGRAM_PDF_MAX_KB', 102400),
 
     // Largest gallery photo an administrator may upload, in KB (default 10 MB). Photos are
     // resized on upload, so this only limits what the server has to accept.

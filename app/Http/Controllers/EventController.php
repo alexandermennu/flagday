@@ -8,8 +8,8 @@ use App\Models\ProgramPdf;
 use App\Support\Graduation;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * Public detail page for each graduation event (Honors Ball, Baccalaureate,
@@ -65,20 +65,19 @@ class EventController extends Controller
     }
 
     /** Serves the event's published program PDF — the copy frozen at its last publish. */
-    public function program(Request $request, string $slug): Response
+    public function program(Request $request, string $slug): StreamedResponse
     {
         $program = Program::publishedFor($slug);
         abort_if($program === null, 404);
 
-        $bytes = base64_decode((string) ProgramPdf::where('program_id', $program->id)->value('published_data'));
         $disposition = $request->boolean('download') ? 'attachment' : 'inline';
 
-        return response($bytes, 200, [
+        return ProgramPdf::stream($program->id, 'published_data', [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => $disposition.'; filename="'.$program->pdfFilename().'"',
             // Laravel Cloud's edge (Cloudflare) caches responses without Cache-Control; a
             // republished program must show up straight away.
             'Cache-Control' => 'no-cache, must-revalidate',
-        ]);
+        ]) ?? abort(404);
     }
 }

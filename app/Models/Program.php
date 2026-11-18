@@ -135,15 +135,6 @@ class Program extends Model
         return (int) config('graduation.program_pdf_max_kb');
     }
 
-    /**
-     * What the server will actually accept: PHP's own upload limits can be lower than the
-     * app setting, in which case the upload fails before validation runs.
-     */
-    public static function effectivePdfUploadMaxKb(): int
-    {
-        return \App\Support\UploadLimits::effectiveKb(self::pdfUploadMaxKb());
-    }
-
     public function pdfFilename(): string
     {
         return Str::slug("{$this->institution_name} {$this->title} {$this->class_year}").'-program.pdf';

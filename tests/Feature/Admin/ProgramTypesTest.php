@@ -98,7 +98,7 @@ class ProgramTypesTest extends TestCase
 
         $response = $this->get(route('events.program', 'honors-ball'));
         $response->assertOk()->assertHeader('Content-Type', 'application/pdf');
-        $this->assertSame(4, $this->pageCount($response->getContent()));
+        $this->assertSame(4, $this->pageCount($response->streamedContent()));
     }
 
     // ---------------------------------------------------------------- baccalaureate
@@ -147,7 +147,7 @@ class ProgramTypesTest extends TestCase
             ->assertSee('Download PDF');
         $this->get(route('class.show'))->assertDontSee(route('events.program', 'baccalaureate')); // booklets list removed from this page
 
-        $this->assertSame(1, $this->pageCount($this->get(route('events.program', 'baccalaureate'))->getContent()));
+        $this->assertSame(1, $this->pageCount($this->get(route('events.program', 'baccalaureate'))->streamedContent()));
         $this->get(route('events.program', 'honors-ball'))->assertNotFound();
     }
 
@@ -172,7 +172,7 @@ class ProgramTypesTest extends TestCase
 
         $download = $this->get(route('admin.programs.download', $program));
         $download->assertOk()->assertHeader('Content-Type', 'application/pdf');
-        $this->assertStringContainsString('upload-one', $download->getContent());
+        $this->assertStringContainsString('upload-one', $download->streamedContent());
 
         $this->get(route('admin.programs.edit', $program))
             ->assertSee('Uploaded PDF')
@@ -207,7 +207,7 @@ class ProgramTypesTest extends TestCase
         $view->assertOk()->assertHeader('Content-Type', 'application/pdf');
         $this->assertStringStartsWith('inline;', $view->headers->get('Content-Disposition'));
         $this->assertStringContainsString('no-cache', $view->headers->get('Cache-Control'));
-        $this->assertStringContainsString('published-file', $view->getContent());
+        $this->assertStringContainsString('published-file', $view->streamedContent());
 
         $download = $this->get(route('events.program', ['convocation', 'download' => 1]));
         $this->assertStringStartsWith('attachment;', $download->headers->get('Content-Disposition'));
@@ -221,12 +221,12 @@ class ProgramTypesTest extends TestCase
 
         // Replacing the file updates Download PDF but not the public page…
         $this->put(route('admin.programs.update', $program), $this->payload('convocation', ['program_pdf' => $this->fakePdf('second-version')]));
-        $this->assertStringContainsString('second-version', $this->get(route('admin.programs.download', $program))->getContent());
-        $this->assertStringContainsString('first-version', $this->get(route('events.program', 'convocation'))->getContent());
+        $this->assertStringContainsString('second-version', $this->get(route('admin.programs.download', $program))->streamedContent());
+        $this->assertStringContainsString('first-version', $this->get(route('events.program', 'convocation'))->streamedContent());
 
         // …until it is published again.
         $this->post(route('admin.programs.publish', $program));
-        $this->assertStringContainsString('second-version', $this->get(route('events.program', 'convocation'))->getContent());
+        $this->assertStringContainsString('second-version', $this->get(route('events.program', 'convocation'))->streamedContent());
         $this->assertSame(2, $program->fresh()->published_version);
     }
 

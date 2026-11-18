@@ -19,7 +19,7 @@
     $type = old('type', $program->type ?? 'honors-ball');
     // Attributes for an element that applies only to some program types.
     $forTypes = fn (string ...$types) => 'data-program-types="'.implode(' ', $types).'"'.(in_array($type, $types, true) ? '' : ' hidden');
-    $pdfMaxKb = \App\Models\Program::effectivePdfUploadMaxKb();
+    $pdfMaxKb = \App\Models\Program::pdfUploadMaxKb();
 @endphp
 
 @if ($errors->has('pdf'))
@@ -277,9 +277,23 @@
             </p>
         @endif
 
+        {{-- Uploaded in chunks before the form is submitted (resources/js/admin.js); the finished upload's token is sent instead of the file. --}}
         <input type="file" name="program_pdf" id="program_pdf" accept="application/pdf,.pdf"
+               data-upload-url="{{ route('admin.program-uploads.store') }}" data-max-bytes="{{ $pdfMaxKb * 1024 }}"
                class="mt-4 block w-full text-sm text-slate-600 file:mr-3 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-slate-700 hover:file:bg-slate-200">
+        <input type="hidden" name="program_pdf_upload" value="{{ old('program_pdf_upload') }}">
+        @if (old('program_pdf_upload') && ! $errors->has('program_pdf_upload'))
+            <p class="mt-2 text-xs text-slate-600">The PDF you uploaded is ready and will be saved with this form.</p>
+        @endif
+        <div data-upload-progress hidden class="mt-3">
+            <div class="h-2 w-full overflow-hidden rounded-full bg-slate-200">
+                <div data-upload-bar class="h-full w-0 rounded-full bg-gold-500 transition-[width] duration-200"></div>
+            </div>
+            <p data-upload-label class="mt-1 text-xs text-slate-600" aria-live="polite"></p>
+        </div>
+        <p data-upload-error hidden class="mt-1 text-xs text-red-600"></p>
         @error('program_pdf') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+        @error('program_pdf_upload') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
     </section>
 
     {{-- ============ Save ============ --}}
