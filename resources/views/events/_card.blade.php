@@ -21,9 +21,13 @@
             </div>
             <span class="font-display font-semibold {{ $square ? 'text-3xl text-gold-500' : 'text-4xl text-white/15' }}" aria-hidden="true">0{{ $index }}</span>
         </div>
-        @if ($event['rsvp'])
+        @if ($event['rsvp'] && \App\Models\RsvpSetting::isOpen())
             <span class="relative mt-4 inline-flex items-center gap-1.5 self-start border border-gold-400/50 bg-gold-400/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-gold-300 {{ $square ? 'rounded-none' : 'rounded-full' }}">
                 <span class="h-1.5 w-1.5 bg-gold-400 {{ $square ? 'rounded-none' : 'rounded-full' }}"></span> RSVP open
+            </span>
+        @elseif ($event['rsvp'])
+            <span class="relative mt-4 inline-flex items-center gap-1.5 self-start border border-white/20 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-neutral-400 {{ $square ? 'rounded-none' : 'rounded-full' }}">
+                <span class="h-1.5 w-1.5 bg-neutral-500 {{ $square ? 'rounded-none' : 'rounded-full' }}"></span> RSVP closed
             </span>
         @endif
     </div>
@@ -47,11 +51,15 @@
         </dl>
 
         <div class="mt-auto flex flex-col gap-3 pt-6 {{ $square ? 'sm:flex-row lg:flex-col' : 'sm:flex-row lg:flex-col xl:flex-row' }}">
-            @if ($event['rsvp'])
+            @if ($event['rsvp'] && \App\Models\RsvpSetting::isOpen())
                 <a href="{{ route('rsvp.create') }}"
                    class="inline-flex flex-1 items-center justify-center bg-gold-400 px-5 py-3 text-sm font-semibold text-ink transition hover:bg-gold-300 active:scale-[0.98] {{ $square ? 'rounded-none' : 'rounded-full' }}">
                     RSVP Now
                 </a>
+            @elseif ($event['rsvp'])
+                <span class="inline-flex flex-1 cursor-default items-center justify-center border border-neutral-200 bg-neutral-100 px-5 py-3 text-sm font-semibold text-neutral-500 {{ $square ? 'rounded-none' : 'rounded-full' }}">
+                    RSVP Closed
+                </span>
             @endif
             <a href="{{ route('events.show', $event['slug']) }}"
                class="inline-flex flex-1 items-center justify-center gap-1.5 border border-neutral-300 px-5 py-3 text-sm font-semibold text-neutral-900 transition hover:border-ink hover:bg-ink hover:text-white {{ $square ? 'rounded-none' : 'rounded-full' }}">

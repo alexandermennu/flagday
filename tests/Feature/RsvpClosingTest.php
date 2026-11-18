@@ -90,6 +90,29 @@ class RsvpClosingTest extends TestCase
         $this->post(route('rsvp.access.store'), ['passcode' => 'secret'])->assertRedirect(route('rsvp.create'));
     }
 
+    public function test_public_pages_show_the_rsvp_as_closed_and_stop_linking_to_the_form(): void
+    {
+        $formLink = 'href="'.route('rsvp.create').'"';
+        foreach ([route('landing'), route('class.show'), route('events.show', 'honors-ball')] as $url) {
+            $this->get($url)->assertOk()->assertSee($formLink, escape: false);
+        }
+
+        $this->setRsvpOpen(false);
+
+        foreach ([route('landing'), route('class.show'), route('events.show', 'honors-ball')] as $url) {
+            $this->get($url)->assertOk()
+                ->assertDontSee($formLink, escape: false)
+                ->assertSee('RSVP Closed');
+        }
+        // The landing page has no footer; the other pages do.
+        $this->get(route('class.show'))->assertSee('RSVP — Honors Ball (closed)');
+
+        $this->get(route('events.show', 'honors-ball'))
+            ->assertDontSee('Go to the RSVP form')
+            ->assertSee('The RSVP for the Honors Ball is closed.');
+        $this->get(route('class.show'))->assertSee('RSVP closed')->assertDontSee('RSVP Now');
+    }
+
     public function test_reopening_accepts_responses_again(): void
     {
         Mail::fake();
@@ -97,6 +120,7 @@ class RsvpClosingTest extends TestCase
         $this->setRsvpOpen(true);
 
         $this->get(route('rsvp.create'))->assertOk()->assertDontSee('RSVP is closed');
+        $this->get(route('events.show', 'honors-ball'))->assertSee('RSVP for the Honors Ball')->assertDontSee('RSVP Closed');
         $this->post(route('rsvp.store'), $this->payload())->assertRedirect(route('rsvp.thank-you'));
         $this->assertDatabaseCount('attendees', 1);
     }

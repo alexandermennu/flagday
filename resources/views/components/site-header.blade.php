@@ -36,10 +36,16 @@
         </nav>
 
         <div class="flex shrink-0 items-center gap-3">
-            <a href="{{ route('rsvp.create') }}"
-               class="hidden items-center gap-2 rounded-full bg-gold-400 px-5 py-2.5 text-sm font-semibold text-ink shadow-sm transition hover:bg-gold-300 active:scale-[0.98] sm:inline-flex">
-                RSVP &middot; Honors Ball
-            </a>
+            @if (\App\Models\RsvpSetting::isOpen())
+                <a href="{{ route('rsvp.create') }}"
+                   class="hidden items-center gap-2 rounded-full bg-gold-400 px-5 py-2.5 text-sm font-semibold text-ink shadow-sm transition hover:bg-gold-300 active:scale-[0.98] sm:inline-flex">
+                    RSVP &middot; Honors Ball
+                </a>
+            @else
+                <span class="hidden cursor-default items-center gap-2 rounded-full border border-white/20 px-5 py-2.5 text-sm font-semibold text-neutral-400 sm:inline-flex">
+                    RSVP Closed
+                </span>
+            @endif
 
             <button type="button" id="mobile-menu-toggle" aria-expanded="false" aria-controls="mobile-menu"
                     class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white md:hidden">
@@ -59,10 +65,16 @@
                     {{ $item['label'] }}
                 </a>
             @endforeach
-            <a href="{{ route('rsvp.create') }}"
-               class="mt-3 rounded-full bg-gold-400 px-5 py-3 text-center text-base font-semibold text-ink">
-                RSVP for the Honors Ball
-            </a>
+            @if (\App\Models\RsvpSetting::isOpen())
+                <a href="{{ route('rsvp.create') }}"
+                   class="mt-3 rounded-full bg-gold-400 px-5 py-3 text-center text-base font-semibold text-ink">
+                    RSVP for the Honors Ball
+                </a>
+            @else
+                <span class="mt-3 rounded-full border border-white/20 px-5 py-3 text-center text-base font-semibold text-neutral-400">
+                    Honors Ball RSVP Closed
+                </span>
+            @endif
         </nav>
     </div>
 </header>

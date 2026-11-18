@@ -20,13 +20,19 @@ class RsvpSetting extends Model
         return static::query()->first() ?? static::create(['is_open' => true]);
     }
 
+    /** Read once per request: the header, footer, cards and middleware all ask. */
     public static function isOpen(): bool
     {
-        try {
-            return static::current()->is_open;
-        } catch (QueryException) {
-            // The settings table doesn't exist yet (migrations not run): RSVP stays open, as before.
-            return true;
+        $attributes = request()->attributes;
+        if (! $attributes->has('rsvp_open')) {
+            try {
+                $attributes->set('rsvp_open', static::current()->is_open);
+            } catch (QueryException) {
+                // The settings table doesn't exist yet (migrations not run): RSVP stays open, as before.
+                $attributes->set('rsvp_open', true);
+            }
         }
+
+        return $attributes->get('rsvp_open');
     }
 }

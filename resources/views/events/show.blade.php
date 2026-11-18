@@ -8,6 +8,7 @@
     // The Honors Ball shows its program card in the hero, beside the title; other events keep
     // it in the sidebar of the details section.
     $programInHero = $event['slug'] === 'honors-ball';
+    $rsvpOpen = \App\Models\RsvpSetting::isOpen();
 
     $details = [
         ['label' => 'Date', 'value' => $event['date_label'], 'set' => filled($event['date'])],
@@ -35,11 +36,15 @@
             <p class="mt-3 text-sm font-semibold uppercase tracking-[0.2em] text-neutral-400">{{ config('graduation.institution') }} &middot; Class of {{ config('graduation.class_year') }}</p>
             <p class="mt-6 max-w-2xl text-lg leading-relaxed text-neutral-300">{{ $event['description'] }}</p>
 
-            @if ($event['rsvp'])
+            @if ($event['rsvp'] && $rsvpOpen)
                 <a href="{{ route('rsvp.create') }}"
                    class="mt-8 inline-flex w-full items-center justify-center rounded-full bg-gold-400 px-8 py-4 text-base font-semibold text-ink shadow-lg shadow-gold-500/25 transition hover:bg-gold-300 active:scale-[0.98] sm:w-auto">
                     RSVP for the {{ $event['name'] }}
                 </a>
+            @elseif ($event['rsvp'])
+                <span class="mt-8 inline-flex w-full cursor-default items-center justify-center rounded-full border border-white/20 px-8 py-4 text-base font-semibold text-neutral-400 sm:w-auto">
+                    RSVP Closed
+                </span>
             @endif
             </div>
 
@@ -73,13 +78,18 @@
                     @include('events._program-card')
                 @endunless
 
-                @if ($event['rsvp'])
+                @if ($event['rsvp'] && $rsvpOpen)
                     <div class="rounded-2xl border border-gold-300 bg-gold-50 p-6">
                         <h2 class="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-700">RSVP</h2>
                         <p class="mt-3 text-sm text-neutral-700">Confirm your attendance and receive your digital Event Pass by email.</p>
                         <a href="{{ route('rsvp.create') }}" class="mt-4 inline-flex text-sm font-semibold text-ink underline decoration-gold-500 decoration-2 underline-offset-4 hover:text-gold-700">
                             Go to the RSVP form &rarr;
                         </a>
+                    </div>
+                @elseif ($event['rsvp'])
+                    <div class="rounded-2xl border border-neutral-200 bg-white p-6">
+                        <h2 class="text-[11px] font-semibold uppercase tracking-[0.2em] text-neutral-500">RSVP Closed</h2>
+                        <p class="mt-3 text-sm text-neutral-700">The RSVP for the {{ $event['name'] }} is closed. If you already confirmed, the Event Pass in your inbox is still valid.</p>
                     </div>
                 @endif
             </aside>

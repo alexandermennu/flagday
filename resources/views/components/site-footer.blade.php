@@ -21,7 +21,11 @@
                     <li><a href="{{ route('landing') }}" class="text-sm transition hover:text-gold-300">Home</a></li>
                     <li><a href="{{ route('class.show') }}" class="text-sm transition hover:text-gold-300">Class of {{ config('graduation.class_year') }}</a></li>
                     <li><a href="{{ route('events.show', 'honors-ball') }}" class="text-sm transition hover:text-gold-300">Honors Ball</a></li>
-                    <li><a href="{{ route('rsvp.create') }}" class="text-sm transition hover:text-gold-300">RSVP — Honors Ball</a></li>
+                    @if (\App\Models\RsvpSetting::isOpen())
+                        <li><a href="{{ route('rsvp.create') }}" class="text-sm transition hover:text-gold-300">RSVP — Honors Ball</a></li>
+                    @else
+                        <li><span class="text-sm text-neutral-500">RSVP — Honors Ball (closed)</span></li>
+                    @endif
                 </ul>
             </nav>
 
