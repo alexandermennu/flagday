@@ -3,6 +3,25 @@
 @section('title', 'Dashboard')
 
 @section('content')
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border p-5 {{ $rsvpOpen ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50' }}">
+        <div>
+            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Honors Ball RSVP</p>
+            <p class="mt-1 text-lg font-bold {{ $rsvpOpen ? 'text-green-700' : 'text-red-700' }}">{{ $rsvpOpen ? 'Open' : 'Closed' }}</p>
+            <p class="mt-1 text-sm text-slate-600">
+                {{ $rsvpOpen ? 'The public RSVP form is accepting responses.' : 'The public RSVP form shows a "closed" notice and accepts no responses. Existing Event Passes stay valid.' }}
+            </p>
+        </div>
+        <form method="POST" action="{{ route('admin.rsvp-status.update') }}"
+              onsubmit="return confirm('{{ $rsvpOpen ? 'Close the RSVP? The public form will stop accepting responses.' : 'Reopen the RSVP? The public form will accept responses again.' }}')">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="is_open" value="{{ $rsvpOpen ? 0 : 1 }}">
+            <button type="submit" class="inline-flex items-center rounded-lg px-5 py-2.5 text-sm font-semibold transition {{ $rsvpOpen ? 'bg-red-700 text-white hover:bg-red-800' : 'bg-green-700 text-white hover:bg-green-800' }}">
+                {{ $rsvpOpen ? 'Close RSVP' : 'Open RSVP' }}
+            </button>
+        </form>
+    </div>
+
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <div class="rounded-2xl border border-slate-200 bg-white p-5">
             <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total</p>

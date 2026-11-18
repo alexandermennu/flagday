@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\ProgramController;
 use App\Http\Controllers\Admin\ProgramPdfUploadController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\RsvpSettingController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\ScheduleEventController;
 use App\Http\Controllers\CalendarController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\PassVerificationController;
 use App\Http\Controllers\ProtocolsController;
 use App\Http\Controllers\RsvpAccessController;
 use App\Http\Controllers\RsvpController;
+use App\Http\Middleware\EnsureRsvpOpen;
 use App\Http\Middleware\RequireRsvpPasscode;
 use Illuminate\Support\Facades\Route;
 
@@ -51,17 +53,20 @@ Route::get('/gallery/photos/{photo}/{variant}', [GalleryPhotoController::class, 
 Route::redirect('/flag-day', '/', 301);
 
 // The RSVP form (Honors Ball only) can sit behind a shared passcode (see RequireRsvpPasscode),
-// switched off by default via event.rsvp_passcode_required.
-Route::get('/rsvp/access', [RsvpAccessController::class, 'show'])->name('rsvp.access');
-Route::post('/rsvp/access', [RsvpAccessController::class, 'store'])
-    ->middleware('throttle:10,1')
-    ->name('rsvp.access.store');
-
-Route::middleware(RequireRsvpPasscode::class)->group(function () {
-    Route::get('/rsvp', [RsvpController::class, 'create'])->name('rsvp.create');
-    Route::post('/rsvp', [RsvpController::class, 'store'])
+// switched off by default via event.rsvp_passcode_required. While the RSVP is closed (admin →
+// Dashboard), EnsureRsvpOpen shows a "closed" notice instead and refuses submissions.
+Route::middleware(EnsureRsvpOpen::class)->group(function () {
+    Route::get('/rsvp/access', [RsvpAccessController::class, 'show'])->name('rsvp.access');
+    Route::post('/rsvp/access', [RsvpAccessController::class, 'store'])
         ->middleware('throttle:10,1')
-        ->name('rsvp.store');
+        ->name('rsvp.access.store');
+
+    Route::middleware(RequireRsvpPasscode::class)->group(function () {
+        Route::get('/rsvp', [RsvpController::class, 'create'])->name('rsvp.create');
+        Route::post('/rsvp', [RsvpController::class, 'store'])
+            ->middleware('throttle:10,1')
+            ->name('rsvp.store');
+    });
 });
 Route::get('/rsvp/thank-you', [RsvpController::class, 'thankYou'])->name('rsvp.thank-you');
 
@@ -85,6 +90,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
 
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+        Route::put('rsvp-status', [RsvpSettingController::class, 'update'])->name('rsvp-status.update');
 
         Route::resource('attendees', AttendeeController::class)->except('show');
         Route::post('attendees/remind', [AttendeeController::class, 'remind'])->name('attendees.remind');

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\AttendeeStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Attendee;
+use App\Models\RsvpSetting;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -24,6 +25,7 @@ class DashboardController extends Controller
         return view('admin.dashboard', [
             'stats' => $stats,
             'recent' => $recent,
+            'rsvpOpen' => RsvpSetting::isOpen(),
         ]);
     }
 }
