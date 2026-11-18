@@ -245,9 +245,20 @@ function showBook(viewer, images, pageWidth, pageHeight, maxHeight) {
     });
 
     // Turning the page always returns to the normal (un-zoomed) book first.
+    //
+    // flipPrev()/flipNext() turn the page by simulating a click, which disableFlipByClick
+    // only accepts on a page corner. In portrait (one page, on phones) flipPrev() clicks the
+    // middle of StPageFlip's two-page-wide book, so it was ignored and "previous" did
+    // nothing. The setting is only meant for clicks on the page, so lift it for the turn.
     const turn = (direction) => {
         zoom.reset();
-        direction < 0 ? flip.flipPrev() : flip.flipNext();
+        const settings = flip.getSettings();
+        settings.disableFlipByClick = false;
+        try {
+            direction < 0 ? flip.flipPrev() : flip.flipNext();
+        } finally {
+            settings.disableFlipByClick = true;
+        }
     };
 
     prev.addEventListener('click', () => turn(-1));
