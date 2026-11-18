@@ -3,6 +3,7 @@
 namespace Tests\Feature\Admin;
 
 use App\Models\Program;
+use App\Models\ProgramPdfPart;
 use App\Models\ProgramPdfUpload;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -38,7 +39,6 @@ class ProgramPdfUploadTest extends TestCase
     {
         $start = $this->start(strlen($bytes))->assertCreated();
         $chunkSize = $start->json('chunk_size');
-        $this->assertSame(0, $chunkSize % 3);
 
         for ($offset = 0; $offset < strlen($bytes); $offset += $chunkSize) {
             $this->sendChunk($start->json('token'), $offset, substr($bytes, $offset, $chunkSize))->assertOk();
@@ -78,6 +78,21 @@ class ProgramPdfUploadTest extends TestCase
         $this->assertTrue($view->streamedContent() === $bytes, 'The published copy matches the uploaded file.');
     }
 
+    public function test_no_stored_value_grows_with_the_size_of_the_file(): void
+    {
+        // MySQL refuses any single value over max_allowed_packet (32 MB on production), which
+        // is what stopped a 30.7 MB upload at 82% while it was stored as one growing value.
+        $program = Program::factory()->create(['type' => 'convocation']);
+        $this->put(route('admin.programs.update', $program), array_merge(Program::factory()->raw(), [
+            'type' => 'convocation',
+            'program_pdf_upload' => $this->upload($this->largePdf()),
+        ]))->assertSessionHasNoErrors();
+        $this->post(route('admin.programs.publish', $program))->assertSessionHasNoErrors();
+
+        $this->assertGreaterThan(2, ProgramPdfPart::where('variant', 'published')->count());
+        $this->assertLessThanOrEqual(6 * 1024 * 1024, (int) ProgramPdfPart::query()->selectRaw('MAX(LENGTH(data)) AS longest')->value('longest'));
+    }
+
     public function test_a_chunked_upload_replaces_an_existing_pdf(): void
     {
         $program = Program::factory()->create(['type' => 'convocation']);
@@ -114,9 +129,10 @@ class ProgramPdfUploadTest extends TestCase
         $token = $this->start(12)->json('token');
 
         $this->sendChunk($token, 3, 'abc')->assertStatus(409);
-        $this->sendChunk($token, 0, '%PDF-')->assertStatus(409); // not a multiple of 3, and not the last chunk
         $this->sendChunk($token, 0, '%PDF-1')->assertOk();
+        $this->sendChunk($token, 0, '%PDF-1')->assertStatus(409); // already received
         $this->sendChunk($token, 6, 'too many bytes')->assertStatus(409);
+        $this->sendChunk($token, 6, 'abcdef')->assertOk();
     }
 
     public function test_an_unfinished_upload_cannot_be_saved(): void

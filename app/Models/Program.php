@@ -123,7 +123,7 @@ class Program extends Model
         return static::query()
             ->where('type', $type)
             ->whereNotNull('published_at')
-            ->whereHas('pdf', fn ($query) => $query->whereNotNull('published_data'))
+            ->whereHas('pdf', fn ($query) => $query->hasPublishedCopy())
             ->orderByDesc('published_at')
             ->orderByDesc('id')
             ->first();

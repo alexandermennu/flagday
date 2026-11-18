@@ -2,65 +2,125 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
+/**
+ * A program's PDF: the working copy (last generated or uploaded, used by Download PDF)
+ * and the copy frozen at the last publish (served on the public event page). Both are
+ * stored as ProgramPdfPart rows rather than single values — see the parts migration.
+ */
 class ProgramPdf extends Model
 {
-    /** Base64 characters read per query when streaming — a multiple of 4, so each piece decodes on its own. */
-    private const STREAM_PIECE = 4 * 1024 * 1024;
+    public const WORKING = 'working';
 
-    protected $fillable = ['program_id', 'data', 'published_data'];
+    public const PUBLISHED = 'published';
+
+    /** Bytes per stored part (4 MB as base64). */
+    private const PART_BYTES = 3 * 1024 * 1024;
+
+    protected $fillable = ['program_id'];
+
+    public function parts(): HasMany
+    {
+        return $this->hasMany(ProgramPdfPart::class);
+    }
+
+    /** Replaces the working copy with the given PDF. */
+    public function storeWorking(string $bytes): void
+    {
+        $this->parts()->where('variant', self::WORKING)->delete();
+
+        for ($offset = 0; $offset < strlen($bytes); $offset += self::PART_BYTES) {
+            $piece = substr($bytes, $offset, self::PART_BYTES);
+            $this->parts()->create([
+                'variant' => self::WORKING,
+                'position' => $offset,
+                'size' => strlen($piece),
+                'data' => base64_encode($piece),
+            ]);
+        }
+    }
+
+    /** Replaces the working copy with a completed chunked upload, moving its parts across. */
+    public function adoptUpload(ProgramPdfUpload $upload): void
+    {
+        $this->parts()->where('variant', self::WORKING)->delete();
+
+        ProgramPdfPart::where('program_pdf_upload_id', $upload->id)->update([
+            'program_pdf_id' => $this->id,
+            'program_pdf_upload_id' => null,
+            'variant' => self::WORKING,
+        ]);
+    }
+
+    /** Freezes the working copy as the published copy, copied inside the database. */
+    public function publishWorking(): void
+    {
+        $this->parts()->where('variant', self::PUBLISHED)->delete();
+
+        DB::table('program_pdf_parts')->insertUsing(
+            ['program_pdf_id', 'variant', 'position', 'size', 'data', 'created_at', 'updated_at'],
+            DB::table('program_pdf_parts')
+                ->where('program_pdf_id', $this->id)
+                ->where('variant', self::WORKING)
+                ->selectRaw('program_pdf_id, ?, position, size, data, ?, ?', [self::PUBLISHED, now(), now()]),
+        );
+    }
+
+    /** Limits a query to PDFs that have a published copy. */
+    public function scopeHasPublishedCopy(Builder $query): void
+    {
+        $query->whereHas('parts', fn (Builder $parts) => $parts->where('variant', self::PUBLISHED));
+    }
 
     /** The working copy: last generated (or uploaded) PDF, used by Download PDF. */
     public function bytes(): string
     {
-        return base64_decode($this->data);
+        return $this->assemble(self::WORKING);
     }
 
     /** The copy frozen at the last publish, served on the public event page. */
     public function publishedBytes(): ?string
     {
-        return $this->published_data === null ? null : base64_decode($this->published_data);
+        $bytes = $this->assemble(self::PUBLISHED);
+
+        return $bytes === '' ? null : $bytes;
+    }
+
+    private function assemble(string $variant): string
+    {
+        return $this->parts()->where('variant', $variant)->orderBy('position')->pluck('data')
+            ->map(fn (string $piece) => base64_decode($piece))
+            ->implode('');
     }
 
     /**
-     * A response streaming the program's working ('data') or published ('published_data')
-     * PDF, decoded a piece at a time so a large PDF is never held in memory whole. Null
-     * when there is no such PDF.
+     * A response streaming the program's working or published PDF one part at a time, so
+     * a large PDF is never held in memory whole. Null when there is no such PDF.
      *
      * @param  array<string, string>  $headers
      */
-    public static function stream(int $programId, string $column, array $headers): ?StreamedResponse
+    public static function stream(int $programId, string $variant, array $headers): ?StreamedResponse
     {
-        $column = match ($column) {
-            'data', 'published_data' => $column,
-        };
+        $parts = ProgramPdfPart::query()
+            ->whereIn('program_pdf_id', static::where('program_id', $programId)->select('id'))
+            ->where('variant', $variant)
+            ->orderBy('position')
+            ->get(['id', 'size']);
 
-        $row = static::query()->toBase()
-            ->where('program_id', $programId)
-            ->whereNotNull($column)
-            ->selectRaw("id, LENGTH({$column}) AS encoded_length")
-            ->first();
-
-        if ($row === null) {
+        if ($parts->isEmpty()) {
             return null;
         }
 
-        $id = $row->id;
-        $encodedLength = (int) $row->encoded_length;
-        $piece = fn (int $offset, int $length) => (string) static::query()->toBase()
-            ->where('id', $id)
-            ->selectRaw("SUBSTR({$column}, ?, ?) AS piece", [$offset, $length])
-            ->value('piece');
-
-        $padding = $encodedLength >= 2 ? substr_count($piece($encodedLength - 1, 2), '=') : 0;
-
-        return response()->stream(function () use ($piece, $encodedLength) {
-            for ($offset = 1; $offset <= $encodedLength; $offset += self::STREAM_PIECE) {
-                echo base64_decode($piece($offset, self::STREAM_PIECE));
+        return response()->stream(function () use ($parts) {
+            foreach ($parts as $part) {
+                echo base64_decode((string) ProgramPdfPart::whereKey($part->id)->value('data'));
                 flush();
             }
-        }, 200, $headers + ['Content-Length' => (string) (intdiv($encodedLength, 4) * 3 - $padding)]);
+        }, 200, $headers + ['Content-Length' => (string) $parts->sum('size')]);
     }
 }

@@ -65,7 +65,7 @@ class Graduation
             return Program::query()
                 ->select(['id', 'type', 'event_date', 'event_time', 'venue_name', 'venue_address', 'published_at'])
                 ->whereNotNull('published_at')
-                ->whereHas('pdf', fn ($query) => $query->whereNotNull('published_data'))
+                ->whereHas('pdf', fn ($query) => $query->hasPublishedCopy())
                 ->orderByDesc('published_at')
                 ->orderByDesc('id')
                 ->get()

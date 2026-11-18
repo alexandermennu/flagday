@@ -134,7 +134,7 @@ class ProgramFlipbookTest extends TestCase
     {
         $this->actingAs(User::factory()->create());
         $program = Program::factory()->create(['type' => 'convocation']);
-        $program->pdf()->create(['data' => base64_encode("%PDF-1.4\n%%EOF\n")]);
+        $program->pdf()->create()->storeWorking("%PDF-1.4\n%%EOF\n");
         $program->forceFill(['pdf_generated_at' => now(), 'pdf_size' => 15])->save();
         $this->post(route('admin.programs.publish', $program))->assertSessionHasNoErrors();
         auth()->logout();

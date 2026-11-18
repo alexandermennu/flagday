@@ -132,8 +132,7 @@ class ProgramController extends Controller
 
         DB::transaction(function () use ($program) {
             // Copied inside the database, so a large PDF never passes through PHP.
-            $program->pdf()->select('id')->firstOrFail();
-            $program->pdf()->update(['published_data' => DB::raw('data')]);
+            $program->pdf()->firstOrFail()->publishWorking();
 
             Program::withoutTimestamps(function () use ($program) {
                 $program->forceFill([
@@ -152,7 +151,7 @@ class ProgramController extends Controller
 
     public function download(Program $program): StreamedResponse|RedirectResponse
     {
-        return ProgramPdf::stream($program->id, 'data', [
+        return ProgramPdf::stream($program->id, ProgramPdf::WORKING, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="'.$program->pdfFilename().'"',
         ]) ?? back()->withErrors(['pdf' => $program->isGenerated()
@@ -204,7 +203,7 @@ class ProgramController extends Controller
         }
 
         DB::transaction(function () use ($program, $bytes) {
-            $program->pdf()->updateOrCreate([], ['data' => base64_encode($bytes)]);
+            $program->pdf()->firstOrCreate()->storeWorking($bytes);
 
             // Metadata only — leaving updated_at alone keeps the "out of date" check meaningful.
             Program::withoutTimestamps(function () use ($program, $bytes) {
@@ -222,7 +221,7 @@ class ProgramController extends Controller
     /**
      * Stores an uploaded Convocation PDF as the program's working PDF (replacing any previous
      * upload) — either a file posted with the form, or a completed chunked upload (see
-     * ProgramPdfUploadController), which is copied inside the database.
+     * ProgramPdfUploadController), whose stored parts are moved onto the program's PDF.
      */
     private function storeUpload(Program $program, ?UploadedFile $file, ?string $uploadToken = null): void
     {
@@ -230,23 +229,15 @@ class ProgramController extends Controller
             return;
         }
 
+        $pdf = $program->pdf()->firstOrCreate();
+
         if ($file) {
             $bytes = (string) file_get_contents($file->getRealPath());
-            $program->pdf()->updateOrCreate([], ['data' => base64_encode($bytes)]);
+            $pdf->storeWorking($bytes);
             $size = strlen($bytes);
         } else {
             $upload = ProgramPdfUpload::where('token', $uploadToken)->firstOrFail(['id', 'total_size']);
-            $source = DB::table('program_pdf_uploads')->where('id', $upload->id);
-
-            if ($program->pdf()->exists()) {
-                $program->pdf()->update(['data' => DB::raw('(select data from program_pdf_uploads where id = '.(int) $upload->id.')')]);
-            } else {
-                DB::table('program_pdfs')->insertUsing(
-                    ['program_id', 'data', 'created_at', 'updated_at'],
-                    $source->selectRaw('?, data, ?, ?', [$program->id, now(), now()]),
-                );
-            }
-
+            $pdf->adoptUpload($upload);
             $upload->delete();
             $size = $upload->total_size;
         }

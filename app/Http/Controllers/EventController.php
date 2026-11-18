@@ -72,7 +72,7 @@ class EventController extends Controller
 
         $disposition = $request->boolean('download') ? 'attachment' : 'inline';
 
-        return ProgramPdf::stream($program->id, 'published_data', [
+        return ProgramPdf::stream($program->id, ProgramPdf::PUBLISHED, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => $disposition.'; filename="'.$program->pdfFilename().'"',
             // Laravel Cloud's edge (Cloudflare) caches responses without Cache-Control; a

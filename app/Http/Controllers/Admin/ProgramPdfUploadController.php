@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Program;
+use App\Models\ProgramPdfPart;
 use App\Models\ProgramPdfUpload;
 use App\Support\UploadLimits;
 use Illuminate\Database\QueryException;
@@ -39,7 +40,6 @@ class ProgramPdfUploadController extends Controller
         $upload = ProgramPdfUpload::create([
             'token' => (string) Str::uuid(),
             'total_size' => (int) $validated['size'],
-            'data' => '',
         ]);
 
         return response()->json([
@@ -58,9 +58,7 @@ class ProgramPdfUploadController extends Controller
         $length = strlen($bytes);
         $remaining = $upload->total_size - $upload->received_size;
 
-        // Every chunk but the last is a multiple of 3 bytes, so its base64 can simply be
-        // appended to what is already stored.
-        if ($offset !== $upload->received_size || $length === 0 || $length > $remaining || ($length < $remaining && $length % 3 !== 0)) {
+        if ($offset !== $upload->received_size || $length === 0 || $length > $remaining) {
             return response()->json(['message' => 'The upload got out of step. Choose the file again and save.'], 409);
         }
 
@@ -70,33 +68,41 @@ class ProgramPdfUploadController extends Controller
             return response()->json(['message' => 'The program PDF must be a valid PDF file.'], 422);
         }
 
-        $concat = in_array(DB::connection()->getDriverName(), ['mysql', 'mariadb'], true) ? 'CONCAT(data, ?)' : 'data || ?';
-
         try {
-            $updated = DB::update(
-                "update program_pdf_uploads set data = {$concat}, received_size = ?, updated_at = ? where id = ? and received_size = ?",
-                [base64_encode($bytes), $offset + $length, now(), $upload->id, $offset],
-            );
+            // Each chunk is its own part, so no stored value grows with the file.
+            $stored = DB::transaction(function () use ($upload, $offset, $length, $bytes) {
+                $claimed = ProgramPdfUpload::whereKey($upload->id)
+                    ->where('received_size', $offset)
+                    ->update(['received_size' => $offset + $length]);
+
+                if ($claimed) {
+                    ProgramPdfPart::create([
+                        'program_pdf_upload_id' => $upload->id,
+                        'position' => $offset,
+                        'size' => $length,
+                        'data' => base64_encode($bytes),
+                    ]);
+                }
+
+                return $claimed > 0;
+            });
         } catch (QueryException $e) {
-            // e.g. MySQL's max_allowed_packet is smaller than the encoded file.
-            Log::error('Program PDF upload could not be stored', ['size' => $upload->total_size, 'error' => $e->getMessage()]);
+            Log::error('Program PDF upload chunk could not be stored', ['offset' => $offset, 'size' => $length, 'error' => $e->getMessage()]);
             $upload->delete();
 
-            return response()->json(['message' => 'The database could not store a file this large. See the server log for details.'], 500);
+            return response()->json(['message' => 'The upload could not be stored. See the server log for details.'], 500);
         }
 
-        if ($updated === 0) {
+        if (! $stored) {
             return response()->json(['message' => 'The upload got out of step. Choose the file again and save.'], 409);
         }
 
         return response()->json(['received' => $offset + $length]);
     }
 
-    /** A multiple of 3 bytes, with headroom under PHP's post_max_size / upload_max_filesize. */
+    /** With headroom under PHP's post_max_size / upload_max_filesize. */
     private static function chunkBytes(): int
     {
-        $bytes = (int) (UploadLimits::effectiveKb(self::CHUNK_KB) * 1024 * 0.9);
-
-        return intdiv($bytes, 3) * 3;
+        return (int) (UploadLimits::effectiveKb(self::CHUNK_KB) * 1024 * 0.9);
     }
 }

@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * A Convocation program PDF part-way through a chunked upload. `data` is the base64 of
- * the bytes received so far; it is only ever appended to and copied in SQL, never loaded.
+ * A Convocation program PDF part-way through a chunked upload. Each chunk received is
+ * stored as a ProgramPdfPart; saving the program form moves them onto its PDF.
  */
 class ProgramPdfUpload extends Model
 {
-    protected $fillable = ['token', 'total_size', 'received_size', 'data'];
+    protected $fillable = ['token', 'total_size', 'received_size'];
 
     protected function casts(): array
     {
